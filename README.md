@@ -1,12 +1,14 @@
 # xLogo Lernwelt
 
-## Live Demo
+---
 
-**Link zum Teilen mit Schülern:**
+## Live Demo - Link zum Kopieren
 
 ```
-https://albecabrera.github.io/Informatik_interaktiv/
+https://albecabrera.github.io/xLogo_interaktiv/
 ```
+
+**Direkt-Link:** [https://albecabrera.github.io/xLogo_interaktiv/](https://albecabrera.github.io/xLogo_interaktiv/)
 
 ---
 
