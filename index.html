@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>xLogo Lernwelt - Spielerisch Programmieren lernen</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="app-container">
@@ -86,34 +86,92 @@
                     </div>
 
                     <div class="workspace">
-                        <div class="canvas-container">
-                            <canvas id="turtleCanvas" width="500" height="400"></canvas>
-                            <div class="canvas-controls">
-                                <button class="control-btn" id="runBtn">▶️ Ausführen</button>
-                                <button class="control-btn" id="stepBtn">⏭️ Schritt</button>
-                                <button class="control-btn" id="resetBtn">🔄 Reset</button>
-                                <button class="control-btn" id="clearBtn">🗑️ Löschen</button>
+                        <div class="canvas-area">
+                            <div class="canvas-container">
+                                <canvas id="turtleCanvas" width="500" height="400"></canvas>
+                            </div>
+
+                            <!-- Alle Steuerungs-Buttons -->
+                            <div class="control-toolbar">
+                                <div class="control-group">
+                                    <button class="control-btn run-btn" id="runBtn" title="Ausführen (F5)">
+                                        <span class="btn-icon">▶️</span>
+                                        <span class="btn-text">Ausführen</span>
+                                        <span class="shortcut">F5</span>
+                                    </button>
+                                    <button class="control-btn stop-btn" id="stopBtn" title="Stoppen (Esc)">
+                                        <span class="btn-icon">⏹️</span>
+                                        <span class="btn-text">Stopp</span>
+                                    </button>
+                                </div>
+
+                                <div class="control-group step-controls">
+                                    <button class="control-btn" id="stepBackBtn" title="Schritt zurück (←)">
+                                        <span class="btn-icon">⏮️</span>
+                                        <span class="btn-text">Zurück</span>
+                                    </button>
+                                    <button class="control-btn" id="stepForwardBtn" title="Schritt vorwärts (→)">
+                                        <span class="btn-icon">⏭️</span>
+                                        <span class="btn-text">Vorwärts</span>
+                                    </button>
+                                </div>
+
+                                <div class="control-group">
+                                    <button class="control-btn" id="resetBtn" title="Reset">
+                                        <span class="btn-icon">🔄</span>
+                                        <span class="btn-text">Reset</span>
+                                    </button>
+                                    <button class="control-btn" id="clearBtn" title="Code löschen">
+                                        <span class="btn-icon">🗑️</span>
+                                        <span class="btn-text">Löschen</span>
+                                    </button>
+                                </div>
+
+                                <div class="control-group speed-control">
+                                    <label for="speedSlider">🐢</label>
+                                    <input type="range" id="speedSlider" min="1" max="10" value="5" title="Geschwindigkeit">
+                                    <label for="speedSlider">🐇</label>
+                                    <span class="speed-value" id="speedValue">5x</span>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="code-panel">
-                            <div class="code-header">
-                                <h4>Dein Code</h4>
-                                <div class="code-hints">
-                                    <span class="code-hint" title="forward (vorwärts)">fd</span>
-                                    <span class="code-hint" title="back (rückwärts)">bk</span>
-                                    <span class="code-hint" title="right turn (rechts)">rt</span>
-                                    <span class="code-hint" title="left turn (links)">lt</span>
-                                    <span class="code-hint" title="repeat (wiederhole)">repeat</span>
+                        <div class="code-console-area">
+                            <div class="code-panel">
+                                <div class="code-header">
+                                    <h4>Dein Code</h4>
+                                    <div class="code-hints">
+                                        <span class="code-hint" title="forward(schritte)">fd()</span>
+                                        <span class="code-hint" title="back(schritte)">bk()</span>
+                                        <span class="code-hint" title="right(grad)">rt()</span>
+                                        <span class="code-hint" title="left(grad)">lt()</span>
+                                        <span class="code-hint" title="repeat anzahl:">repeat:</span>
+                                    </div>
+                                </div>
+                                <div class="code-editor-container">
+                                    <div class="line-numbers" id="lineNumbers"></div>
+                                    <textarea id="codeInput" spellcheck="false" placeholder="# Schreibe hier deinen xLogo-Code...
+# Beispiel:
+fd(100)
+rt(90)
+fd(100)
+
+# Schleife mit Einrückung:
+repeat 4:
+    fd(100)
+    rt(90)"></textarea>
                                 </div>
                             </div>
-                            <textarea id="codeInput" placeholder="Schreibe hier deinen xLogo-Code...
-Beispiel:
-fd 100
-rt 90
-fd 100"></textarea>
-                            <div class="feedback-area" id="feedbackArea">
-                                <div class="feedback-message" id="feedbackMessage"></div>
+
+                            <!-- Konsole -->
+                            <div class="console-panel">
+                                <div class="console-header">
+                                    <h4>Konsole</h4>
+                                    <button class="console-clear-btn" id="clearConsoleBtn" title="Konsole leeren">🗑️</button>
+                                </div>
+                                <div class="console-output" id="consoleOutput">
+                                    <div class="console-welcome">Willkommen! Drücke F5 oder klicke auf "Ausführen".</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -122,41 +180,90 @@ fd 100"></textarea>
 
             <!-- Sandbox-Ansicht -->
             <section class="view sandbox-view" id="sandboxView">
-                <div class="sandbox-container">
+                <div class="sandbox-layout">
                     <div class="sandbox-canvas-area">
-                        <canvas id="sandboxCanvas" width="600" height="500"></canvas>
-                        <div class="canvas-controls">
-                            <button class="control-btn" id="sandboxRunBtn">▶️ Ausführen</button>
-                            <button class="control-btn" id="sandboxStepBtn">⏭️ Schritt</button>
-                            <button class="control-btn" id="sandboxResetBtn">🔄 Reset</button>
-                            <button class="control-btn" id="sandboxClearBtn">🗑️ Löschen</button>
-                            <input type="color" id="penColor" value="#00aa00" title="Stiftfarbe">
-                            <input type="range" id="penWidth" min="1" max="10" value="2" title="Stiftbreite">
+                        <div class="canvas-container">
+                            <canvas id="sandboxCanvas" width="600" height="500"></canvas>
                         </div>
-                    </div>
-                    <div class="sandbox-code-area">
-                        <h3>Freies Experimentieren</h3>
-                        <div class="command-reference">
-                            <h4>Befehlsreferenz (xLogo):</h4>
-                            <div class="command-list">
-                                <div class="command-item"><code>fd X</code> - Forward: X Schritte vorwärts</div>
-                                <div class="command-item"><code>bk X</code> - Back: X Schritte rückwärts</div>
-                                <div class="command-item"><code>rt X</code> - Right Turn: X Grad nach rechts</div>
-                                <div class="command-item"><code>lt X</code> - Left Turn: X Grad nach links</div>
-                                <div class="command-item"><code>pu</code> - Pen Up: Stift hoch</div>
-                                <div class="command-item"><code>pd</code> - Pen Down: Stift runter</div>
-                                <div class="command-item"><code>repeat X [...]</code> - Wiederhole X mal</div>
-                                <div class="command-item"><code>setpc "rot"</code> - Stiftfarbe ändern</div>
-                                <div class="command-item"><code>cs</code> - Clear Screen: Löschen</div>
-                                <div class="command-item"><code>home</code> - Zurück zur Mitte</div>
+                        <div class="control-toolbar">
+                            <div class="control-group">
+                                <button class="control-btn run-btn" id="sandboxRunBtn" title="Ausführen (F5)">
+                                    <span class="btn-icon">▶️</span>
+                                    <span class="btn-text">Ausführen</span>
+                                </button>
+                                <button class="control-btn stop-btn" id="sandboxStopBtn" title="Stoppen">
+                                    <span class="btn-icon">⏹️</span>
+                                    <span class="btn-text">Stopp</span>
+                                </button>
+                            </div>
+                            <div class="control-group step-controls">
+                                <button class="control-btn" id="sandboxStepBackBtn" title="Schritt zurück">
+                                    <span class="btn-icon">⏮️</span>
+                                </button>
+                                <button class="control-btn" id="sandboxStepForwardBtn" title="Schritt vorwärts">
+                                    <span class="btn-icon">⏭️</span>
+                                </button>
+                            </div>
+                            <div class="control-group">
+                                <button class="control-btn" id="sandboxResetBtn" title="Reset">
+                                    <span class="btn-icon">🔄</span>
+                                </button>
+                                <button class="control-btn" id="sandboxClearBtn" title="Löschen">
+                                    <span class="btn-icon">🗑️</span>
+                                </button>
+                            </div>
+                            <div class="control-group">
+                                <input type="color" id="penColor" value="#00aa00" title="Stiftfarbe">
+                                <input type="range" id="penWidth" min="1" max="10" value="2" title="Stiftbreite">
+                            </div>
+                            <div class="control-group speed-control">
+                                <label>🐢</label>
+                                <input type="range" id="sandboxSpeedSlider" min="1" max="10" value="5">
+                                <label>🐇</label>
                             </div>
                         </div>
-                        <textarea id="sandboxCode" placeholder="Experimentiere frei! Zum Beispiel:
+                    </div>
 
-repeat 4 [fd 100 rt 90]
+                    <div class="sandbox-code-area">
+                        <div class="command-reference">
+                            <h4>xLogo Befehlsreferenz:</h4>
+                            <div class="command-list">
+                                <div class="command-item"><code>fd(X)</code> - Forward: X Schritte vorwärts</div>
+                                <div class="command-item"><code>bk(X)</code> - Back: X Schritte rückwärts</div>
+                                <div class="command-item"><code>rt(X)</code> - Right: X Grad nach rechts</div>
+                                <div class="command-item"><code>lt(X)</code> - Left: X Grad nach links</div>
+                                <div class="command-item"><code>pu()</code> - Pen Up: Stift hoch</div>
+                                <div class="command-item"><code>pd()</code> - Pen Down: Stift runter</div>
+                                <div class="command-item"><code>repeat X:</code> - Wiederhole (mit Einrückung!)</div>
+                                <div class="command-item"><code>setpc("rot")</code> - Stiftfarbe</div>
+                                <div class="command-item"><code>setpw(X)</code> - Stiftbreite</div>
+                                <div class="command-item"><code>cs()</code> - Clear Screen</div>
+                                <div class="command-item"><code>home()</code> - Zurück zur Mitte</div>
+                                <div class="command-item"><code>print("text")</code> - Ausgabe in Konsole</div>
+                            </div>
+                        </div>
 
-Dies zeichnet ein Quadrat!"></textarea>
-                        <div class="sandbox-feedback" id="sandboxFeedback"></div>
+                        <div class="code-editor-container">
+                            <div class="line-numbers" id="sandboxLineNumbers"></div>
+                            <textarea id="sandboxCode" spellcheck="false" placeholder="# Freies Experimentieren!
+# Beispiel - Quadrat:
+
+repeat 4:
+    fd(100)
+    rt(90)
+
+print('Quadrat fertig!')"></textarea>
+                        </div>
+
+                        <div class="console-panel">
+                            <div class="console-header">
+                                <h4>Konsole</h4>
+                                <button class="console-clear-btn" id="sandboxClearConsoleBtn">🗑️</button>
+                            </div>
+                            <div class="console-output" id="sandboxConsoleOutput">
+                                <div class="console-welcome">Bereit zum Experimentieren!</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -189,11 +296,11 @@ Dies zeichnet ein Quadrat!"></textarea>
 
                         <div class="form-group">
                             <label for="taskSolution">Musterlösung (Code):</label>
-                            <textarea id="taskSolution" placeholder="fd 100
-rt 120
-fd 100
-rt 120
-fd 100"></textarea>
+                            <textarea id="taskSolution" placeholder="fd(100)
+rt(120)
+fd(100)
+rt(120)
+fd(100)"></textarea>
                         </div>
 
                         <div class="form-group">

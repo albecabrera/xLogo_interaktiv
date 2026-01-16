@@ -51,40 +51,68 @@ Eine interaktive Lernplattform zum spielerischen Erlernen der Programmiersprache
 
 | Befehl | Beschreibung |
 |--------|--------------|
-| `fd X` | Forward: X Schritte vorwärts |
-| `bk X` | Back: X Schritte rückwärts |
-| `rt X` | Right Turn: X Grad nach rechts drehen |
-| `lt X` | Left Turn: X Grad nach links drehen |
-| `pu` | Pen Up: Stift heben (nicht zeichnen) |
-| `pd` | Pen Down: Stift senken (zeichnen) |
-| `repeat X [...]` | Befehle X mal wiederholen |
-| `setpc "farbe"` | Stiftfarbe ändern |
-| `setpw X` | Stiftbreite setzen |
-| `cs` | Clear Screen: Bildschirm löschen |
-| `home` | Zur Mitte zurückkehren |
-| `ht` | Hide Turtle: Schildkröte verstecken |
-| `st` | Show Turtle: Schildkröte zeigen |
+| `fd(X)` | Forward: X Schritte vorwärts |
+| `bk(X)` | Back: X Schritte rückwärts |
+| `rt(X)` | Right Turn: X Grad nach rechts drehen |
+| `lt(X)` | Left Turn: X Grad nach links drehen |
+| `pu()` | Pen Up: Stift heben (nicht zeichnen) |
+| `pd()` | Pen Down: Stift senken (zeichnen) |
+| `repeat X:` | Befehle X mal wiederholen (mit Einrückung!) |
+| `setpc("farbe")` | Stiftfarbe ändern |
+| `setpw(X)` | Stiftbreite setzen |
+| `cs()` | Clear Screen: Bildschirm löschen |
+| `home()` | Zur Mitte zurückkehren |
+| `ht()` | Hide Turtle: Schildkröte verstecken |
+| `st()` | Show Turtle: Schildkröte zeigen |
+| `print("text")` | Text in der Konsole ausgeben |
+
+## Tastaturkürzel
+
+| Kürzel | Funktion |
+|--------|----------|
+| `F5` | Code ausführen |
+| `Esc` | Ausführung stoppen |
+| `→` | Schritt vorwärts |
+| `←` | Schritt zurück |
+| `Ctrl+Enter` | Code ausführen |
 
 ## Beispiele
 
 **Quadrat zeichnen:**
-```logo
-repeat 4 [fd 100 rt 90]
+```python
+repeat 4:
+    fd(100)
+    rt(90)
 ```
 
 **Dreieck zeichnen:**
-```logo
-repeat 3 [fd 100 rt 120]
+```python
+repeat 3:
+    fd(100)
+    rt(120)
 ```
 
 **Stern zeichnen:**
-```logo
-repeat 5 [fd 100 rt 144]
+```python
+repeat 5:
+    fd(100)
+    rt(144)
 ```
 
 **Kreis (Annäherung):**
-```logo
-repeat 36 [fd 10 rt 10]
+```python
+repeat 36:
+    fd(10)
+    rt(10)
+```
+
+**Blume:**
+```python
+repeat 6:
+    repeat 36:
+        fd(5)
+        rt(10)
+    rt(60)
 ```
 
 ## Lokale Entwicklung
