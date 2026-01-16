@@ -1,0 +1,1136 @@
+/* ========================================
+   xLogo Lernwelt - Styles
+   Motivierendes, cleanes Design
+   ======================================== */
+
+:root {
+    /* Farbpalette */
+    --primary: #6c5ce7;
+    --primary-light: #a29bfe;
+    --primary-dark: #5541d7;
+    --secondary: #00cec9;
+    --secondary-light: #81ecec;
+    --accent: #fd79a8;
+    --success: #00b894;
+    --warning: #fdcb6e;
+    --error: #e17055;
+
+    /* Hintergrund */
+    --bg-main: #f8f9ff;
+    --bg-card: #ffffff;
+    --bg-dark: #2d3436;
+
+    /* Text */
+    --text-primary: #2d3436;
+    --text-secondary: #636e72;
+    --text-light: #b2bec3;
+
+    /* Schatten */
+    --shadow-sm: 0 2px 8px rgba(108, 92, 231, 0.1);
+    --shadow-md: 0 4px 20px rgba(108, 92, 231, 0.15);
+    --shadow-lg: 0 8px 40px rgba(108, 92, 231, 0.2);
+
+    /* Radius */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --radius-xl: 30px;
+
+    /* Animationen */
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(135deg, var(--bg-main) 0%, #e8e4ff 100%);
+    min-height: 100vh;
+    color: var(--text-primary);
+}
+
+/* ========================================
+   Header
+   ======================================== */
+
+.main-header {
+    background: var(--bg-card);
+    padding: 1rem 2rem;
+    box-shadow: var(--shadow-md);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.turtle-icon {
+    font-size: 2.5rem;
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+.logo h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.8rem;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stats-bar {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.rubox-display, .level-display, .streak-display {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius-xl);
+    font-weight: 700;
+}
+
+.rubox-icon {
+    font-size: 1.5rem;
+    animation: sparkle 1.5s infinite;
+}
+
+@keyframes sparkle {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.rubox-count {
+    font-size: 1.3rem;
+    color: var(--primary);
+}
+
+.rubox-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.level-icon, .streak-icon {
+    font-size: 1.3rem;
+}
+
+.level-text, .streak-count {
+    font-size: 1rem;
+    color: var(--primary);
+}
+
+.main-nav {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.nav-btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: var(--radius-xl);
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.nav-btn:hover {
+    background: var(--bg-main);
+    color: var(--primary);
+}
+
+.nav-btn.active {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+    box-shadow: var(--shadow-sm);
+}
+
+/* ========================================
+   Main Content
+   ======================================== */
+
+.main-content {
+    padding: 2rem;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.view {
+    display: none;
+}
+
+.view.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ========================================
+   Schwierigkeitsgrad-Auswahl
+   ======================================== */
+
+.difficulty-selector {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.difficulty-selector h2 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+}
+
+.difficulty-cards {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.difficulty-card {
+    background: var(--bg-card);
+    border: 3px solid transparent;
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    width: 200px;
+    cursor: pointer;
+    transition: var(--transition-normal);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.difficulty-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-md);
+}
+
+.difficulty-card.active {
+    border-color: var(--primary);
+    box-shadow: var(--shadow-md);
+}
+
+.difficulty-card.beginner.active { border-color: var(--success); }
+.difficulty-card.intermediate.active { border-color: var(--warning); }
+.difficulty-card.advanced.active { border-color: var(--accent); }
+
+.difficulty-emoji {
+    font-size: 2.5rem;
+}
+
+.difficulty-name {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+}
+
+.difficulty-desc {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.difficulty-reward {
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-xl);
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+/* ========================================
+   Aufgabenbereich
+   ======================================== */
+
+.task-area {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 2rem;
+}
+
+.task-panel {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--bg-main);
+}
+
+.task-header h3 {
+    font-family: 'Fredoka One', cursive;
+    color: var(--primary);
+}
+
+.task-number {
+    background: var(--primary-light);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radius-xl);
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.task-content {
+    margin-bottom: 1.5rem;
+}
+
+.task-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-primary);
+}
+
+.hint-area {
+    margin-bottom: 1.5rem;
+}
+
+.hint-btn {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px dashed var(--warning);
+    border-radius: var(--radius-md);
+    background: rgba(253, 203, 110, 0.1);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.hint-btn:hover {
+    background: rgba(253, 203, 110, 0.2);
+}
+
+.hint-content {
+    display: none;
+    margin-top: 1rem;
+    padding: 1rem;
+    background: rgba(253, 203, 110, 0.15);
+    border-radius: var(--radius-md);
+    color: var(--text-primary);
+    line-height: 1.5;
+}
+
+.hint-content.visible {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+.expected-preview {
+    border-top: 2px solid var(--bg-main);
+    padding-top: 1rem;
+}
+
+.expected-preview h4 {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+}
+
+#expectedCanvas {
+    width: 100%;
+    height: auto;
+    border: 2px solid var(--bg-main);
+    border-radius: var(--radius-md);
+    background: white;
+}
+
+/* ========================================
+   Arbeitsbereich
+   ======================================== */
+
+.workspace {
+    display: grid;
+    grid-template-columns: 1fr 350px;
+    gap: 1.5rem;
+}
+
+.canvas-container {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+#turtleCanvas, #sandboxCanvas {
+    width: 100%;
+    height: auto;
+    border: 3px solid var(--bg-main);
+    border-radius: var(--radius-md);
+    background: white;
+    display: block;
+}
+
+.canvas-controls {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+.control-btn {
+    padding: 0.6rem 1rem;
+    border: none;
+    border-radius: var(--radius-md);
+    background: var(--bg-main);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.control-btn:hover {
+    background: var(--primary-light);
+    color: white;
+}
+
+#runBtn, #sandboxRunBtn {
+    background: linear-gradient(135deg, var(--success) 0%, #55efc4 100%);
+    color: white;
+}
+
+#runBtn:hover, #sandboxRunBtn:hover {
+    transform: scale(1.05);
+}
+
+/* ========================================
+   Code-Panel
+   ======================================== */
+
+.code-panel {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+}
+
+.code-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.code-header h4 {
+    font-family: 'Fredoka One', cursive;
+    color: var(--primary);
+}
+
+.code-hints {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.code-hint {
+    background: var(--bg-main);
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+    font-family: monospace;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    cursor: help;
+}
+
+#codeInput, #sandboxCode, #taskDescription, #taskSolution, #taskHint {
+    flex: 1;
+    min-height: 200px;
+    padding: 1rem;
+    border: 2px solid var(--bg-main);
+    border-radius: var(--radius-md);
+    font-family: 'Fira Code', 'Consolas', monospace;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    resize: vertical;
+    transition: var(--transition-fast);
+}
+
+#codeInput:focus, #sandboxCode:focus, #taskDescription:focus, #taskSolution:focus, #taskHint:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+}
+
+.feedback-area {
+    margin-top: 1rem;
+    min-height: 60px;
+}
+
+.feedback-message {
+    padding: 1rem;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    display: none;
+}
+
+.feedback-message.success {
+    display: block;
+    background: rgba(0, 184, 148, 0.15);
+    color: var(--success);
+    border: 2px solid var(--success);
+    animation: successPulse 0.5s ease;
+}
+
+.feedback-message.error {
+    display: block;
+    background: rgba(225, 112, 85, 0.15);
+    color: var(--error);
+    border: 2px solid var(--error);
+}
+
+.feedback-message.info {
+    display: block;
+    background: rgba(108, 92, 231, 0.15);
+    color: var(--primary);
+    border: 2px solid var(--primary);
+}
+
+@keyframes successPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+/* ========================================
+   Sandbox
+   ======================================== */
+
+.sandbox-container {
+    display: grid;
+    grid-template-columns: 1fr 400px;
+    gap: 2rem;
+}
+
+.sandbox-canvas-area {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.sandbox-code-area {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.sandbox-code-area h3 {
+    font-family: 'Fredoka One', cursive;
+    color: var(--primary);
+    margin-bottom: 1rem;
+}
+
+.command-reference {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: var(--bg-main);
+    border-radius: var(--radius-md);
+}
+
+.command-reference h4 {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+}
+
+.command-list {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.command-item {
+    font-size: 0.85rem;
+    color: var(--text-primary);
+}
+
+.command-item code {
+    background: var(--bg-card);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-family: 'Fira Code', monospace;
+    color: var(--primary);
+}
+
+#penColor {
+    width: 40px;
+    height: 36px;
+    border: none;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+}
+
+#penWidth {
+    width: 80px;
+}
+
+.sandbox-feedback {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    border-radius: var(--radius-md);
+    font-size: 0.9rem;
+    min-height: 40px;
+}
+
+/* ========================================
+   Admin-Bereich
+   ======================================== */
+
+.admin-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.admin-container h2 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2rem;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+}
+
+.admin-intro {
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+}
+
+.admin-form {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.form-group input[type="text"],
+.form-group select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--bg-main);
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-size: 1rem;
+    transition: var(--transition-fast);
+}
+
+.form-group input[type="text"]:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+.preview-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+#adminPreviewCanvas {
+    border: 2px solid var(--bg-main);
+    border-radius: var(--radius-md);
+    background: white;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.btn-primary {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    color: white;
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-secondary {
+    padding: 0.75rem 1.5rem;
+    border: 2px solid var(--primary);
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--primary);
+    font-family: inherit;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.btn-secondary:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.custom-tasks-list {
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.custom-tasks-list h3 {
+    font-family: 'Fredoka One', cursive;
+    color: var(--primary);
+    margin-bottom: 1rem;
+}
+
+.custom-task-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    background: var(--bg-main);
+    border-radius: var(--radius-md);
+    margin-bottom: 0.75rem;
+}
+
+.custom-task-info h4 {
+    font-size: 1rem;
+    color: var(--text-primary);
+    margin-bottom: 0.25rem;
+}
+
+.custom-task-info span {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.custom-task-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.task-action-btn {
+    padding: 0.5rem;
+    border: none;
+    border-radius: var(--radius-sm);
+    background: var(--bg-card);
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.task-action-btn:hover {
+    background: var(--primary-light);
+}
+
+.task-action-btn.delete:hover {
+    background: var(--error);
+    color: white;
+}
+
+/* ========================================
+   Popups
+   ======================================== */
+
+.reward-popup, .levelup-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.reward-popup.visible, .levelup-popup.visible {
+    display: flex;
+    animation: fadeIn 0.3s ease;
+}
+
+.reward-content, .levelup-content {
+    background: var(--bg-card);
+    border-radius: var(--radius-xl);
+    padding: 3rem;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+    animation: popIn 0.4s ease;
+}
+
+@keyframes popIn {
+    0% { transform: scale(0.8); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.reward-animation, .levelup-animation {
+    font-size: 4rem;
+    animation: bounce 0.5s ease infinite;
+}
+
+.reward-content h2, .levelup-content h2 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2rem;
+    color: var(--primary);
+    margin: 1rem 0;
+}
+
+.reward-message, .levelup-message {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+}
+
+.reward-rubox {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+.rubox-amount {
+    font-family: 'Fredoka One', cursive;
+    font-size: 2.5rem;
+    color: var(--primary);
+}
+
+/* ========================================
+   Responsive Design
+   ======================================== */
+
+@media (max-width: 1200px) {
+    .task-area {
+        grid-template-columns: 1fr;
+    }
+
+    .workspace {
+        grid-template-columns: 1fr;
+    }
+
+    .sandbox-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .stats-bar {
+        justify-content: center;
+    }
+
+    .main-nav {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .nav-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+    }
+
+    .difficulty-cards {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .difficulty-card {
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .main-content {
+        padding: 1rem;
+    }
+}
+
+/* ========================================
+   Schildkröten-Grafik (wird per JS gerendert)
+   ======================================== */
+
+.turtle-marker {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    transform-origin: center center;
+    pointer-events: none;
+}
+
+/* ========================================
+   Zusätzliche Animationen
+   ======================================== */
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.shake {
+    animation: shake 0.3s ease;
+}
+
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 5px var(--primary); }
+    50% { box-shadow: 0 0 20px var(--primary); }
+}
+
+.glow {
+    animation: glow 1s ease infinite;
+}
+
+/* Confetti Animation */
+.confetti {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 999;
+}
+
+/* Streak-Animation */
+@keyframes fireGlow {
+    0%, 100% { text-shadow: 0 0 5px #ff6b6b; }
+    50% { text-shadow: 0 0 20px #ff6b6b, 0 0 30px #feca57; }
+}
+
+.streak-icon {
+    animation: fireGlow 1s ease infinite;
+}
+
+/* ========================================
+   Share-Button und Popup
+   ======================================== */
+
+.share-btn {
+    background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-light) 100%) !important;
+    color: white !important;
+}
+
+.share-btn:hover {
+    transform: scale(1.05);
+}
+
+.share-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.share-popup.visible {
+    display: flex;
+    animation: fadeIn 0.3s ease;
+}
+
+.share-content {
+    background: var(--bg-card);
+    border-radius: var(--radius-xl);
+    padding: 2.5rem;
+    text-align: center;
+    box-shadow: var(--shadow-lg);
+    animation: popIn 0.4s ease;
+    max-width: 450px;
+    width: 90%;
+    position: relative;
+}
+
+.close-popup-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 50%;
+    background: var(--bg-main);
+    color: var(--text-secondary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-fast);
+}
+
+.close-popup-btn:hover {
+    background: var(--error);
+    color: white;
+}
+
+.share-content h2 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.75rem;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+}
+
+.share-content > p {
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+}
+
+.share-qr {
+    margin: 1.5rem 0;
+    display: flex;
+    justify-content: center;
+}
+
+.share-qr canvas {
+    border: 4px solid var(--bg-main);
+    border-radius: var(--radius-md);
+    background: white;
+    padding: 10px;
+}
+
+.share-link-area {
+    margin-bottom: 1.5rem;
+}
+
+.share-link-area label {
+    display: block;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+    text-align: left;
+}
+
+.link-copy-container {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.link-copy-container input {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--bg-main);
+    border-radius: var(--radius-md);
+    font-family: monospace;
+    font-size: 0.9rem;
+    background: var(--bg-main);
+}
+
+.copy-btn {
+    padding: 0.75rem 1rem;
+    border: none;
+    border-radius: var(--radius-md);
+    background: var(--primary);
+    color: white;
+    font-family: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    white-space: nowrap;
+}
+
+.copy-btn:hover {
+    background: var(--primary-dark);
+}
+
+.copy-feedback {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: var(--success);
+    min-height: 1.2rem;
+}
+
+.share-buttons {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.share-option-btn {
+    padding: 0.75rem 1.25rem;
+    border: 2px solid var(--bg-main);
+    border-radius: var(--radius-md);
+    background: var(--bg-card);
+    color: var(--text-primary);
+    font-family: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition-fast);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.share-option-btn:hover {
+    border-color: var(--primary);
+    background: rgba(108, 92, 231, 0.1);
+}
+
+.share-option-btn span {
+    font-size: 1.2rem;
+}
