@@ -4,6 +4,136 @@
    ======================================== */
 
 // ==========================================
+// Internationalization (i18n)
+// ==========================================
+
+const translations = {
+    de: {
+        'nav.learn': 'Lernen',
+        'nav.sandbox': 'Sandbox',
+        'nav.admin': 'Aufgaben',
+        'nav.share': 'Teilen',
+        'difficulty.beginner': 'Anfänger',
+        'difficulty.intermediate': 'Fortgeschritten',
+        'difficulty.advanced': 'Experte',
+        'task.current': 'Aufgabe',
+        'task.selectDifficulty': 'Wähle einen Schwierigkeitsgrad!',
+        'task.hint': 'Hinweis',
+        'task.expected': 'Erwartet:',
+        'code.title': 'Code',
+        'console.title': 'Konsole',
+        'console.welcome': 'Drücke F5 zum Ausführen',
+        'console.ready': 'Bereit!',
+        'console.running': 'Code wird ausgeführt...',
+        'console.success': 'Befehle erfolgreich ausgeführt!',
+        'console.error': 'Fehler',
+        'console.indentError': 'Einrückungsfehler in Zeile',
+        'console.mustBe4': 'Einrückung muss genau 4 Leerzeichen sein',
+        'console.enterCode': 'Bitte gib zuerst Code ein!',
+        'console.stopped': 'Ausführung gestoppt.',
+        'console.reset': 'Canvas zurückgesetzt.',
+        'console.atStart': 'Bereits am Anfang.',
+        'console.allDone': 'Alle Schritte ausgeführt!',
+        'console.step': 'Schritt',
+        'console.backTo': 'Zurück zu Schritt',
+        'console.readySteps': 'Bereit für Schritt-für-Schritt',
+        'console.steps': 'Schritte',
+        'console.wrongSolution': 'Das sieht noch nicht ganz richtig aus. Versuche es nochmal!',
+        'console.taskLoaded': 'Neue Aufgabe geladen. Viel Erfolg!',
+        'console.needRubox': 'Du brauchst mindestens 5 Rubox für einen Hinweis!',
+        'reference.title': 'Befehle:',
+        'reward.title': 'Fantastisch!',
+        'reward.message': 'Aufgabe gelöst!',
+        'reward.firstTime': 'Du hast die Aufgabe zum ersten Mal gelöst!',
+        'reward.again': 'Du hast die Aufgabe erneut gemeistert!',
+        'reward.next': 'Weiter',
+        'admin.title': 'Aufgaben erstellen',
+        'admin.taskTitle': 'Titel:',
+        'admin.difficulty': 'Schwierigkeit:',
+        'admin.description': 'Beschreibung:',
+        'admin.solution': 'Musterlösung:',
+        'admin.hint': 'Hinweis:',
+        'admin.save': 'Speichern',
+        'admin.preview': 'Vorschau',
+        'admin.saved': 'Gespeichert:',
+        'share.title': 'Teilen',
+        'error.unknownCmd': 'Unbekannter Befehl',
+        'error.repeatNeedsBlock': 'repeat-Block braucht eingerückte Befehle darunter.',
+        'error.unexpectedIndent': 'Unerwartete Einrückung. Einrückung nur nach Doppelpunkt (:) erlaubt.',
+        'error.inconsistentIndent': 'Inkonsistente Einrückung.'
+    },
+    en: {
+        'nav.learn': 'Learn',
+        'nav.sandbox': 'Sandbox',
+        'nav.admin': 'Tasks',
+        'nav.share': 'Share',
+        'difficulty.beginner': 'Beginner',
+        'difficulty.intermediate': 'Intermediate',
+        'difficulty.advanced': 'Expert',
+        'task.current': 'Task',
+        'task.selectDifficulty': 'Select a difficulty level!',
+        'task.hint': 'Hint',
+        'task.expected': 'Expected:',
+        'code.title': 'Code',
+        'console.title': 'Console',
+        'console.welcome': 'Press F5 to run',
+        'console.ready': 'Ready!',
+        'console.running': 'Running code...',
+        'console.success': 'commands executed successfully!',
+        'console.error': 'Error',
+        'console.indentError': 'Indentation error in line',
+        'console.mustBe4': 'Indentation must be exactly 4 spaces',
+        'console.enterCode': 'Please enter code first!',
+        'console.stopped': 'Execution stopped.',
+        'console.reset': 'Canvas reset.',
+        'console.atStart': 'Already at the beginning.',
+        'console.allDone': 'All steps executed!',
+        'console.step': 'Step',
+        'console.backTo': 'Back to step',
+        'console.readySteps': 'Ready for step-by-step',
+        'console.steps': 'steps',
+        'console.wrongSolution': 'That doesn\'t look quite right. Try again!',
+        'console.taskLoaded': 'New task loaded. Good luck!',
+        'console.needRubox': 'You need at least 5 Rubox for a hint!',
+        'reference.title': 'Commands:',
+        'reward.title': 'Fantastic!',
+        'reward.message': 'Task solved!',
+        'reward.firstTime': 'You solved the task for the first time!',
+        'reward.again': 'You mastered the task again!',
+        'reward.next': 'Continue',
+        'admin.title': 'Create Tasks',
+        'admin.taskTitle': 'Title:',
+        'admin.difficulty': 'Difficulty:',
+        'admin.description': 'Description:',
+        'admin.solution': 'Solution:',
+        'admin.hint': 'Hint:',
+        'admin.save': 'Save',
+        'admin.preview': 'Preview',
+        'admin.saved': 'Saved:',
+        'share.title': 'Share',
+        'error.unknownCmd': 'Unknown command',
+        'error.repeatNeedsBlock': 'repeat block needs indented commands below.',
+        'error.unexpectedIndent': 'Unexpected indentation. Indentation only allowed after colon (:).',
+        'error.inconsistentIndent': 'Inconsistent indentation.'
+    }
+};
+
+let currentLang = 'de';
+
+function t(key) {
+    return translations[currentLang][key] || translations['de'][key] || key;
+}
+
+function updateUILanguage() {
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[currentLang][key]) {
+            el.textContent = translations[currentLang][key];
+        }
+    });
+}
+
+// ==========================================
 // Konsolen-Klasse
 // ==========================================
 
@@ -13,7 +143,7 @@ class Console {
     }
 
     clear() {
-        this.output.innerHTML = '<div class="console-welcome">Konsole gelöscht.</div>';
+        this.output.innerHTML = `<div class="console-welcome">${t('console.welcome')}</div>`;
     }
 
     log(message, type = 'info') {
@@ -24,25 +154,14 @@ class Console {
         this.output.scrollTop = this.output.scrollHeight;
     }
 
-    success(message) {
-        this.log(message, 'success');
-    }
-
-    error(message) {
-        this.log(message, 'error');
-    }
-
-    print(message) {
-        this.log(message, 'print');
-    }
-
-    step(message) {
-        this.log(message, 'step');
-    }
+    success(message) { this.log(message, 'success'); }
+    error(message) { this.log(message, 'error'); }
+    print(message) { this.log(message, 'print'); }
+    step(message) { this.log(message, 'step'); }
 }
 
 // ==========================================
-// Schildkröten-Klasse (Turtle) - Verbesserte Grafik
+// Schildkröten-Klasse (Turtle)
 // ==========================================
 
 class Turtle {
@@ -51,53 +170,30 @@ class Turtle {
         this.ctx = canvas.getContext('2d');
         this.width = canvas.width;
         this.height = canvas.height;
-
-        // Position und Winkel
         this.x = this.width / 2;
         this.y = this.height / 2;
-        this.angle = -90; // Startet nach oben
-
-        // Stift-Einstellungen
+        this.angle = -90;
         this.penDown = true;
         this.penColor = options.penColor || '#00aa00';
         this.penWidth = options.penWidth || 2;
-
-        // Geschwindigkeit für Animation (1-10)
         this.speed = options.speed || 5;
-
-        // Pfad-Historie für Vergleich und Undo
         this.pathHistory = [];
-
-        // Zustands-Historie für Schritt zurück
         this.stateHistory = [];
-
-        // Schildkröte sichtbar
         this.turtleVisible = true;
-
-        // Animation
         this.isAnimating = false;
-
-        // Initiales Zeichnen
         this.clear();
     }
 
-    // Zustand speichern (für Schritt zurück)
     saveState() {
         this.stateHistory.push({
-            x: this.x,
-            y: this.y,
-            angle: this.angle,
-            penDown: this.penDown,
-            penColor: this.penColor,
-            penWidth: this.penWidth,
-            pathHistoryLength: this.pathHistory.length
+            x: this.x, y: this.y, angle: this.angle,
+            penDown: this.penDown, penColor: this.penColor,
+            penWidth: this.penWidth, pathHistoryLength: this.pathHistory.length
         });
     }
 
-    // Letzten Zustand wiederherstellen
     restoreLastState() {
         if (this.stateHistory.length === 0) return false;
-
         const state = this.stateHistory.pop();
         this.x = state.x;
         this.y = state.y;
@@ -105,90 +201,73 @@ class Turtle {
         this.penDown = state.penDown;
         this.penColor = state.penColor;
         this.penWidth = state.penWidth;
-
-        // Pfad kürzen
         this.pathHistory = this.pathHistory.slice(0, state.pathHistoryLength);
         this.redraw();
         return true;
     }
 
-    // Canvas löschen und Schildkröte zurücksetzen
     clear() {
-        this.ctx.fillStyle = '#ffffff';
+        const isDark = document.body.getAttribute('data-theme') === 'dark';
+        this.ctx.fillStyle = isDark ? '#1f2335' : '#ffffff';
         this.ctx.fillRect(0, 0, this.width, this.height);
         this.drawGrid();
         this.drawTurtle();
     }
 
-    // Gitter zeichnen
     drawGrid() {
-        this.ctx.strokeStyle = '#f0f0f0';
+        const isDark = document.body.getAttribute('data-theme') === 'dark';
+        this.ctx.strokeStyle = isDark ? '#2a2e42' : '#f0f0f0';
         this.ctx.lineWidth = 1;
-
         for (let x = 0; x <= this.width; x += 50) {
             this.ctx.beginPath();
             this.ctx.moveTo(x, 0);
             this.ctx.lineTo(x, this.height);
             this.ctx.stroke();
         }
-
         for (let y = 0; y <= this.height; y += 50) {
             this.ctx.beginPath();
             this.ctx.moveTo(0, y);
             this.ctx.lineTo(this.width, y);
             this.ctx.stroke();
         }
-
-        // Mittelpunkt markieren
-        this.ctx.fillStyle = '#ddd';
+        this.ctx.fillStyle = isDark ? '#565f89' : '#ddd';
         this.ctx.beginPath();
         this.ctx.arc(this.width / 2, this.height / 2, 3, 0, Math.PI * 2);
         this.ctx.fill();
     }
 
-    // Verbesserte Schildkröten-Grafik
     drawTurtle() {
         if (!this.turtleVisible) return;
-
         const size = 18;
         const angleRad = (this.angle * Math.PI) / 180;
-
         this.ctx.save();
         this.ctx.translate(this.x, this.y);
         this.ctx.rotate(angleRad + Math.PI / 2);
-
-        // Schatten
         this.ctx.shadowColor = 'rgba(0,0,0,0.2)';
         this.ctx.shadowBlur = 5;
         this.ctx.shadowOffsetX = 2;
         this.ctx.shadowOffsetY = 2;
 
-        // Panzer (Shell) - dunkelgrün mit Muster
+        // Shell
         this.ctx.fillStyle = '#2d8a4e';
         this.ctx.beginPath();
         this.ctx.ellipse(0, 0, size * 0.7, size, 0, 0, Math.PI * 2);
         this.ctx.fill();
 
-        // Panzer-Muster (hexagonales Muster)
+        // Pattern
         this.ctx.shadowColor = 'transparent';
         this.ctx.strokeStyle = '#1e6b3a';
         this.ctx.lineWidth = 1.5;
-
-        // Zentrale Linie
         this.ctx.beginPath();
         this.ctx.moveTo(0, -size * 0.7);
         this.ctx.lineTo(0, size * 0.7);
         this.ctx.stroke();
-
-        // Seitliche Linien
         this.ctx.beginPath();
         this.ctx.moveTo(-size * 0.4, -size * 0.5);
         this.ctx.lineTo(-size * 0.4, size * 0.5);
         this.ctx.moveTo(size * 0.4, -size * 0.5);
         this.ctx.lineTo(size * 0.4, size * 0.5);
         this.ctx.stroke();
-
-        // Diagonale Linien
         for (let i = -2; i <= 2; i++) {
             if (i === 0) continue;
             this.ctx.beginPath();
@@ -197,47 +276,43 @@ class Turtle {
             this.ctx.stroke();
         }
 
-        // Kopf (etwas größer und realistischer)
+        // Head
         this.ctx.fillStyle = '#3cb371';
         this.ctx.beginPath();
         this.ctx.ellipse(0, -size * 1.1, size * 0.35, size * 0.4, 0, 0, Math.PI * 2);
         this.ctx.fill();
 
-        // Augen
+        // Eyes
         this.ctx.fillStyle = '#fff';
         this.ctx.beginPath();
         this.ctx.arc(-size * 0.15, -size * 1.2, 4, 0, Math.PI * 2);
         this.ctx.arc(size * 0.15, -size * 1.2, 4, 0, Math.PI * 2);
         this.ctx.fill();
-
-        // Pupillen
         this.ctx.fillStyle = '#000';
         this.ctx.beginPath();
         this.ctx.arc(-size * 0.15, -size * 1.22, 2, 0, Math.PI * 2);
         this.ctx.arc(size * 0.15, -size * 1.22, 2, 0, Math.PI * 2);
         this.ctx.fill();
 
-        // Beine (4 Stück, realistischer)
+        // Legs
         this.ctx.fillStyle = '#3cb371';
-        const legPositions = [
-            { x: -size * 0.6, y: -size * 0.4, angle: -30 },
-            { x: size * 0.6, y: -size * 0.4, angle: 30 },
-            { x: -size * 0.6, y: size * 0.4, angle: -150 },
-            { x: size * 0.6, y: size * 0.4, angle: 150 }
+        const legs = [
+            { x: -size * 0.6, y: -size * 0.4, a: -30 },
+            { x: size * 0.6, y: -size * 0.4, a: 30 },
+            { x: -size * 0.6, y: size * 0.4, a: -150 },
+            { x: size * 0.6, y: size * 0.4, a: 150 }
         ];
-
-        legPositions.forEach(pos => {
+        legs.forEach(leg => {
             this.ctx.save();
-            this.ctx.translate(pos.x, pos.y);
-            this.ctx.rotate((pos.angle * Math.PI) / 180);
+            this.ctx.translate(leg.x, leg.y);
+            this.ctx.rotate((leg.a * Math.PI) / 180);
             this.ctx.beginPath();
             this.ctx.ellipse(0, 0, 5, 8, 0, 0, Math.PI * 2);
             this.ctx.fill();
             this.ctx.restore();
         });
 
-        // Schwanz
-        this.ctx.fillStyle = '#3cb371';
+        // Tail
         this.ctx.beginPath();
         this.ctx.moveTo(-3, size * 0.9);
         this.ctx.lineTo(3, size * 0.9);
@@ -248,76 +323,42 @@ class Turtle {
         this.ctx.restore();
     }
 
-    // Neuzeichnen
     redraw() {
         this.clear();
-
-        // Pfad neu zeichnen
         this.ctx.lineCap = 'round';
         this.ctx.lineJoin = 'round';
-
-        for (const segment of this.pathHistory) {
-            this.ctx.strokeStyle = segment.color;
-            this.ctx.lineWidth = segment.width;
+        for (const seg of this.pathHistory) {
+            this.ctx.strokeStyle = seg.color;
+            this.ctx.lineWidth = seg.width;
             this.ctx.beginPath();
-            this.ctx.moveTo(segment.x1, segment.y1);
-            this.ctx.lineTo(segment.x2, segment.y2);
+            this.ctx.moveTo(seg.x1, seg.y1);
+            this.ctx.lineTo(seg.x2, seg.y2);
             this.ctx.stroke();
         }
-
         this.drawTurtle();
     }
 
-    // Vorwärts bewegen
     forward(distance) {
         const angleRad = (this.angle * Math.PI) / 180;
         const newX = this.x + distance * Math.cos(angleRad);
         const newY = this.y + distance * Math.sin(angleRad);
-
         if (this.penDown) {
             this.pathHistory.push({
-                x1: this.x,
-                y1: this.y,
-                x2: newX,
-                y2: newY,
-                color: this.penColor,
-                width: this.penWidth
+                x1: this.x, y1: this.y, x2: newX, y2: newY,
+                color: this.penColor, width: this.penWidth
             });
         }
-
         this.x = newX;
         this.y = newY;
         this.redraw();
     }
 
-    // Rückwärts bewegen
-    backward(distance) {
-        this.forward(-distance);
-    }
+    backward(d) { this.forward(-d); }
+    right(deg) { this.angle = (this.angle + deg) % 360; this.redraw(); }
+    left(deg) { this.angle = (this.angle - deg) % 360; this.redraw(); }
+    penUp() { this.penDown = false; }
+    penDownFunc() { this.penDown = true; }
 
-    // Rechts drehen
-    right(degrees) {
-        this.angle = (this.angle + degrees) % 360;
-        this.redraw();
-    }
-
-    // Links drehen
-    left(degrees) {
-        this.angle = (this.angle - degrees) % 360;
-        this.redraw();
-    }
-
-    // Stift heben
-    penUp() {
-        this.penDown = false;
-    }
-
-    // Stift senken
-    penDownFunc() {
-        this.penDown = true;
-    }
-
-    // Farbe setzen
     setColor(color) {
         const colorMap = {
             'rot': '#e74c3c', 'red': '#e74c3c',
@@ -331,36 +372,13 @@ class Turtle {
             'weiß': '#ffffff', 'white': '#ffffff',
             'braun': '#8b4513', 'brown': '#8b4513'
         };
-
-        if (color.startsWith('#')) {
-            this.penColor = color;
-        } else {
-            this.penColor = colorMap[color.toLowerCase()] || '#00aa00';
-        }
+        this.penColor = color.startsWith('#') ? color : (colorMap[color.toLowerCase()] || '#00aa00');
     }
 
-    // Stiftbreite setzen
-    setWidth(width) {
-        this.penWidth = Math.max(1, Math.min(20, width));
-    }
-
-    // Zur Mitte zurück
-    home() {
-        this.x = this.width / 2;
-        this.y = this.height / 2;
-        this.angle = -90;
-        this.redraw();
-    }
-
-    hideTurtle() {
-        this.turtleVisible = false;
-        this.redraw();
-    }
-
-    showTurtle() {
-        this.turtleVisible = true;
-        this.redraw();
-    }
+    setWidth(w) { this.penWidth = Math.max(1, Math.min(20, w)); }
+    home() { this.x = this.width / 2; this.y = this.height / 2; this.angle = -90; this.redraw(); }
+    hideTurtle() { this.turtleVisible = false; this.redraw(); }
+    showTurtle() { this.turtleVisible = true; this.redraw(); }
 
     reset() {
         this.x = this.width / 2;
@@ -377,73 +395,56 @@ class Turtle {
 
     getPathSignature() {
         if (this.pathHistory.length === 0) return '';
-
         const startX = this.width / 2;
         const startY = this.height / 2;
-
         const normalized = this.pathHistory.map(seg => ({
             dx1: Math.round((seg.x1 - startX) / 5) * 5,
             dy1: Math.round((seg.y1 - startY) / 5) * 5,
             dx2: Math.round((seg.x2 - startX) / 5) * 5,
             dy2: Math.round((seg.y2 - startY) / 5) * 5
         }));
-
         return JSON.stringify(normalized);
     }
 }
 
 // ==========================================
-// xLogo Interpreter - Neue Syntax mit Klammern und Einrückung
+// xLogo Interpreter - Strikte 4-Space Einrückung
 // ==========================================
 
 class XLogoInterpreter {
     constructor(turtle, console = null) {
         this.turtle = turtle;
         this.console = console;
-        this.procedures = {};
-        this.executionSteps = [];
-        this.flatSteps = []; // Flache Liste aller Schritte für Stepping
+        this.flatSteps = [];
         this.currentStep = 0;
         this.errors = [];
         this.speed = 5;
     }
 
-    setSpeed(speed) {
-        this.speed = Math.max(1, Math.min(10, speed));
-    }
+    setSpeed(speed) { this.speed = Math.max(1, Math.min(10, speed)); }
 
-    // Code parsen und ausführen
     execute(code, stepByStep = false) {
         this.errors = [];
-        this.executionSteps = [];
         this.flatSteps = [];
         this.currentStep = 0;
         this.turtle.stateHistory = [];
 
         try {
-            // Einrückung prüfen
             this.validateIndentation(code);
-
-            // Code parsen
             const commands = this.parseIndentedCode(code);
-
             if (stepByStep) {
                 this.flattenCommands(commands);
                 return { success: true, steps: this.flatSteps.length };
             }
-
             this.runCommands(commands);
             return { success: true, steps: this.countCommands(commands) };
         } catch (error) {
             this.errors.push(error.message);
-            if (this.console) {
-                this.console.error(`Fehler: ${error.message}`);
-            }
+            if (this.console) this.console.error(`${t('console.error')}: ${error.message}`);
             return { success: false, error: error.message };
         }
     }
 
-    // Befehle abflachen für Step-by-Step
     flattenCommands(commands, repeatContext = null) {
         for (const cmd of commands) {
             if (cmd.type === 'repeat') {
@@ -456,7 +457,6 @@ class XLogoInterpreter {
         }
     }
 
-    // Befehle zählen
     countCommands(commands) {
         let count = 0;
         for (const cmd of commands) {
@@ -469,89 +469,72 @@ class XLogoInterpreter {
         return count;
     }
 
-    // Einrückung validieren
+    // Strikte Einrückungsprüfung: nur 0, 4, 8, 12... Leerzeichen erlaubt
     validateIndentation(code) {
         const lines = code.split('\n');
-        let expectedIndent = 0;
         const indentStack = [0];
+        let prevEndsWithColon = false;
 
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i];
             const lineNum = i + 1;
 
-            // Leere Zeilen und Kommentare überspringen
             if (line.trim() === '' || line.trim().startsWith('#')) continue;
 
-            // Aktuelle Einrückung berechnen
-            const currentIndent = line.match(/^(\s*)/)[1].length;
-
-            // Tabs in Spaces umrechnen (1 Tab = 4 Spaces)
             const normalizedLine = line.replace(/\t/g, '    ');
-            const normalizedIndent = normalizedLine.match(/^(\s*)/)[1].length;
+            const indent = normalizedLine.match(/^(\s*)/)[1].length;
+            const trimmed = normalizedLine.trim();
+            const endsWithColon = trimmed.endsWith(':') && !trimmed.startsWith('#');
 
-            // Prüfen ob die Zeile mit : endet (Block-Start)
-            const trimmed = line.trim();
-            const startsBlock = trimmed.endsWith(':') && !trimmed.startsWith('#');
+            // Prüfen ob Einrückung ein Vielfaches von 4 ist
+            if (indent % 4 !== 0) {
+                throw new Error(`${t('console.indentError')} ${lineNum}: ${t('console.mustBe4')} (${indent} gefunden)`);
+            }
 
-            // Prüfen ob Einrückung konsistent ist
-            if (normalizedIndent > indentStack[indentStack.length - 1]) {
-                // Einrückung erhöht sich
-                if (indentStack.length > 1 || startsBlock) {
-                    // OK wenn vorherige Zeile Block-Start war oder wir bereits eingerückt sind
-                    indentStack.push(normalizedIndent);
-                } else if (normalizedIndent !== indentStack[indentStack.length - 1]) {
-                    throw new Error(`Zeile ${lineNum}: Unerwartete Einrückung. Einrückung nur nach Doppelpunkt (:) erlaubt.`);
+            const expectedIndent = indentStack[indentStack.length - 1];
+
+            if (indent > expectedIndent) {
+                if (prevEndsWithColon && indent === expectedIndent + 4) {
+                    indentStack.push(indent);
+                } else if (!prevEndsWithColon) {
+                    throw new Error(`${t('console.indentError')} ${lineNum}: ${t('error.unexpectedIndent')}`);
+                } else {
+                    throw new Error(`${t('console.indentError')} ${lineNum}: ${t('console.mustBe4')}`);
                 }
-            } else if (normalizedIndent < indentStack[indentStack.length - 1]) {
-                // Einrückung verringert sich
-                while (indentStack.length > 1 && indentStack[indentStack.length - 1] > normalizedIndent) {
+            } else if (indent < expectedIndent) {
+                while (indentStack.length > 1 && indentStack[indentStack.length - 1] > indent) {
                     indentStack.pop();
                 }
-                if (indentStack[indentStack.length - 1] !== normalizedIndent) {
-                    throw new Error(`Zeile ${lineNum}: Inkonsistente Einrückung. Erwartete ${indentStack[indentStack.length - 1]} Leerzeichen, gefunden ${normalizedIndent}.`);
+                if (indentStack[indentStack.length - 1] !== indent) {
+                    throw new Error(`${t('console.indentError')} ${lineNum}: ${t('error.inconsistentIndent')}`);
                 }
             }
 
-            // Wenn Block-Start, erwarten wir erhöhte Einrückung
-            if (startsBlock) {
-                expectedIndent = normalizedIndent + 4;
-            }
+            prevEndsWithColon = endsWithColon;
         }
     }
 
-    // Code mit Einrückung parsen
     parseIndentedCode(code) {
         const lines = code.split('\n')
-            .map((line, index) => ({
-                content: line.replace(/\t/g, '    '), // Tabs zu Spaces
-                lineNum: index + 1
-            }))
+            .map((line, index) => ({ content: line.replace(/\t/g, '    '), lineNum: index + 1 }))
             .filter(line => line.content.trim() !== '' && !line.content.trim().startsWith('#'));
-
         return this.parseLines(lines, 0);
     }
 
-    // Zeilen rekursiv parsen
     parseLines(lines, minIndent) {
         const commands = [];
         let i = 0;
-
         while (i < lines.length) {
             const line = lines[i];
             const indent = line.content.match(/^(\s*)/)[1].length;
-
-            // Überspringen wenn Einrückung zu hoch
             if (indent < minIndent) break;
 
             if (indent === minIndent) {
                 const trimmed = line.content.trim();
 
-                // repeat-Block
                 if (trimmed.match(/^repeat\s*\(?(\d+)\)?:/i)) {
                     const match = trimmed.match(/^repeat\s*\(?(\d+)\)?:/i);
                     const count = parseInt(match[1]);
-
-                    // Block-Inhalt finden
                     const blockLines = [];
                     let j = i + 1;
                     while (j < lines.length) {
@@ -560,146 +543,94 @@ class XLogoInterpreter {
                         if (blockIndent > indent) {
                             blockLines.push(blockLine);
                             j++;
-                        } else {
-                            break;
-                        }
+                        } else break;
                     }
-
                     if (blockLines.length === 0) {
-                        throw new Error(`Zeile ${line.lineNum}: repeat-Block braucht eingerückte Befehle darunter.`);
+                        throw new Error(`Zeile ${line.lineNum}: ${t('error.repeatNeedsBlock')}`);
                     }
-
                     const innerCommands = this.parseLines(blockLines, indent + 4);
                     commands.push({ type: 'repeat', count, commands: innerCommands, lineNum: line.lineNum });
                     i = j;
                     continue;
                 }
 
-                // Einzelner Befehl
                 const cmd = this.parseCommand(trimmed, line.lineNum);
-                if (cmd) {
-                    commands.push(cmd);
-                }
+                if (cmd) commands.push(cmd);
             }
-
             i++;
         }
-
         return commands;
     }
 
-    // Einzelnen Befehl parsen (neue Syntax mit Klammern)
     parseCommand(text, lineNum) {
         text = text.trim().toLowerCase();
-
-        // Leere oder Kommentar
         if (!text || text.startsWith('#')) return null;
 
-        // fd(100) - forward
-        let match = text.match(/^fd\s*\(\s*(-?\d+(?:\.\d+)?)\s*\)$/);
+        let match;
+
+        // fd(100) / forward(100)
+        match = text.match(/^(?:fd|forward)\s*\(\s*(-?\d+(?:\.\d+)?)\s*\)$/);
         if (match) return { type: 'forward', value: parseFloat(match[1]), lineNum };
 
-        // forward(100)
-        match = text.match(/^forward\s*\(\s*(-?\d+(?:\.\d+)?)\s*\)$/);
-        if (match) return { type: 'forward', value: parseFloat(match[1]), lineNum };
-
-        // bk(100) - backward
-        match = text.match(/^bk\s*\(\s*(-?\d+(?:\.\d+)?)\s*\)$/);
+        // bk(100) / backward(100)
+        match = text.match(/^(?:bk|backward?)\s*\(\s*(-?\d+(?:\.\d+)?)\s*\)$/);
         if (match) return { type: 'backward', value: parseFloat(match[1]), lineNum };
 
-        // backward(100)
-        match = text.match(/^backward?\s*\(\s*(-?\d+(?:\.\d+)?)\s*\)$/);
-        if (match) return { type: 'backward', value: parseFloat(match[1]), lineNum };
-
-        // rt(90) - right
-        match = text.match(/^rt\s*\(\s*(-?\d+(?:\.\d+)?)\s*\)$/);
+        // rt(90) / right(90)
+        match = text.match(/^(?:rt|right)\s*\(\s*(-?\d+(?:\.\d+)?)\s*\)$/);
         if (match) return { type: 'right', value: parseFloat(match[1]), lineNum };
 
-        // right(90)
-        match = text.match(/^right\s*\(\s*(-?\d+(?:\.\d+)?)\s*\)$/);
-        if (match) return { type: 'right', value: parseFloat(match[1]), lineNum };
-
-        // lt(90) - left
-        match = text.match(/^lt\s*\(\s*(-?\d+(?:\.\d+)?)\s*\)$/);
+        // lt(90) / left(90)
+        match = text.match(/^(?:lt|left)\s*\(\s*(-?\d+(?:\.\d+)?)\s*\)$/);
         if (match) return { type: 'left', value: parseFloat(match[1]), lineNum };
 
-        // left(90)
-        match = text.match(/^left\s*\(\s*(-?\d+(?:\.\d+)?)\s*\)$/);
-        if (match) return { type: 'left', value: parseFloat(match[1]), lineNum };
+        // pu() / penup()
+        if (text.match(/^(?:pu|penup)\s*\(\s*\)$/)) return { type: 'penup', lineNum };
 
-        // pu() - pen up
-        if (text.match(/^pu\s*\(\s*\)$/)) return { type: 'penup', lineNum };
-        if (text.match(/^penup\s*\(\s*\)$/)) return { type: 'penup', lineNum };
+        // pd() / pendown()
+        if (text.match(/^(?:pd|pendown)\s*\(\s*\)$/)) return { type: 'pendown', lineNum };
 
-        // pd() - pen down
-        if (text.match(/^pd\s*\(\s*\)$/)) return { type: 'pendown', lineNum };
-        if (text.match(/^pendown\s*\(\s*\)$/)) return { type: 'pendown', lineNum };
-
-        // setpc("rot") oder setpc("red") oder setpc("#ff0000")
-        match = text.match(/^setpc\s*\(\s*["']([^"']+)["']\s*\)$/);
+        // setpc("color") / setpencolor("color")
+        match = text.match(/^(?:setpc|setpencolor)\s*\(\s*["']([^"']+)["']\s*\)$/);
         if (match) return { type: 'color', value: match[1], lineNum };
 
-        // setpencolor
-        match = text.match(/^setpencolor\s*\(\s*["']([^"']+)["']\s*\)$/);
-        if (match) return { type: 'color', value: match[1], lineNum };
-
-        // setpw(3) - pen width
-        match = text.match(/^setpw\s*\(\s*(\d+(?:\.\d+)?)\s*\)$/);
-        if (match) return { type: 'width', value: parseFloat(match[1]), lineNum };
-
-        // setpenwidth
-        match = text.match(/^setpenwidth\s*\(\s*(\d+(?:\.\d+)?)\s*\)$/);
+        // setpw(3) / setpenwidth(3)
+        match = text.match(/^(?:setpw|setpenwidth)\s*\(\s*(\d+(?:\.\d+)?)\s*\)$/);
         if (match) return { type: 'width', value: parseFloat(match[1]), lineNum };
 
         // home()
         if (text.match(/^home\s*\(\s*\)$/)) return { type: 'home', lineNum };
 
-        // cs() - clear screen
-        if (text.match(/^cs\s*\(\s*\)$/)) return { type: 'clearscreen', lineNum };
-        if (text.match(/^clearscreen\s*\(\s*\)$/)) return { type: 'clearscreen', lineNum };
+        // cs() / clearscreen()
+        if (text.match(/^(?:cs|clearscreen)\s*\(\s*\)$/)) return { type: 'clearscreen', lineNum };
 
-        // ht() - hide turtle
-        if (text.match(/^ht\s*\(\s*\)$/)) return { type: 'hideturtle', lineNum };
-        if (text.match(/^hideturtle\s*\(\s*\)$/)) return { type: 'hideturtle', lineNum };
+        // ht() / hideturtle()
+        if (text.match(/^(?:ht|hideturtle)\s*\(\s*\)$/)) return { type: 'hideturtle', lineNum };
 
-        // st() - show turtle
-        if (text.match(/^st\s*\(\s*\)$/)) return { type: 'showturtle', lineNum };
-        if (text.match(/^showturtle\s*\(\s*\)$/)) return { type: 'showturtle', lineNum };
+        // st() / showturtle()
+        if (text.match(/^(?:st|showturtle)\s*\(\s*\)$/)) return { type: 'showturtle', lineNum };
 
-        // print("text") oder print('text')
+        // print("text") / print('text') / print(number)
         match = text.match(/^print\s*\(\s*["'](.*)["']\s*\)$/);
         if (match) return { type: 'print', value: match[1], lineNum };
-
-        // print(variable) - für Zahlen
         match = text.match(/^print\s*\(\s*(\d+(?:\.\d+)?)\s*\)$/);
         if (match) return { type: 'print', value: match[1], lineNum };
 
-        // Alte Syntax ohne Klammern (für Abwärtskompatibilität)
-        // fd 100
+        // Legacy syntax without parentheses
         match = text.match(/^fd\s+(-?\d+(?:\.\d+)?)$/);
         if (match) return { type: 'forward', value: parseFloat(match[1]), lineNum };
-
-        // bk 100
         match = text.match(/^bk\s+(-?\d+(?:\.\d+)?)$/);
         if (match) return { type: 'backward', value: parseFloat(match[1]), lineNum };
-
-        // rt 90
         match = text.match(/^rt\s+(-?\d+(?:\.\d+)?)$/);
         if (match) return { type: 'right', value: parseFloat(match[1]), lineNum };
-
-        // lt 90
         match = text.match(/^lt\s+(-?\d+(?:\.\d+)?)$/);
         if (match) return { type: 'left', value: parseFloat(match[1]), lineNum };
-
-        // pu / pd ohne Klammern
         if (text === 'pu') return { type: 'penup', lineNum };
         if (text === 'pd') return { type: 'pendown', lineNum };
 
-        // Unbekannter Befehl
-        throw new Error(`Zeile ${lineNum}: Unbekannter Befehl "${text}"`);
+        throw new Error(`Zeile ${lineNum}: ${t('error.unknownCmd')} "${text}"`);
     }
 
-    // Einzelnen Schritt ausführen (vorwärts)
     executeStep() {
         if (this.currentStep < this.flatSteps.length) {
             const cmd = this.flatSteps[this.currentStep];
@@ -716,7 +647,6 @@ class XLogoInterpreter {
         return { done: true };
     }
 
-    // Schritt zurück
     stepBack() {
         if (this.currentStep > 0 && this.turtle.restoreLastState()) {
             this.currentStep--;
@@ -730,217 +660,77 @@ class XLogoInterpreter {
         return { done: true, atStart: true };
     }
 
-    // Befehle ausführen
     runCommands(commands) {
-        for (const cmd of commands) {
-            this.runCommand(cmd);
-        }
+        for (const cmd of commands) this.runCommand(cmd);
     }
 
-    // Einzelnen Befehl ausführen
     runCommand(cmd) {
         switch (cmd.type) {
-            case 'forward':
-                this.turtle.forward(cmd.value);
-                break;
-            case 'backward':
-                this.turtle.backward(cmd.value);
-                break;
-            case 'right':
-                this.turtle.right(cmd.value);
-                break;
-            case 'left':
-                this.turtle.left(cmd.value);
-                break;
-            case 'penup':
-                this.turtle.penUp();
-                break;
-            case 'pendown':
-                this.turtle.penDownFunc();
-                break;
+            case 'forward': this.turtle.forward(cmd.value); break;
+            case 'backward': this.turtle.backward(cmd.value); break;
+            case 'right': this.turtle.right(cmd.value); break;
+            case 'left': this.turtle.left(cmd.value); break;
+            case 'penup': this.turtle.penUp(); break;
+            case 'pendown': this.turtle.penDownFunc(); break;
             case 'repeat':
-                for (let i = 0; i < cmd.count; i++) {
-                    this.runCommands(cmd.commands);
-                }
+                for (let i = 0; i < cmd.count; i++) this.runCommands(cmd.commands);
                 break;
-            case 'color':
-                this.turtle.setColor(cmd.value);
-                break;
-            case 'width':
-                this.turtle.setWidth(cmd.value);
-                break;
-            case 'home':
-                this.turtle.home();
-                break;
-            case 'clearscreen':
-                this.turtle.reset();
-                break;
-            case 'hideturtle':
-                this.turtle.hideTurtle();
-                break;
-            case 'showturtle':
-                this.turtle.showTurtle();
-                break;
-            case 'print':
-                if (this.console) {
-                    this.console.print(cmd.value);
-                }
-                break;
+            case 'color': this.turtle.setColor(cmd.value); break;
+            case 'width': this.turtle.setWidth(cmd.value); break;
+            case 'home': this.turtle.home(); break;
+            case 'clearscreen': this.turtle.reset(); break;
+            case 'hideturtle': this.turtle.hideTurtle(); break;
+            case 'showturtle': this.turtle.showTurtle(); break;
+            case 'print': if (this.console) this.console.print(cmd.value); break;
         }
     }
 
-    // Befehl als String (für Anzeige)
     commandToString(cmd) {
-        switch (cmd.type) {
-            case 'forward': return `fd(${cmd.value})`;
-            case 'backward': return `bk(${cmd.value})`;
-            case 'right': return `rt(${cmd.value})`;
-            case 'left': return `lt(${cmd.value})`;
-            case 'penup': return 'pu()';
-            case 'pendown': return 'pd()';
-            case 'repeat': return `repeat ${cmd.count}:`;
-            case 'color': return `setpc("${cmd.value}")`;
-            case 'width': return `setpw(${cmd.value})`;
-            case 'home': return 'home()';
-            case 'clearscreen': return 'cs()';
-            case 'hideturtle': return 'ht()';
-            case 'showturtle': return 'st()';
-            case 'print': return `print("${cmd.value}")`;
-            default: return cmd.type;
-        }
+        const map = {
+            'forward': `fd(${cmd.value})`,
+            'backward': `bk(${cmd.value})`,
+            'right': `rt(${cmd.value})`,
+            'left': `lt(${cmd.value})`,
+            'penup': 'pu()',
+            'pendown': 'pd()',
+            'repeat': `repeat ${cmd.count}:`,
+            'color': `setpc("${cmd.value}")`,
+            'width': `setpw(${cmd.value})`,
+            'home': 'home()',
+            'clearscreen': 'cs()',
+            'hideturtle': 'ht()',
+            'showturtle': 'st()',
+            'print': `print("${cmd.value}")`
+        };
+        return map[cmd.type] || cmd.type;
     }
 }
 
 // ==========================================
-// Aufgaben-System (aktualisiert für neue Syntax)
+// Aufgaben (Tasks)
 // ==========================================
 
 const defaultTasks = {
     beginner: [
-        {
-            id: 'b1',
-            title: 'Erste Schritte',
-            description: 'Lass die Schildkröte 100 Schritte vorwärts gehen! Benutze den Befehl <code>fd(100)</code>.',
-            hint: 'Schreibe einfach: fd(100)',
-            solution: 'fd(100)',
-            reward: 10
-        },
-        {
-            id: 'b2',
-            title: 'Hin und zurück',
-            description: 'Gehe 50 Schritte vorwärts und dann 50 Schritte rückwärts.',
-            hint: 'Benutze fd(50) und dann bk(50)',
-            solution: 'fd(50)\nbk(50)',
-            reward: 10
-        },
-        {
-            id: 'b3',
-            title: 'Die erste Ecke',
-            description: 'Gehe 80 Schritte vorwärts und drehe dich dann um 90 Grad nach rechts.',
-            hint: 'Benutze fd(80) und dann rt(90)',
-            solution: 'fd(80)\nrt(90)',
-            reward: 10
-        },
-        {
-            id: 'b4',
-            title: 'Der Winkel',
-            description: 'Zeichne einen Winkel: Gehe 60 Schritte, drehe 90° rechts, gehe nochmal 60.',
-            hint: 'fd(60), rt(90), fd(60)',
-            solution: 'fd(60)\nrt(90)\nfd(60)',
-            reward: 10
-        },
-        {
-            id: 'b5',
-            title: 'Das einfache Quadrat',
-            description: 'Zeichne ein Quadrat mit Seitenlänge 80.',
-            hint: '4 mal: vorwärts 80, rechts 90',
-            solution: 'fd(80)\nrt(90)\nfd(80)\nrt(90)\nfd(80)\nrt(90)\nfd(80)',
-            reward: 15
-        }
+        { id: 'b1', title: 'Erste Schritte', description: 'Lass die Schildkröte 100 Schritte vorwärts gehen! Benutze <code>fd(100)</code>.', hint: 'Schreibe: fd(100)', solution: 'fd(100)', reward: 10 },
+        { id: 'b2', title: 'Hin und zurück', description: 'Gehe 50 Schritte vorwärts und dann 50 Schritte rückwärts.', hint: 'fd(50) dann bk(50)', solution: 'fd(50)\nbk(50)', reward: 10 },
+        { id: 'b3', title: 'Die erste Ecke', description: 'Gehe 80 Schritte vorwärts und drehe 90° nach rechts.', hint: 'fd(80) dann rt(90)', solution: 'fd(80)\nrt(90)', reward: 10 },
+        { id: 'b4', title: 'Der Winkel', description: 'Zeichne einen Winkel: 60 Schritte, 90° rechts, nochmal 60.', hint: 'fd(60), rt(90), fd(60)', solution: 'fd(60)\nrt(90)\nfd(60)', reward: 10 },
+        { id: 'b5', title: 'Das einfache Quadrat', description: 'Zeichne ein Quadrat mit Seitenlänge 80.', hint: '4 mal: vorwärts 80, rechts 90', solution: 'fd(80)\nrt(90)\nfd(80)\nrt(90)\nfd(80)\nrt(90)\nfd(80)', reward: 15 }
     ],
     intermediate: [
-        {
-            id: 'i1',
-            title: 'Quadrat mit Schleife',
-            description: 'Zeichne ein Quadrat mit Seitenlänge 100 mit einer <code>repeat</code>-Schleife!',
-            hint: 'repeat 4:\n    fd(100)\n    rt(90)',
-            solution: 'repeat 4:\n    fd(100)\n    rt(90)',
-            reward: 25
-        },
-        {
-            id: 'i2',
-            title: 'Das gleichseitige Dreieck',
-            description: 'Zeichne ein gleichseitiges Dreieck mit Seitenlänge 100.',
-            hint: 'Bei einem Dreieck drehst du 120°',
-            solution: 'repeat 3:\n    fd(100)\n    rt(120)',
-            reward: 25
-        },
-        {
-            id: 'i3',
-            title: 'Das Sechseck',
-            description: 'Zeichne ein regelmäßiges Sechseck mit Seitenlänge 60.',
-            hint: '6 Seiten, 360°/6 = 60° pro Drehung',
-            solution: 'repeat 6:\n    fd(60)\n    rt(60)',
-            reward: 25
-        },
-        {
-            id: 'i4',
-            title: 'Die Treppe',
-            description: 'Zeichne eine Treppe mit 4 Stufen (je 30 Schritte).',
-            hint: 'Vorwärts, rechts, vorwärts, links - 4 mal',
-            solution: 'repeat 4:\n    fd(30)\n    rt(90)\n    fd(30)\n    lt(90)',
-            reward: 30
-        },
-        {
-            id: 'i5',
-            title: 'Der Stern',
-            description: 'Zeichne einen 5-zackigen Stern mit Seitenlänge 100.',
-            hint: '5 mal mit 144° Drehung',
-            solution: 'repeat 5:\n    fd(100)\n    rt(144)',
-            reward: 30
-        }
+        { id: 'i1', title: 'Quadrat mit Schleife', description: 'Zeichne ein Quadrat (100) mit <code>repeat</code>-Schleife!', hint: 'repeat 4:\n    fd(100)\n    rt(90)', solution: 'repeat 4:\n    fd(100)\n    rt(90)', reward: 25 },
+        { id: 'i2', title: 'Das Dreieck', description: 'Zeichne ein gleichseitiges Dreieck (100).', hint: '120° Drehung', solution: 'repeat 3:\n    fd(100)\n    rt(120)', reward: 25 },
+        { id: 'i3', title: 'Das Sechseck', description: 'Zeichne ein Sechseck (60).', hint: '360°/6 = 60°', solution: 'repeat 6:\n    fd(60)\n    rt(60)', reward: 25 },
+        { id: 'i4', title: 'Die Treppe', description: 'Zeichne eine Treppe mit 4 Stufen (30).', hint: 'Vorwärts, rechts, vorwärts, links', solution: 'repeat 4:\n    fd(30)\n    rt(90)\n    fd(30)\n    lt(90)', reward: 30 },
+        { id: 'i5', title: 'Der Stern', description: 'Zeichne einen 5-zackigen Stern (100).', hint: '144° Drehung', solution: 'repeat 5:\n    fd(100)\n    rt(144)', reward: 30 }
     ],
     advanced: [
-        {
-            id: 'a1',
-            title: 'Spirale',
-            description: 'Zeichne eine quadratische Spirale (10, 20, 30... bis 80).',
-            hint: 'Jede Seite 10 größer als die vorherige',
-            solution: 'fd(10)\nrt(90)\nfd(20)\nrt(90)\nfd(30)\nrt(90)\nfd(40)\nrt(90)\nfd(50)\nrt(90)\nfd(60)\nrt(90)\nfd(70)\nrt(90)\nfd(80)',
-            reward: 50
-        },
-        {
-            id: 'a2',
-            title: 'Kreis',
-            description: 'Zeichne einen Kreis mit kleinen Schritten.',
-            hint: '36 mal: 10 Schritte, 10° drehen',
-            solution: 'repeat 36:\n    fd(10)\n    rt(10)',
-            reward: 50
-        },
-        {
-            id: 'a3',
-            title: 'Blume',
-            description: 'Zeichne eine Blume: 6 Kreise, die sich in der Mitte treffen.',
-            hint: '6 Kreise mit je 60° Versatz',
-            solution: 'repeat 6:\n    repeat 36:\n        fd(5)\n        rt(10)\n    rt(60)',
-            reward: 60
-        },
-        {
-            id: 'a4',
-            title: 'Das Haus vom Nikolaus',
-            description: 'Zeichne das bekannte "Haus vom Nikolaus" in einem Zug.',
-            hint: 'Start unten links, diagonale Linien = 141 Schritte',
-            solution: 'fd(100)\nrt(45)\nfd(141)\nrt(135)\nfd(100)\nlt(135)\nfd(141)\nrt(135)\nfd(100)\nrt(90)\nfd(100)\nrt(135)\nfd(141)\nlt(135)\nfd(100)',
-            reward: 75
-        },
-        {
-            id: 'a5',
-            title: 'Verschachtelte Quadrate',
-            description: 'Zeichne 5 Quadrate (20, 40, 60, 80, 100).',
-            hint: 'Nutze pu() und pd() zum Bewegen ohne Zeichnen',
-            solution: 'repeat 4:\n    fd(20)\n    rt(90)\npu()\nbk(10)\nlt(90)\nbk(10)\nrt(90)\npd()\nrepeat 4:\n    fd(40)\n    rt(90)\npu()\nbk(10)\nlt(90)\nbk(10)\nrt(90)\npd()\nrepeat 4:\n    fd(60)\n    rt(90)\npu()\nbk(10)\nlt(90)\nbk(10)\nrt(90)\npd()\nrepeat 4:\n    fd(80)\n    rt(90)\npu()\nbk(10)\nlt(90)\nbk(10)\nrt(90)\npd()\nrepeat 4:\n    fd(100)\n    rt(90)',
-            reward: 80
-        }
+        { id: 'a1', title: 'Spirale', description: 'Zeichne eine quadratische Spirale (10, 20, 30... bis 80).', hint: 'Jede Seite 10 größer', solution: 'fd(10)\nrt(90)\nfd(20)\nrt(90)\nfd(30)\nrt(90)\nfd(40)\nrt(90)\nfd(50)\nrt(90)\nfd(60)\nrt(90)\nfd(70)\nrt(90)\nfd(80)', reward: 50 },
+        { id: 'a2', title: 'Kreis', description: 'Zeichne einen Kreis.', hint: '36 mal: 10 Schritte, 10° drehen', solution: 'repeat 36:\n    fd(10)\n    rt(10)', reward: 50 },
+        { id: 'a3', title: 'Blume', description: 'Zeichne eine Blume: 6 Kreise.', hint: '6 Kreise mit 60° Versatz', solution: 'repeat 6:\n    repeat 36:\n        fd(5)\n        rt(10)\n    rt(60)', reward: 60 },
+        { id: 'a4', title: 'Haus vom Nikolaus', description: 'Zeichne das "Haus vom Nikolaus" in einem Zug.', hint: 'Diagonale = 141', solution: 'fd(100)\nrt(45)\nfd(141)\nrt(135)\nfd(100)\nlt(135)\nfd(141)\nrt(135)\nfd(100)\nrt(90)\nfd(100)\nrt(135)\nfd(141)\nlt(135)\nfd(100)', reward: 75 },
+        { id: 'a5', title: 'Verschachtelte Quadrate', description: 'Zeichne 5 Quadrate (20, 40, 60, 80, 100).', hint: 'Nutze pu() und pd()', solution: 'repeat 4:\n    fd(20)\n    rt(90)\npu()\nbk(10)\nlt(90)\nbk(10)\nrt(90)\npd()\nrepeat 4:\n    fd(40)\n    rt(90)\npu()\nbk(10)\nlt(90)\nbk(10)\nrt(90)\npd()\nrepeat 4:\n    fd(60)\n    rt(90)\npu()\nbk(10)\nlt(90)\nbk(10)\nrt(90)\npd()\nrepeat 4:\n    fd(80)\n    rt(90)\npu()\nbk(10)\nlt(90)\nbk(10)\nrt(90)\npd()\nrepeat 4:\n    fd(100)\n    rt(90)', reward: 80 }
     ]
 };
 
@@ -958,20 +748,16 @@ class GameState {
         this.currentDifficulty = 'beginner';
         this.currentTaskIndex = 0;
         this.hintsUsed = new Set();
-
         this.load();
     }
 
     save() {
-        const data = {
-            rubox: this.rubox,
-            level: this.level,
-            streak: this.streak,
+        localStorage.setItem('xlogoGameState', JSON.stringify({
+            rubox: this.rubox, level: this.level, streak: this.streak,
             completedTasks: Array.from(this.completedTasks),
             customTasks: this.customTasks,
             hintsUsed: Array.from(this.hintsUsed)
-        };
-        localStorage.setItem('xlogoGameState', JSON.stringify(data));
+        }));
     }
 
     load() {
@@ -1004,84 +790,58 @@ class GameState {
     }
 
     checkLevelUp() {
-        const levelsThresholds = [0, 50, 150, 300, 500, 750, 1000, 1500, 2000, 3000, 5000];
+        const thresholds = [0, 50, 150, 300, 500, 750, 1000, 1500, 2000, 3000, 5000];
         let newLevel = 1;
-
-        for (let i = levelsThresholds.length - 1; i >= 0; i--) {
-            if (this.rubox >= levelsThresholds[i]) {
-                newLevel = i + 1;
-                break;
-            }
+        for (let i = thresholds.length - 1; i >= 0; i--) {
+            if (this.rubox >= thresholds[i]) { newLevel = i + 1; break; }
         }
-
-        if (newLevel > this.level) {
-            this.level = newLevel;
-            return true;
-        }
+        if (newLevel > this.level) { this.level = newLevel; return true; }
         return false;
     }
 
-    getTasks(difficulty) {
-        return [...defaultTasks[difficulty], ...this.customTasks[difficulty]];
-    }
-
+    getTasks(difficulty) { return [...defaultTasks[difficulty], ...this.customTasks[difficulty]]; }
     getCurrentTask() {
         const tasks = this.getTasks(this.currentDifficulty);
-        if (this.currentTaskIndex < tasks.length) {
-            return tasks[this.currentTaskIndex];
-        }
-        return null;
+        return this.currentTaskIndex < tasks.length ? tasks[this.currentTaskIndex] : null;
     }
 
     completeTask(taskId, reward) {
         if (!this.completedTasks.has(taskId)) {
             this.completedTasks.add(taskId);
             this.streak++;
-            const earnedRubox = this.addRubox(reward);
-            return { earnedRubox, isNew: true };
+            return { earnedRubox: this.addRubox(reward), isNew: true };
         }
         this.streak++;
-        const earnedRubox = this.addRubox(Math.floor(reward / 2));
-        return { earnedRubox, isNew: false };
+        return { earnedRubox: this.addRubox(Math.floor(reward / 2)), isNew: false };
     }
 
-    resetStreak() {
-        this.streak = 0;
-        this.save();
-    }
+    resetStreak() { this.streak = 0; this.save(); }
 
     addCustomTask(task) {
-        const id = 'custom_' + Date.now();
-        const newTask = { ...task, id };
+        const newTask = { ...task, id: 'custom_' + Date.now() };
         this.customTasks[task.difficulty].push(newTask);
         this.save();
         return newTask;
     }
 
     deleteCustomTask(taskId) {
-        for (const difficulty of Object.keys(this.customTasks)) {
-            this.customTasks[difficulty] = this.customTasks[difficulty].filter(t => t.id !== taskId);
+        for (const d of Object.keys(this.customTasks)) {
+            this.customTasks[d] = this.customTasks[d].filter(t => t.id !== taskId);
         }
         this.save();
     }
 
-    exportTasks() {
-        return JSON.stringify(this.customTasks, null, 2);
-    }
+    exportTasks() { return JSON.stringify(this.customTasks, null, 2); }
 
     importTasks(jsonData) {
         try {
             const imported = JSON.parse(jsonData);
-            for (const difficulty of Object.keys(imported)) {
-                if (this.customTasks[difficulty]) {
-                    this.customTasks[difficulty].push(...imported[difficulty]);
-                }
+            for (const d of Object.keys(imported)) {
+                if (this.customTasks[d]) this.customTasks[d].push(...imported[d]);
             }
             this.save();
             return true;
-        } catch (e) {
-            return false;
-        }
+        } catch (e) { return false; }
     }
 }
 
@@ -1093,16 +853,54 @@ class XLogoApp {
     constructor() {
         this.gameState = new GameState();
         this.speed = 5;
-        this.isRunning = false;
-        this.animationId = null;
-
+        this.initTheme();
+        this.initLanguage();
         this.initCanvases();
         this.initConsoles();
         this.initInterpreters();
         this.initEventListeners();
         this.initLineNumbers();
+        this.initEditorFeatures();
         this.updateUI();
         this.loadCurrentTask();
+    }
+
+    initTheme() {
+        const savedTheme = localStorage.getItem('xlogoTheme') || 'light';
+        document.body.setAttribute('data-theme', savedTheme);
+        this.updateThemeIcon();
+    }
+
+    updateThemeIcon() {
+        const isDark = document.body.getAttribute('data-theme') === 'dark';
+        document.querySelector('.theme-icon').textContent = isDark ? '☀️' : '🌙';
+    }
+
+    toggleTheme() {
+        const isDark = document.body.getAttribute('data-theme') === 'dark';
+        const newTheme = isDark ? 'light' : 'dark';
+        document.body.setAttribute('data-theme', newTheme);
+        localStorage.setItem('xlogoTheme', newTheme);
+        this.updateThemeIcon();
+        this.mainTurtle.redraw();
+        this.sandboxTurtle.redraw();
+        this.expectedTurtle.redraw();
+        this.adminTurtle.redraw();
+    }
+
+    initLanguage() {
+        const savedLang = localStorage.getItem('xlogoLang') || 'de';
+        currentLang = savedLang;
+        document.getElementById('languageSelect').value = savedLang;
+        updateUILanguage();
+    }
+
+    setLanguage(lang) {
+        currentLang = lang;
+        localStorage.setItem('xlogoLang', lang);
+        updateUILanguage();
+        this.mainConsole.clear();
+        this.sandboxConsole.clear();
     }
 
     initCanvases() {
@@ -1128,9 +926,7 @@ class XLogoApp {
         const updateLineNumbers = (textarea, lineNumbersDiv) => {
             const lines = textarea.value.split('\n').length;
             let html = '';
-            for (let i = 1; i <= Math.max(lines, 10); i++) {
-                html += `<span>${i}</span>\n`;
-            }
+            for (let i = 1; i <= Math.max(lines, 10); i++) html += `<span>${i}</span>\n`;
             lineNumbersDiv.innerHTML = html;
         };
 
@@ -1139,36 +935,105 @@ class XLogoApp {
         const sandboxCode = document.getElementById('sandboxCode');
         const sandboxLineNumbers = document.getElementById('sandboxLineNumbers');
 
-        // Initial
         updateLineNumbers(codeInput, lineNumbers);
         updateLineNumbers(sandboxCode, sandboxLineNumbers);
 
-        // Bei Änderung
         codeInput.addEventListener('input', () => updateLineNumbers(codeInput, lineNumbers));
-        codeInput.addEventListener('scroll', () => {
-            lineNumbers.scrollTop = codeInput.scrollTop;
-        });
+        codeInput.addEventListener('scroll', () => { lineNumbers.scrollTop = codeInput.scrollTop; });
 
         sandboxCode.addEventListener('input', () => updateLineNumbers(sandboxCode, sandboxLineNumbers));
-        sandboxCode.addEventListener('scroll', () => {
-            sandboxLineNumbers.scrollTop = sandboxCode.scrollTop;
+        sandboxCode.addEventListener('scroll', () => { sandboxLineNumbers.scrollTop = sandboxCode.scrollTop; });
+    }
+
+    initEditorFeatures() {
+        const editors = [
+            document.getElementById('codeInput'),
+            document.getElementById('sandboxCode'),
+            document.getElementById('taskSolution')
+        ];
+
+        editors.forEach(editor => {
+            if (!editor) return;
+
+            editor.addEventListener('keydown', (e) => {
+                // Auto-close parentheses
+                if (e.key === '(') {
+                    e.preventDefault();
+                    const start = editor.selectionStart;
+                    const end = editor.selectionEnd;
+                    const text = editor.value;
+                    const selected = text.substring(start, end);
+                    editor.value = text.substring(0, start) + '(' + selected + ')' + text.substring(end);
+                    editor.selectionStart = editor.selectionEnd = start + 1;
+                    editor.dispatchEvent(new Event('input'));
+                }
+
+                // Auto-close quotes
+                if (e.key === '"' || e.key === "'") {
+                    const start = editor.selectionStart;
+                    const text = editor.value;
+                    if (text[start] === e.key) {
+                        e.preventDefault();
+                        editor.selectionStart = editor.selectionEnd = start + 1;
+                        return;
+                    }
+                    e.preventDefault();
+                    const end = editor.selectionEnd;
+                    const selected = text.substring(start, end);
+                    editor.value = text.substring(0, start) + e.key + selected + e.key + text.substring(end);
+                    editor.selectionStart = editor.selectionEnd = start + 1;
+                    editor.dispatchEvent(new Event('input'));
+                }
+
+                // Duplicate line: Shift+Option/Alt+Down
+                if (e.shiftKey && e.altKey && e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    const start = editor.selectionStart;
+                    const end = editor.selectionEnd;
+                    const text = editor.value;
+
+                    let lineStart = text.lastIndexOf('\n', start - 1) + 1;
+                    let lineEnd = text.indexOf('\n', end);
+                    if (lineEnd === -1) lineEnd = text.length;
+
+                    const selectedLines = text.substring(lineStart, lineEnd);
+                    const newText = text.substring(0, lineEnd) + '\n' + selectedLines + text.substring(lineEnd);
+
+                    editor.value = newText;
+                    const newStart = lineEnd + 1 + (start - lineStart);
+                    const newEnd = lineEnd + 1 + (end - lineStart);
+                    editor.selectionStart = newStart;
+                    editor.selectionEnd = newEnd;
+                    editor.dispatchEvent(new Event('input'));
+                }
+
+                // Tab for indentation (4 spaces)
+                if (e.key === 'Tab') {
+                    e.preventDefault();
+                    const start = editor.selectionStart;
+                    const text = editor.value;
+                    editor.value = text.substring(0, start) + '    ' + text.substring(start);
+                    editor.selectionStart = editor.selectionEnd = start + 4;
+                    editor.dispatchEvent(new Event('input'));
+                }
+            });
         });
     }
 
     initEventListeners() {
-        // Navigation
         document.querySelectorAll('.nav-btn').forEach(btn => {
             if (btn.id !== 'shareBtn') {
-                btn.addEventListener('click', (e) => this.switchView(e.target.dataset.view));
+                btn.addEventListener('click', (e) => this.switchView(e.target.closest('.nav-btn').dataset.view));
             }
         });
 
-        // Schwierigkeitsgrad
+        document.getElementById('themeToggle').addEventListener('click', () => this.toggleTheme());
+        document.getElementById('languageSelect').addEventListener('change', (e) => this.setLanguage(e.target.value));
+
         document.querySelectorAll('.difficulty-card').forEach(card => {
             card.addEventListener('click', (e) => this.selectDifficulty(e.currentTarget.dataset.difficulty));
         });
 
-        // Haupt-Steuerung
         document.getElementById('runBtn').addEventListener('click', () => this.runCode());
         document.getElementById('stopBtn').addEventListener('click', () => this.stopCode());
         document.getElementById('stepForwardBtn').addEventListener('click', () => this.stepForward());
@@ -1177,17 +1042,13 @@ class XLogoApp {
         document.getElementById('clearBtn').addEventListener('click', () => this.clearCode());
         document.getElementById('clearConsoleBtn').addEventListener('click', () => this.mainConsole.clear());
 
-        // Geschwindigkeit
         document.getElementById('speedSlider').addEventListener('input', (e) => {
             this.speed = parseInt(e.target.value);
-            document.getElementById('speedValue').textContent = `${this.speed}x`;
             this.mainInterpreter.setSpeed(this.speed);
         });
 
-        // Hinweis
         document.getElementById('hintBtn').addEventListener('click', () => this.showHint());
 
-        // Sandbox-Steuerung
         document.getElementById('sandboxRunBtn').addEventListener('click', () => this.runSandboxCode());
         document.getElementById('sandboxStopBtn').addEventListener('click', () => this.stopSandboxCode());
         document.getElementById('sandboxStepForwardBtn').addEventListener('click', () => this.stepSandboxForward());
@@ -1200,113 +1061,74 @@ class XLogoApp {
         });
         document.getElementById('sandboxClearConsoleBtn').addEventListener('click', () => this.sandboxConsole.clear());
 
-        // Sandbox Farbe/Breite
-        document.getElementById('penColor').addEventListener('input', (e) => {
-            this.sandboxTurtle.setColor(e.target.value);
-        });
-        document.getElementById('penWidth').addEventListener('input', (e) => {
-            this.sandboxTurtle.setWidth(parseInt(e.target.value));
-        });
+        document.getElementById('penColor').addEventListener('input', (e) => this.sandboxTurtle.setColor(e.target.value));
+        document.getElementById('penWidth').addEventListener('input', (e) => this.sandboxTurtle.setWidth(parseInt(e.target.value)));
+        document.getElementById('sandboxSpeedSlider').addEventListener('input', (e) => this.sandboxInterpreter.setSpeed(parseInt(e.target.value)));
 
-        // Sandbox Geschwindigkeit
-        document.getElementById('sandboxSpeedSlider').addEventListener('input', (e) => {
-            this.sandboxInterpreter.setSpeed(parseInt(e.target.value));
-        });
-
-        // Admin
         document.getElementById('previewSolutionBtn').addEventListener('click', () => this.previewAdminSolution());
         document.getElementById('saveTaskBtn').addEventListener('click', () => this.saveCustomTask());
         document.getElementById('exportTasksBtn').addEventListener('click', () => this.exportTasks());
-        document.getElementById('importTasksBtn').addEventListener('click', () => {
-            document.getElementById('importFile').click();
-        });
+        document.getElementById('importTasksBtn').addEventListener('click', () => document.getElementById('importFile').click());
         document.getElementById('importFile').addEventListener('change', (e) => this.importTasks(e));
 
-        // Popups
         document.getElementById('nextTaskBtn').addEventListener('click', () => this.nextTask());
-        document.getElementById('closeLevelupBtn').addEventListener('click', () => {
-            document.getElementById('levelupPopup').classList.remove('visible');
-        });
+        document.getElementById('closeLevelupBtn').addEventListener('click', () => document.getElementById('levelupPopup').classList.remove('visible'));
 
-        // Tastaturkürzel
         document.addEventListener('keydown', (e) => this.handleKeyboard(e));
-
-        // Share
         this.initShareListeners();
     }
 
     handleKeyboard(e) {
-        const activeElement = document.activeElement;
-        const isTextarea = activeElement.tagName === 'TEXTAREA';
-        const isInput = activeElement.tagName === 'INPUT';
+        const active = document.activeElement;
+        const isTextarea = active.tagName === 'TEXTAREA';
+        const isInput = active.tagName === 'INPUT';
 
-        // F5 zum Ausführen
         if (e.key === 'F5') {
             e.preventDefault();
             const view = document.querySelector('.view.active');
-            if (view.id === 'sandboxView') {
-                this.runSandboxCode();
-            } else if (view.id === 'learnView') {
-                this.runCode();
-            }
+            if (view.id === 'sandboxView') this.runSandboxCode();
+            else if (view.id === 'learnView') this.runCode();
         }
 
-        // Escape zum Stoppen
         if (e.key === 'Escape') {
             this.stopCode();
             this.stopSandboxCode();
         }
 
-        // Pfeiltasten nur wenn nicht in Textarea
         if (!isTextarea && !isInput) {
             if (e.key === 'ArrowRight') {
                 e.preventDefault();
                 const view = document.querySelector('.view.active');
-                if (view.id === 'sandboxView') {
-                    this.stepSandboxForward();
-                } else {
-                    this.stepForward();
-                }
+                if (view.id === 'sandboxView') this.stepSandboxForward();
+                else this.stepForward();
             }
 
             if (e.key === 'ArrowLeft') {
                 e.preventDefault();
                 const view = document.querySelector('.view.active');
-                if (view.id === 'sandboxView') {
-                    this.stepSandboxBack();
-                } else {
-                    this.stepBack();
-                }
+                if (view.id === 'sandboxView') this.stepSandboxBack();
+                else this.stepBack();
             }
         }
 
-        // Ctrl+Enter zum Ausführen
         if (e.ctrlKey && e.key === 'Enter') {
             const view = document.querySelector('.view.active');
-            if (view.id === 'sandboxView') {
-                this.runSandboxCode();
-            } else if (view.id === 'learnView') {
-                this.runCode();
-            }
+            if (view.id === 'sandboxView') this.runSandboxCode();
+            else if (view.id === 'learnView') this.runCode();
         }
     }
 
     switchView(view) {
         document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
         document.querySelector(`[data-view="${view}"]`).classList.add('active');
-
         document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
         document.getElementById(`${view}View`).classList.add('active');
-
-        if (view === 'admin') {
-            this.renderCustomTasksList();
-        }
+        if (view === 'admin') this.renderCustomTasksList();
     }
 
     selectDifficulty(difficulty) {
         document.querySelectorAll('.difficulty-card').forEach(card => card.classList.remove('active'));
         document.querySelector(`[data-difficulty="${difficulty}"]`).classList.add('active');
-
         this.gameState.currentDifficulty = difficulty;
         this.gameState.currentTaskIndex = 0;
         this.loadCurrentTask();
@@ -1314,105 +1136,67 @@ class XLogoApp {
 
     loadCurrentTask() {
         const task = this.gameState.getCurrentTask();
-
         if (task) {
-            document.getElementById('taskContent').innerHTML = `
-                <h4>${task.title}</h4>
-                <p class="task-description">${task.description}</p>
-            `;
-
+            document.getElementById('taskContent').innerHTML = `<h4>${task.title}</h4><p class="task-description">${task.description}</p>`;
             const tasks = this.gameState.getTasks(this.gameState.currentDifficulty);
-            document.getElementById('taskNumber').textContent =
-                `${this.gameState.currentTaskIndex + 1}/${tasks.length}`;
-
+            document.getElementById('taskNumber').textContent = `${this.gameState.currentTaskIndex + 1}/${tasks.length}`;
             document.getElementById('hintContent').classList.remove('visible');
             document.getElementById('hintContent').textContent = '';
-
             this.expectedTurtle.reset();
             this.expectedInterpreter.execute(task.solution);
-
             this.mainTurtle.reset();
             document.getElementById('codeInput').value = '';
             this.mainConsole.clear();
-            this.mainConsole.log('Neue Aufgabe geladen. Viel Erfolg!', 'info');
+            this.mainConsole.log(t('console.taskLoaded'), 'info');
         } else {
-            document.getElementById('taskContent').innerHTML = `
-                <p class="task-description">Alle Aufgaben abgeschlossen! Probiere einen anderen Schwierigkeitsgrad.</p>
-            `;
+            document.getElementById('taskContent').innerHTML = `<p class="task-description">${t('task.selectDifficulty')}</p>`;
             document.getElementById('taskNumber').textContent = '✓';
         }
     }
 
     runCode() {
         const code = document.getElementById('codeInput').value.trim();
-
-        if (!code) {
-            this.mainConsole.error('Bitte gib zuerst Code ein!');
-            return;
-        }
+        if (!code) { this.mainConsole.error(t('console.enterCode')); return; }
 
         this.mainConsole.clear();
-        this.mainConsole.log('Code wird ausgeführt...', 'info');
+        this.mainConsole.log(t('console.running'), 'info');
         this.mainTurtle.reset();
 
         const result = this.mainInterpreter.execute(code);
+        if (!result.success) { this.gameState.resetStreak(); this.updateUI(); return; }
 
-        if (!result.success) {
-            this.gameState.resetStreak();
-            this.updateUI();
-            return;
-        }
-
-        this.mainConsole.success(`${result.steps} Befehle erfolgreich ausgeführt!`);
+        this.mainConsole.success(`${result.steps} ${t('console.success')}`);
         this.checkSolution();
     }
 
-    stopCode() {
-        this.isRunning = false;
-        if (this.animationId) {
-            cancelAnimationFrame(this.animationId);
-            this.animationId = null;
-        }
-        this.mainConsole.log('Ausführung gestoppt.', 'info');
-    }
+    stopCode() { this.mainConsole.log(t('console.stopped'), 'info'); }
 
     stepForward() {
         if (this.mainInterpreter.currentStep === 0 || this.mainInterpreter.currentStep >= this.mainInterpreter.flatSteps.length) {
             const code = document.getElementById('codeInput').value.trim();
-
-            if (!code) {
-                this.mainConsole.error('Bitte gib zuerst Code ein!');
-                return;
-            }
+            if (!code) { this.mainConsole.error(t('console.enterCode')); return; }
 
             this.mainTurtle.reset();
             this.mainConsole.clear();
             const result = this.mainInterpreter.execute(code, true);
-
             if (!result.success) return;
-
-            this.mainConsole.log(`Bereit für Schritt-für-Schritt (${result.steps} Schritte)`, 'info');
+            this.mainConsole.log(`${t('console.readySteps')} (${result.steps} ${t('console.steps')})`, 'info');
         }
 
         const stepResult = this.mainInterpreter.executeStep();
-
-        if (stepResult.done) {
-            this.mainConsole.success('Alle Schritte ausgeführt!');
-            this.checkSolution();
-        } else {
+        if (stepResult.done) { this.mainConsole.success(t('console.allDone')); this.checkSolution(); }
+        else {
             const cmdStr = this.mainInterpreter.commandToString(stepResult.command);
-            this.mainConsole.step(`Schritt ${stepResult.currentStep}/${stepResult.totalSteps}: ${cmdStr}`);
+            this.mainConsole.step(`${t('console.step')} ${stepResult.currentStep}/${stepResult.totalSteps}: ${cmdStr}`);
         }
     }
 
     stepBack() {
         const result = this.mainInterpreter.stepBack();
-
-        if (result.atStart) {
-            this.mainConsole.log('Bereits am Anfang.', 'info');
-        } else if (!result.done) {
+        if (result.atStart) this.mainConsole.log(t('console.atStart'), 'info');
+        else if (!result.done) {
             const cmdStr = this.mainInterpreter.commandToString(result.command);
-            this.mainConsole.step(`Zurück zu Schritt ${result.currentStep}/${result.totalSteps}: ${cmdStr}`);
+            this.mainConsole.step(`${t('console.backTo')} ${result.currentStep}/${result.totalSteps}: ${cmdStr}`);
         }
     }
 
@@ -1420,18 +1204,12 @@ class XLogoApp {
         const task = this.gameState.getCurrentTask();
         if (!task) return;
 
-        const playerPath = this.mainTurtle.getPathSignature();
-        const expectedPath = this.expectedTurtle.getPathSignature();
-
-        if (playerPath === expectedPath) {
+        if (this.mainTurtle.getPathSignature() === this.expectedTurtle.getPathSignature()) {
             const result = this.gameState.completeTask(task.id, task.reward);
             this.showReward(result.earnedRubox, result.isNew);
-
-            if (this.gameState.checkLevelUp()) {
-                setTimeout(() => this.showLevelUp(), 1500);
-            }
+            if (this.gameState.checkLevelUp()) setTimeout(() => this.showLevelUp(), 1500);
         } else {
-            this.mainConsole.error('Das sieht noch nicht ganz richtig aus. Versuche es nochmal!');
+            this.mainConsole.error(t('console.wrongSolution'));
             this.gameState.resetStreak();
             this.updateUI();
         }
@@ -1442,23 +1220,17 @@ class XLogoApp {
         this.mainInterpreter.currentStep = 0;
         this.mainInterpreter.flatSteps = [];
         this.mainConsole.clear();
-        this.mainConsole.log('Canvas zurückgesetzt.', 'info');
+        this.mainConsole.log(t('console.reset'), 'info');
     }
 
-    clearCode() {
-        document.getElementById('codeInput').value = '';
-        this.resetCanvas();
-    }
+    clearCode() { document.getElementById('codeInput').value = ''; this.resetCanvas(); }
 
     showHint() {
         const task = this.gameState.getCurrentTask();
         if (!task) return;
 
         if (!this.gameState.hintsUsed.has(task.id)) {
-            if (this.gameState.rubox < 5) {
-                this.mainConsole.error('Du brauchst mindestens 5 Rubox für einen Hinweis!');
-                return;
-            }
+            if (this.gameState.rubox < 5) { this.mainConsole.error(t('console.needRubox')); return; }
             this.gameState.spendRubox(5);
             this.gameState.hintsUsed.add(task.id);
             this.gameState.save();
@@ -1471,16 +1243,14 @@ class XLogoApp {
 
     showReward(amount, isNew) {
         document.getElementById('rewardAmount').textContent = `+${amount}`;
-        document.getElementById('rewardMessage').textContent = isNew
-            ? 'Du hast die Aufgabe zum ersten Mal gelöst!'
-            : 'Du hast die Aufgabe erneut gemeistert!';
+        document.getElementById('rewardMessage').textContent = isNew ? t('reward.firstTime') : t('reward.again');
         document.getElementById('rewardPopup').classList.add('visible');
         this.updateUI();
         this.createConfetti();
     }
 
     showLevelUp() {
-        document.getElementById('levelupMessage').textContent = `Du hast Level ${this.gameState.level} erreicht!`;
+        document.getElementById('levelupMessage').textContent = `Level ${this.gameState.level}!`;
         document.getElementById('levelupPopup').classList.add('visible');
     }
 
@@ -1492,33 +1262,16 @@ class XLogoApp {
 
     createConfetti() {
         const colors = ['#6c5ce7', '#00cec9', '#fd79a8', '#fdcb6e', '#00b894'];
-
         for (let i = 0; i < 50; i++) {
             const confetti = document.createElement('div');
-            confetti.style.cssText = `
-                position: fixed;
-                width: 10px;
-                height: 10px;
-                background: ${colors[Math.floor(Math.random() * colors.length)]};
-                left: ${Math.random() * 100}vw;
-                top: -10px;
-                border-radius: ${Math.random() > 0.5 ? '50%' : '0'};
-                pointer-events: none;
-                z-index: 1001;
-                animation: confettiFall ${2 + Math.random() * 2}s linear forwards;
-            `;
+            confetti.style.cssText = `position:fixed;width:10px;height:10px;background:${colors[Math.floor(Math.random() * colors.length)]};left:${Math.random() * 100}vw;top:-10px;border-radius:${Math.random() > 0.5 ? '50%' : '0'};pointer-events:none;z-index:1001;animation:confettiFall ${2 + Math.random() * 2}s linear forwards;`;
             document.body.appendChild(confetti);
             setTimeout(() => confetti.remove(), 4000);
         }
-
         if (!document.getElementById('confettiStyle')) {
             const style = document.createElement('style');
             style.id = 'confettiStyle';
-            style.textContent = `
-                @keyframes confettiFall {
-                    to { transform: translateY(100vh) rotate(720deg); opacity: 0; }
-                }
-            `;
+            style.textContent = '@keyframes confettiFall { to { transform: translateY(100vh) rotate(720deg); opacity: 0; } }';
             document.head.appendChild(style);
         }
     }
@@ -1529,17 +1282,12 @@ class XLogoApp {
         document.getElementById('streakCount').textContent = this.gameState.streak;
     }
 
-    // Sandbox
     runSandboxCode() {
         const code = document.getElementById('sandboxCode').value.trim();
-
-        if (!code) {
-            this.sandboxConsole.error('Bitte gib Code ein!');
-            return;
-        }
+        if (!code) { this.sandboxConsole.error(t('console.enterCode')); return; }
 
         this.sandboxConsole.clear();
-        this.sandboxConsole.log('Code wird ausgeführt...', 'info');
+        this.sandboxConsole.log(t('console.running'), 'info');
         this.sandboxTurtle.reset();
 
         const color = document.getElementById('penColor').value;
@@ -1548,24 +1296,15 @@ class XLogoApp {
         this.sandboxTurtle.setWidth(width);
 
         const result = this.sandboxInterpreter.execute(code);
-
-        if (result.success) {
-            this.sandboxConsole.success(`${result.steps} Befehle erfolgreich ausgeführt!`);
-        }
+        if (result.success) this.sandboxConsole.success(`${result.steps} ${t('console.success')}`);
     }
 
-    stopSandboxCode() {
-        this.sandboxConsole.log('Ausführung gestoppt.', 'info');
-    }
+    stopSandboxCode() { this.sandboxConsole.log(t('console.stopped'), 'info'); }
 
     stepSandboxForward() {
         if (this.sandboxInterpreter.currentStep === 0 || this.sandboxInterpreter.currentStep >= this.sandboxInterpreter.flatSteps.length) {
             const code = document.getElementById('sandboxCode').value.trim();
-
-            if (!code) {
-                this.sandboxConsole.error('Bitte gib Code ein!');
-                return;
-            }
+            if (!code) { this.sandboxConsole.error(t('console.enterCode')); return; }
 
             this.sandboxTurtle.reset();
             this.sandboxConsole.clear();
@@ -1576,48 +1315,30 @@ class XLogoApp {
             this.sandboxTurtle.setWidth(width);
 
             const result = this.sandboxInterpreter.execute(code, true);
-
             if (!result.success) return;
-
-            this.sandboxConsole.log(`Bereit (${result.steps} Schritte)`, 'info');
+            this.sandboxConsole.log(`${t('console.readySteps')} (${result.steps})`, 'info');
         }
 
         const stepResult = this.sandboxInterpreter.executeStep();
-
-        if (stepResult.done) {
-            this.sandboxConsole.success('Alle Schritte ausgeführt!');
-        } else {
+        if (stepResult.done) this.sandboxConsole.success(t('console.allDone'));
+        else {
             const cmdStr = this.sandboxInterpreter.commandToString(stepResult.command);
-            this.sandboxConsole.step(`Schritt ${stepResult.currentStep}/${stepResult.totalSteps}: ${cmdStr}`);
+            this.sandboxConsole.step(`${t('console.step')} ${stepResult.currentStep}/${stepResult.totalSteps}: ${cmdStr}`);
         }
     }
 
     stepSandboxBack() {
         const result = this.sandboxInterpreter.stepBack();
-
-        if (result.atStart) {
-            this.sandboxConsole.log('Bereits am Anfang.', 'info');
-        } else if (!result.done) {
-            const cmdStr = this.sandboxInterpreter.commandToString(result.command);
-            this.sandboxConsole.step(`Zurück zu Schritt ${result.currentStep}/${result.totalSteps}`);
-        }
+        if (result.atStart) this.sandboxConsole.log(t('console.atStart'), 'info');
+        else if (!result.done) this.sandboxConsole.step(`${t('console.backTo')} ${result.currentStep}/${result.totalSteps}`);
     }
 
-    // Admin
     previewAdminSolution() {
         const code = document.getElementById('taskSolution').value.trim();
-
-        if (!code) {
-            alert('Bitte gib eine Musterlösung ein!');
-            return;
-        }
-
+        if (!code) { alert('Bitte gib eine Musterlösung ein!'); return; }
         this.adminTurtle.reset();
         const result = this.adminInterpreter.execute(code);
-
-        if (!result.success) {
-            alert(`Fehler in der Musterlösung: ${result.error}`);
-        }
+        if (!result.success) alert(`Fehler: ${result.error}`);
     }
 
     saveCustomTask() {
@@ -1627,30 +1348,14 @@ class XLogoApp {
         const solution = document.getElementById('taskSolution').value.trim();
         const hint = document.getElementById('taskHint').value.trim();
 
-        if (!title || !description || !solution) {
-            alert('Bitte fülle alle Pflichtfelder aus!');
-            return;
-        }
+        if (!title || !description || !solution) { alert('Bitte fülle alle Pflichtfelder aus!'); return; }
 
         this.adminTurtle.reset();
         const result = this.adminInterpreter.execute(solution);
-        if (!result.success) {
-            alert(`Die Musterlösung enthält Fehler: ${result.error}`);
-            return;
-        }
+        if (!result.success) { alert(`Fehler in der Musterlösung: ${result.error}`); return; }
 
         const rewards = { beginner: 10, intermediate: 25, advanced: 50 };
-
-        const task = {
-            title,
-            description,
-            difficulty,
-            solution,
-            hint: hint || 'Versuche es Schritt für Schritt!',
-            reward: rewards[difficulty]
-        };
-
-        this.gameState.addCustomTask(task);
+        this.gameState.addCustomTask({ title, description, difficulty, solution, hint: hint || 'Versuche es Schritt für Schritt!', reward: rewards[difficulty] });
 
         document.getElementById('taskTitle').value = '';
         document.getElementById('taskDescription').value = '';
@@ -1658,7 +1363,7 @@ class XLogoApp {
         document.getElementById('taskHint').value = '';
         this.adminTurtle.reset();
 
-        alert('Aufgabe erfolgreich gespeichert!');
+        alert('Aufgabe gespeichert!');
         this.renderCustomTasksList();
     }
 
@@ -1666,28 +1371,22 @@ class XLogoApp {
         const data = this.gameState.exportTasks();
         const blob = new Blob([data], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
-
         const a = document.createElement('a');
         a.href = url;
         a.download = 'xlogo-aufgaben.json';
         a.click();
-
         URL.revokeObjectURL(url);
     }
 
     importTasks(event) {
         const file = event.target.files[0];
         if (!file) return;
-
         const reader = new FileReader();
         reader.onload = (e) => {
-            const success = this.gameState.importTasks(e.target.result);
-            if (success) {
-                alert('Aufgaben erfolgreich importiert!');
+            if (this.gameState.importTasks(e.target.result)) {
+                alert('Aufgaben importiert!');
                 this.renderCustomTasksList();
-            } else {
-                alert('Fehler beim Importieren.');
-            }
+            } else alert('Fehler beim Importieren.');
         };
         reader.readAsText(file);
         event.target.value = '';
@@ -1702,43 +1401,33 @@ class XLogoApp {
         ];
 
         if (allTasks.length === 0) {
-            container.innerHTML = '<p style="color: #636e72;">Noch keine eigenen Aufgaben.</p>';
+            container.innerHTML = '<p style="color: var(--text-secondary);">Keine Aufgaben.</p>';
             return;
         }
 
-        const labels = {
-            beginner: '🌱 Anfänger',
-            intermediate: '🌿 Fortgeschritten',
-            advanced: '🌳 Experte'
-        };
-
+        const labels = { beginner: '🌱', intermediate: '🌿', advanced: '🌳' };
         container.innerHTML = allTasks.map(task => `
             <div class="custom-task-item">
                 <div class="custom-task-info">
                     <h4>${task.title}</h4>
-                    <span>${labels[task.difficulty]} | ${task.reward} Rubox</span>
+                    <span>${labels[task.difficulty]} ${task.reward}</span>
                 </div>
-                <div class="custom-task-actions">
-                    <button class="task-action-btn delete" onclick="app.deleteCustomTask('${task.id}')">🗑️</button>
-                </div>
+                <button class="task-action-btn delete" onclick="app.deleteCustomTask('${task.id}')">🗑️</button>
             </div>
         `).join('');
     }
 
     deleteCustomTask(taskId) {
-        if (confirm('Möchtest du diese Aufgabe wirklich löschen?')) {
+        if (confirm('Aufgabe löschen?')) {
             this.gameState.deleteCustomTask(taskId);
             this.renderCustomTasksList();
         }
     }
 
-    // Share
     initShareListeners() {
         document.getElementById('shareBtn').addEventListener('click', () => this.openSharePopup());
         document.getElementById('closeShareBtn').addEventListener('click', () => this.closeSharePopup());
-        document.getElementById('sharePopup').addEventListener('click', (e) => {
-            if (e.target.id === 'sharePopup') this.closeSharePopup();
-        });
+        document.getElementById('sharePopup').addEventListener('click', (e) => { if (e.target.id === 'sharePopup') this.closeSharePopup(); });
         document.getElementById('copyLinkBtn').addEventListener('click', () => this.copyShareLink());
         document.getElementById('shareWhatsApp').addEventListener('click', () => this.shareViaWhatsApp());
         document.getElementById('shareEmail').addEventListener('click', () => this.shareViaEmail());
@@ -1760,66 +1449,57 @@ class XLogoApp {
 
     generateQRCode(url) {
         const canvas = document.getElementById('qrCanvas');
-
         if (typeof QRCode !== 'undefined') {
-            QRCode.toCanvas(canvas, url, {
-                width: 200,
-                margin: 2,
-                color: { dark: '#6c5ce7', light: '#ffffff' }
-            }, (error) => {
+            QRCode.toCanvas(canvas, url, { width: 180, margin: 2, color: { dark: '#6c5ce7', light: '#ffffff' } }, (error) => {
                 if (error) console.error('QR-Code Fehler:', error);
             });
         } else {
             const ctx = canvas.getContext('2d');
             ctx.fillStyle = '#f0f0f0';
-            ctx.fillRect(0, 0, 200, 200);
+            ctx.fillRect(0, 0, 180, 180);
             ctx.fillStyle = '#6c5ce7';
             ctx.font = '14px Arial';
             ctx.textAlign = 'center';
-            ctx.fillText('QR-Code', 100, 90);
-            ctx.fillText('wird geladen...', 100, 110);
+            ctx.fillText('QR-Code', 90, 80);
+            ctx.fillText('lädt...', 90, 100);
         }
     }
 
     copyShareLink() {
         const linkInput = document.getElementById('shareLink');
         const feedback = document.getElementById('copyFeedback');
-
         navigator.clipboard.writeText(linkInput.value).then(() => {
-            feedback.textContent = '✓ Link kopiert!';
+            feedback.textContent = '✓ Kopiert!';
             setTimeout(() => { feedback.textContent = ''; }, 3000);
         }).catch(() => {
             linkInput.select();
             document.execCommand('copy');
-            feedback.textContent = '✓ Link kopiert!';
+            feedback.textContent = '✓ Kopiert!';
             setTimeout(() => { feedback.textContent = ''; }, 3000);
         });
     }
 
     shareViaWhatsApp() {
         const url = document.getElementById('shareLink').value;
-        const text = encodeURIComponent(`Lerne spielerisch Programmieren mit xLogo!\n${url}`);
+        const text = encodeURIComponent(`Lerne Programmieren mit xLogo!\n${url}`);
         window.open(`https://wa.me/?text=${text}`, '_blank');
     }
 
     shareViaEmail() {
         const url = document.getElementById('shareLink').value;
-        const subject = encodeURIComponent('xLogo Lernwelt - Spielerisch Programmieren lernen');
-        const body = encodeURIComponent(`Hallo!\n\nHier ist ein Link zum Programmieren lernen:\n${url}\n\nViel Spaß!`);
+        const subject = encodeURIComponent('xLogo Lernwelt');
+        const body = encodeURIComponent(`Hallo!\n\nProgrammieren lernen:\n${url}\n\nViel Spaß!`);
         window.open(`mailto:?subject=${subject}&body=${body}`);
     }
 
     downloadQRCode() {
         const canvas = document.getElementById('qrCanvas');
         const link = document.createElement('a');
-        link.download = 'xlogo-lernwelt-qrcode.png';
+        link.download = 'xlogo-qrcode.png';
         link.href = canvas.toDataURL('image/png');
         link.click();
     }
 }
 
-// App starten
 let app;
-document.addEventListener('DOMContentLoaded', () => {
-    app = new XLogoApp();
-});
+document.addEventListener('DOMContentLoaded', () => { app = new XLogoApp(); });

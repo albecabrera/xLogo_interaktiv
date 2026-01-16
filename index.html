@@ -31,11 +31,22 @@
                 </div>
             </div>
             <nav class="main-nav">
-                <button class="nav-btn active" data-view="learn">📚 Lernen</button>
-                <button class="nav-btn" data-view="sandbox">🎮 Sandbox</button>
-                <button class="nav-btn" data-view="admin">⚙️ Aufgaben erstellen</button>
-                <button class="nav-btn share-btn" id="shareBtn">📤 Teilen</button>
+                <button class="nav-btn active" data-view="learn">📚 <span data-i18n="nav.learn">Lernen</span></button>
+                <button class="nav-btn" data-view="sandbox">🎮 <span data-i18n="nav.sandbox">Sandbox</span></button>
+                <button class="nav-btn" data-view="admin">⚙️ <span data-i18n="nav.admin">Aufgaben</span></button>
+                <button class="nav-btn share-btn" id="shareBtn">📤 <span data-i18n="nav.share">Teilen</span></button>
             </nav>
+            <div class="header-controls">
+                <div class="language-selector">
+                    <select id="languageSelect" title="Sprache / Language">
+                        <option value="de">🇩🇪 Deutsch</option>
+                        <option value="en">🇬🇧 English</option>
+                    </select>
+                </div>
+                <button class="theme-toggle" id="themeToggle" title="Modus wechseln">
+                    <span class="theme-icon">🌙</span>
+                </button>
+            </div>
         </header>
 
         <!-- Hauptinhalt -->
@@ -43,135 +54,110 @@
             <!-- Lern-Ansicht -->
             <section class="view learn-view active" id="learnView">
                 <div class="difficulty-selector">
-                    <h2>Wähle deinen Schwierigkeitsgrad</h2>
                     <div class="difficulty-cards">
                         <button class="difficulty-card beginner active" data-difficulty="beginner">
                             <span class="difficulty-emoji">🌱</span>
-                            <span class="difficulty-name">Anfänger</span>
-                            <span class="difficulty-desc">Erste Schritte mit der Schildkröte</span>
-                            <span class="difficulty-reward">+10 Rubox</span>
+                            <span class="difficulty-name" data-i18n="difficulty.beginner">Anfänger</span>
+                            <span class="difficulty-reward">+10</span>
                         </button>
                         <button class="difficulty-card intermediate" data-difficulty="intermediate">
                             <span class="difficulty-emoji">🌿</span>
-                            <span class="difficulty-name">Fortgeschritten</span>
-                            <span class="difficulty-desc">Schleifen und Formen</span>
-                            <span class="difficulty-reward">+25 Rubox</span>
+                            <span class="difficulty-name" data-i18n="difficulty.intermediate">Fortgeschritten</span>
+                            <span class="difficulty-reward">+25</span>
                         </button>
                         <button class="difficulty-card advanced" data-difficulty="advanced">
                             <span class="difficulty-emoji">🌳</span>
-                            <span class="difficulty-name">Experte</span>
-                            <span class="difficulty-desc">Komplexe Figuren und Prozeduren</span>
-                            <span class="difficulty-reward">+50 Rubox</span>
+                            <span class="difficulty-name" data-i18n="difficulty.advanced">Experte</span>
+                            <span class="difficulty-reward">+50</span>
                         </button>
                     </div>
                 </div>
 
-                <div class="task-area">
+                <div class="main-workspace">
+                    <!-- Linke Seite: Aufgabe + Erwartetes Ergebnis -->
                     <div class="task-panel">
                         <div class="task-header">
-                            <h3>Aktuelle Aufgabe</h3>
+                            <h3 data-i18n="task.current">Aufgabe</h3>
                             <span class="task-number" id="taskNumber">1/5</span>
                         </div>
                         <div class="task-content" id="taskContent">
-                            <p class="task-description">Wähle einen Schwierigkeitsgrad, um zu beginnen!</p>
+                            <p class="task-description" data-i18n="task.selectDifficulty">Wähle einen Schwierigkeitsgrad!</p>
                         </div>
-                        <div class="hint-area" id="hintArea">
-                            <button class="hint-btn" id="hintBtn">💡 Hinweis anzeigen (-5 Rubox)</button>
-                            <div class="hint-content" id="hintContent"></div>
-                        </div>
-                        <div class="expected-preview" id="expectedPreview">
-                            <h4>Erwartetes Ergebnis:</h4>
-                            <canvas id="expectedCanvas" width="200" height="200"></canvas>
+                        <button class="hint-btn" id="hintBtn">💡 <span data-i18n="task.hint">Hinweis</span> (-5)</button>
+                        <div class="hint-content" id="hintContent"></div>
+                        <div class="expected-preview">
+                            <h4 data-i18n="task.expected">Erwartet:</h4>
+                            <canvas id="expectedCanvas" width="150" height="150"></canvas>
                         </div>
                     </div>
 
-                    <div class="workspace">
-                        <div class="canvas-area">
-                            <div class="canvas-container">
-                                <canvas id="turtleCanvas" width="500" height="400"></canvas>
+                    <!-- Mitte: Canvas -->
+                    <div class="canvas-section">
+                        <div class="canvas-container">
+                            <canvas id="turtleCanvas" width="450" height="350"></canvas>
+                        </div>
+                        <div class="control-toolbar">
+                            <div class="control-group">
+                                <button class="control-btn run-btn" id="runBtn" title="F5">
+                                    <span class="btn-icon">▶️</span>
+                                </button>
+                                <button class="control-btn stop-btn" id="stopBtn" title="Esc">
+                                    <span class="btn-icon">⏹️</span>
+                                </button>
                             </div>
-
-                            <!-- Alle Steuerungs-Buttons -->
-                            <div class="control-toolbar">
-                                <div class="control-group">
-                                    <button class="control-btn run-btn" id="runBtn" title="Ausführen (F5)">
-                                        <span class="btn-icon">▶️</span>
-                                        <span class="btn-text">Ausführen</span>
-                                        <span class="shortcut">F5</span>
-                                    </button>
-                                    <button class="control-btn stop-btn" id="stopBtn" title="Stoppen (Esc)">
-                                        <span class="btn-icon">⏹️</span>
-                                        <span class="btn-text">Stopp</span>
-                                    </button>
-                                </div>
-
-                                <div class="control-group step-controls">
-                                    <button class="control-btn" id="stepBackBtn" title="Schritt zurück (←)">
-                                        <span class="btn-icon">⏮️</span>
-                                        <span class="btn-text">Zurück</span>
-                                    </button>
-                                    <button class="control-btn" id="stepForwardBtn" title="Schritt vorwärts (→)">
-                                        <span class="btn-icon">⏭️</span>
-                                        <span class="btn-text">Vorwärts</span>
-                                    </button>
-                                </div>
-
-                                <div class="control-group">
-                                    <button class="control-btn" id="resetBtn" title="Reset">
-                                        <span class="btn-icon">🔄</span>
-                                        <span class="btn-text">Reset</span>
-                                    </button>
-                                    <button class="control-btn" id="clearBtn" title="Code löschen">
-                                        <span class="btn-icon">🗑️</span>
-                                        <span class="btn-text">Löschen</span>
-                                    </button>
-                                </div>
-
-                                <div class="control-group speed-control">
-                                    <label for="speedSlider">🐢</label>
-                                    <input type="range" id="speedSlider" min="1" max="10" value="5" title="Geschwindigkeit">
-                                    <label for="speedSlider">🐇</label>
-                                    <span class="speed-value" id="speedValue">5x</span>
-                                </div>
+                            <div class="control-group">
+                                <button class="control-btn" id="stepBackBtn" title="←">
+                                    <span class="btn-icon">⏮️</span>
+                                </button>
+                                <button class="control-btn" id="stepForwardBtn" title="→">
+                                    <span class="btn-icon">⏭️</span>
+                                </button>
+                            </div>
+                            <div class="control-group">
+                                <button class="control-btn" id="resetBtn">
+                                    <span class="btn-icon">🔄</span>
+                                </button>
+                                <button class="control-btn" id="clearBtn">
+                                    <span class="btn-icon">🗑️</span>
+                                </button>
+                            </div>
+                            <div class="control-group speed-control">
+                                <span>🐢</span>
+                                <input type="range" id="speedSlider" min="1" max="10" value="5">
+                                <span>🐇</span>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="code-console-area">
-                            <div class="code-panel">
-                                <div class="code-header">
-                                    <h4>Dein Code</h4>
-                                    <div class="code-hints">
-                                        <span class="code-hint" title="forward(schritte)">fd()</span>
-                                        <span class="code-hint" title="back(schritte)">bk()</span>
-                                        <span class="code-hint" title="right(grad)">rt()</span>
-                                        <span class="code-hint" title="left(grad)">lt()</span>
-                                        <span class="code-hint" title="repeat anzahl:">repeat:</span>
-                                    </div>
+                    <!-- Rechte Seite: Code + Konsole -->
+                    <div class="code-section">
+                        <div class="code-panel">
+                            <div class="code-header">
+                                <h4 data-i18n="code.title">Code</h4>
+                                <div class="code-hints">
+                                    <span class="code-hint">fd()</span>
+                                    <span class="code-hint">rt()</span>
+                                    <span class="code-hint">repeat:</span>
                                 </div>
-                                <div class="code-editor-container">
-                                    <div class="line-numbers" id="lineNumbers"></div>
-                                    <textarea id="codeInput" spellcheck="false" placeholder="# Schreibe hier deinen xLogo-Code...
-# Beispiel:
+                            </div>
+                            <div class="code-editor-container">
+                                <div class="line-numbers" id="lineNumbers"></div>
+                                <textarea id="codeInput" spellcheck="false" placeholder="# Code hier...
 fd(100)
 rt(90)
-fd(100)
 
-# Schleife mit Einrückung:
 repeat 4:
     fd(100)
     rt(90)"></textarea>
-                                </div>
                             </div>
-
-                            <!-- Konsole -->
-                            <div class="console-panel">
-                                <div class="console-header">
-                                    <h4>Konsole</h4>
-                                    <button class="console-clear-btn" id="clearConsoleBtn" title="Konsole leeren">🗑️</button>
-                                </div>
-                                <div class="console-output" id="consoleOutput">
-                                    <div class="console-welcome">Willkommen! Drücke F5 oder klicke auf "Ausführen".</div>
-                                </div>
+                        </div>
+                        <div class="console-panel">
+                            <div class="console-header">
+                                <h4 data-i18n="console.title">Konsole</h4>
+                                <button class="console-clear-btn" id="clearConsoleBtn">🗑️</button>
+                            </div>
+                            <div class="console-output" id="consoleOutput">
+                                <div class="console-welcome" data-i18n="console.welcome">Drücke F5 zum Ausführen</div>
                             </div>
                         </div>
                     </div>
@@ -180,88 +166,60 @@ repeat 4:
 
             <!-- Sandbox-Ansicht -->
             <section class="view sandbox-view" id="sandboxView">
-                <div class="sandbox-layout">
-                    <div class="sandbox-canvas-area">
+                <div class="sandbox-workspace">
+                    <div class="sandbox-left">
+                        <div class="command-reference">
+                            <h4 data-i18n="reference.title">Befehle:</h4>
+                            <div class="command-grid">
+                                <code>fd(X)</code><code>bk(X)</code><code>rt(X)</code><code>lt(X)</code>
+                                <code>pu()</code><code>pd()</code><code>repeat X:</code><code>print()</code>
+                            </div>
+                        </div>
                         <div class="canvas-container">
-                            <canvas id="sandboxCanvas" width="600" height="500"></canvas>
+                            <canvas id="sandboxCanvas" width="500" height="400"></canvas>
                         </div>
                         <div class="control-toolbar">
                             <div class="control-group">
-                                <button class="control-btn run-btn" id="sandboxRunBtn" title="Ausführen (F5)">
-                                    <span class="btn-icon">▶️</span>
-                                    <span class="btn-text">Ausführen</span>
-                                </button>
-                                <button class="control-btn stop-btn" id="sandboxStopBtn" title="Stoppen">
-                                    <span class="btn-icon">⏹️</span>
-                                    <span class="btn-text">Stopp</span>
-                                </button>
-                            </div>
-                            <div class="control-group step-controls">
-                                <button class="control-btn" id="sandboxStepBackBtn" title="Schritt zurück">
-                                    <span class="btn-icon">⏮️</span>
-                                </button>
-                                <button class="control-btn" id="sandboxStepForwardBtn" title="Schritt vorwärts">
-                                    <span class="btn-icon">⏭️</span>
-                                </button>
+                                <button class="control-btn run-btn" id="sandboxRunBtn">▶️</button>
+                                <button class="control-btn stop-btn" id="sandboxStopBtn">⏹️</button>
                             </div>
                             <div class="control-group">
-                                <button class="control-btn" id="sandboxResetBtn" title="Reset">
-                                    <span class="btn-icon">🔄</span>
-                                </button>
-                                <button class="control-btn" id="sandboxClearBtn" title="Löschen">
-                                    <span class="btn-icon">🗑️</span>
-                                </button>
+                                <button class="control-btn" id="sandboxStepBackBtn">⏮️</button>
+                                <button class="control-btn" id="sandboxStepForwardBtn">⏭️</button>
                             </div>
                             <div class="control-group">
-                                <input type="color" id="penColor" value="#00aa00" title="Stiftfarbe">
-                                <input type="range" id="penWidth" min="1" max="10" value="2" title="Stiftbreite">
+                                <button class="control-btn" id="sandboxResetBtn">🔄</button>
+                                <button class="control-btn" id="sandboxClearBtn">🗑️</button>
+                            </div>
+                            <div class="control-group">
+                                <input type="color" id="penColor" value="#00aa00">
+                                <input type="range" id="penWidth" min="1" max="10" value="2" title="Breite">
                             </div>
                             <div class="control-group speed-control">
-                                <label>🐢</label>
+                                <span>🐢</span>
                                 <input type="range" id="sandboxSpeedSlider" min="1" max="10" value="5">
-                                <label>🐇</label>
+                                <span>🐇</span>
                             </div>
                         </div>
                     </div>
-
-                    <div class="sandbox-code-area">
-                        <div class="command-reference">
-                            <h4>xLogo Befehlsreferenz:</h4>
-                            <div class="command-list">
-                                <div class="command-item"><code>fd(X)</code> - Forward: X Schritte vorwärts</div>
-                                <div class="command-item"><code>bk(X)</code> - Back: X Schritte rückwärts</div>
-                                <div class="command-item"><code>rt(X)</code> - Right: X Grad nach rechts</div>
-                                <div class="command-item"><code>lt(X)</code> - Left: X Grad nach links</div>
-                                <div class="command-item"><code>pu()</code> - Pen Up: Stift hoch</div>
-                                <div class="command-item"><code>pd()</code> - Pen Down: Stift runter</div>
-                                <div class="command-item"><code>repeat X:</code> - Wiederhole (mit Einrückung!)</div>
-                                <div class="command-item"><code>setpc("rot")</code> - Stiftfarbe</div>
-                                <div class="command-item"><code>setpw(X)</code> - Stiftbreite</div>
-                                <div class="command-item"><code>cs()</code> - Clear Screen</div>
-                                <div class="command-item"><code>home()</code> - Zurück zur Mitte</div>
-                                <div class="command-item"><code>print("text")</code> - Ausgabe in Konsole</div>
-                            </div>
-                        </div>
-
-                        <div class="code-editor-container">
+                    <div class="sandbox-right">
+                        <div class="code-editor-container sandbox-editor">
                             <div class="line-numbers" id="sandboxLineNumbers"></div>
                             <textarea id="sandboxCode" spellcheck="false" placeholder="# Freies Experimentieren!
-# Beispiel - Quadrat:
 
 repeat 4:
     fd(100)
     rt(90)
 
-print('Quadrat fertig!')"></textarea>
+print('Fertig!')"></textarea>
                         </div>
-
                         <div class="console-panel">
                             <div class="console-header">
-                                <h4>Konsole</h4>
+                                <h4 data-i18n="console.title">Konsole</h4>
                                 <button class="console-clear-btn" id="sandboxClearConsoleBtn">🗑️</button>
                             </div>
                             <div class="console-output" id="sandboxConsoleOutput">
-                                <div class="console-welcome">Bereit zum Experimentieren!</div>
+                                <div class="console-welcome" data-i18n="console.ready">Bereit!</div>
                             </div>
                         </div>
                     </div>
@@ -271,62 +229,51 @@ print('Quadrat fertig!')"></textarea>
             <!-- Admin-Ansicht -->
             <section class="view admin-view" id="adminView">
                 <div class="admin-container">
-                    <h2>Aufgaben erstellen</h2>
-                    <p class="admin-intro">Erstelle eigene Aufgaben für deine Schüler. Die Aufgaben werden lokal gespeichert und können als Code exportiert werden.</p>
-
-                    <div class="admin-form">
-                        <div class="form-group">
-                            <label for="taskTitle">Aufgabentitel:</label>
-                            <input type="text" id="taskTitle" placeholder="z.B. Zeichne ein Dreieck">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="taskDescription">Aufgabenbeschreibung:</label>
-                            <textarea id="taskDescription" placeholder="Beschreibe die Aufgabe ausführlich..."></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="taskDifficulty">Schwierigkeitsgrad:</label>
-                            <select id="taskDifficulty">
-                                <option value="beginner">🌱 Anfänger (+10 Rubox)</option>
-                                <option value="intermediate">🌿 Fortgeschritten (+25 Rubox)</option>
-                                <option value="advanced">🌳 Experte (+50 Rubox)</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="taskSolution">Musterlösung (Code):</label>
-                            <textarea id="taskSolution" placeholder="fd(100)
-rt(120)
-fd(100)
-rt(120)
-fd(100)"></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="taskHint">Hinweis für Schüler:</label>
-                            <textarea id="taskHint" placeholder="Ein hilfreicher Hinweis..."></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Vorschau der Musterlösung:</label>
-                            <div class="preview-container">
-                                <canvas id="adminPreviewCanvas" width="300" height="300"></canvas>
-                                <button class="control-btn" id="previewSolutionBtn">👁️ Vorschau</button>
+                    <h2 data-i18n="admin.title">Aufgaben erstellen</h2>
+                    <div class="admin-grid">
+                        <div class="admin-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="taskTitle" data-i18n="admin.taskTitle">Titel:</label>
+                                    <input type="text" id="taskTitle" placeholder="z.B. Zeichne ein Dreieck">
+                                </div>
+                                <div class="form-group">
+                                    <label for="taskDifficulty" data-i18n="admin.difficulty">Schwierigkeit:</label>
+                                    <select id="taskDifficulty">
+                                        <option value="beginner">🌱 Anfänger</option>
+                                        <option value="intermediate">🌿 Fortgeschritten</option>
+                                        <option value="advanced">🌳 Experte</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="taskDescription" data-i18n="admin.description">Beschreibung:</label>
+                                <textarea id="taskDescription" rows="2" placeholder="Beschreibe die Aufgabe..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="taskSolution" data-i18n="admin.solution">Musterlösung:</label>
+                                <textarea id="taskSolution" rows="4" placeholder="fd(100)
+rt(90)"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="taskHint" data-i18n="admin.hint">Hinweis:</label>
+                                <input type="text" id="taskHint" placeholder="Ein hilfreicher Hinweis...">
+                            </div>
+                            <div class="form-actions">
+                                <button class="btn-primary" id="saveTaskBtn">💾 <span data-i18n="admin.save">Speichern</span></button>
+                                <button class="btn-secondary" id="previewSolutionBtn">👁️ <span data-i18n="admin.preview">Vorschau</span></button>
+                                <button class="btn-secondary" id="exportTasksBtn">📤 Export</button>
+                                <button class="btn-secondary" id="importTasksBtn">📥 Import</button>
+                                <input type="file" id="importFile" accept=".json" style="display: none;">
                             </div>
                         </div>
-
-                        <div class="form-actions">
-                            <button class="btn-primary" id="saveTaskBtn">💾 Aufgabe speichern</button>
-                            <button class="btn-secondary" id="exportTasksBtn">📤 Alle exportieren</button>
-                            <button class="btn-secondary" id="importTasksBtn">📥 Importieren</button>
-                            <input type="file" id="importFile" accept=".json" style="display: none;">
+                        <div class="admin-preview">
+                            <canvas id="adminPreviewCanvas" width="250" height="250"></canvas>
+                            <div class="custom-tasks-list">
+                                <h4 data-i18n="admin.saved">Gespeichert:</h4>
+                                <div id="customTasksList"></div>
+                            </div>
                         </div>
-                    </div>
-
-                    <div class="custom-tasks-list">
-                        <h3>Gespeicherte Aufgaben</h3>
-                        <div id="customTasksList"></div>
                     </div>
                 </div>
             </section>
@@ -336,13 +283,13 @@ fd(100)"></textarea>
         <div class="reward-popup" id="rewardPopup">
             <div class="reward-content">
                 <div class="reward-animation">🎉</div>
-                <h2>Fantastisch!</h2>
-                <p class="reward-message" id="rewardMessage">Du hast die Aufgabe gelöst!</p>
+                <h2 data-i18n="reward.title">Fantastisch!</h2>
+                <p class="reward-message" id="rewardMessage" data-i18n="reward.message">Aufgabe gelöst!</p>
                 <div class="reward-rubox">
                     <span class="rubox-icon">💎</span>
                     <span class="rubox-amount" id="rewardAmount">+10</span>
                 </div>
-                <button class="btn-primary" id="nextTaskBtn">Weiter zur nächsten Aufgabe</button>
+                <button class="btn-primary" id="nextTaskBtn" data-i18n="reward.next">Weiter</button>
             </div>
         </div>
 
@@ -351,47 +298,35 @@ fd(100)"></textarea>
             <div class="levelup-content">
                 <div class="levelup-animation">⭐</div>
                 <h2>Level Up!</h2>
-                <p class="levelup-message" id="levelupMessage">Du hast Level 2 erreicht!</p>
+                <p class="levelup-message" id="levelupMessage"></p>
                 <button class="btn-primary" id="closeLevelupBtn">Super!</button>
             </div>
         </div>
 
-        <!-- Share-Popup mit QR-Code -->
+        <!-- Share-Popup -->
         <div class="share-popup" id="sharePopup">
             <div class="share-content">
                 <button class="close-popup-btn" id="closeShareBtn">&times;</button>
-                <h2>📤 Seite teilen</h2>
-                <p>Teile diese Seite mit deinen Schülern!</p>
-
+                <h2>📤 <span data-i18n="share.title">Teilen</span></h2>
                 <div class="share-qr">
-                    <canvas id="qrCanvas" width="200" height="200"></canvas>
+                    <canvas id="qrCanvas" width="180" height="180"></canvas>
                 </div>
-
                 <div class="share-link-area">
-                    <label>Link zum Kopieren:</label>
                     <div class="link-copy-container">
                         <input type="text" id="shareLink" readonly>
-                        <button class="copy-btn" id="copyLinkBtn">📋 Kopieren</button>
+                        <button class="copy-btn" id="copyLinkBtn">📋</button>
                     </div>
                     <span class="copy-feedback" id="copyFeedback"></span>
                 </div>
-
                 <div class="share-buttons">
-                    <button class="share-option-btn" id="shareWhatsApp">
-                        <span>📱</span> WhatsApp
-                    </button>
-                    <button class="share-option-btn" id="shareEmail">
-                        <span>✉️</span> E-Mail
-                    </button>
-                    <button class="share-option-btn" id="downloadQR">
-                        <span>💾</span> QR speichern
-                    </button>
+                    <button class="share-option-btn" id="shareWhatsApp">📱 WhatsApp</button>
+                    <button class="share-option-btn" id="shareEmail">✉️ E-Mail</button>
+                    <button class="share-option-btn" id="downloadQR">💾 QR</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- QR-Code Library -->
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
     <script src="app.js"></script>
 </body>
