@@ -1125,33 +1125,39 @@ class CodeEditor {
         const code = this.textarea.value;
         this.lines = code.split('\n');
 
-        // Build line numbers and code lines
-        let lineNumbersHtml = '';
-        let codeHtml = '';
+        // Build combined HTML with line numbers and code on same line
+        let html = '';
 
         const lineCount = Math.max(this.lines.length, 1);
         for (let i = 0; i < lineCount; i++) {
             const lineNum = i + 1;
-            const highlighted = i < this.lines.length ? this.highlightLine(this.lines[i]) : '';
+            const lineContent = i < this.lines.length ? this.lines[i] : '';
+            const highlighted = this.highlightLine(lineContent);
             const isActive = i === this.currentLine;
 
-            // Line number with inline style for active state
-            const lineNumStyle = isActive
-                ? 'background:#eab308;color:#1a1a1a;font-weight:700;border-radius:4px;padding:0.2rem 0.4rem;'
-                : '';
-            lineNumbersHtml += `<span class="${isActive ? 'active' : ''}" style="${lineNumStyle}">${lineNum}</span>`;
+            // Row container style
+            const rowStyle = isActive
+                ? 'display:flex;align-items:center;background:#fef08a;border-left:6px solid #eab308;border-radius:6px;margin:4px 0;padding:8px 12px;'
+                : 'display:flex;align-items:center;margin:4px 0;padding:8px 12px;border-left:6px solid transparent;';
 
-            // Code line with inline style for active state
-            const lineStyle = isActive
-                ? 'background:#fef08a;border-left:6px solid #eab308;color:#1a1a1a;font-weight:500;border-radius:4px;'
-                : '';
-            codeHtml += `<div class="code-line ${isActive ? 'active' : ''}" data-line="${i}" style="${lineStyle}">${highlighted || '&nbsp;'}</div>`;
+            // Line number style
+            const numStyle = isActive
+                ? 'min-width:40px;text-align:right;margin-right:16px;font-weight:700;color:#92400e;'
+                : 'min-width:40px;text-align:right;margin-right:16px;color:#6b7280;';
+
+            // Code style
+            const codeStyle = isActive
+                ? 'flex:1;color:#1a1a1a;font-weight:500;'
+                : 'flex:1;';
+
+            html += `<div class="code-row ${isActive ? 'active' : ''}" data-line="${i}" style="${rowStyle}">
+                <span class="line-num" style="${numStyle}">${lineNum}</span>
+                <span class="line-code" style="${codeStyle}">${highlighted || '&nbsp;'}</span>
+            </div>`;
         }
 
-        this.displayContent.innerHTML = `
-            <div class="code-display-lines">${lineNumbersHtml}</div>
-            <div class="code-display-code">${codeHtml}</div>
-        `;
+        this.displayContent.innerHTML = html;
+        this.displayContent.style.cssText = 'display:flex;flex-direction:column;padding:12px;font-family:monospace;font-size:1.1rem;line-height:1.6;';
     }
 
     highlightLine(line) {
@@ -1193,9 +1199,9 @@ class CodeEditor {
     }
 
     handleDisplayClick(e) {
-        const lineEl = e.target.closest('.code-line');
-        if (lineEl) {
-            const lineNum = parseInt(lineEl.dataset.line);
+        const rowEl = e.target.closest('.code-row');
+        if (rowEl) {
+            const lineNum = parseInt(rowEl.dataset.line);
             this.setActiveLine(lineNum);
         }
         this.displayContent.focus();
@@ -1271,29 +1277,39 @@ class CodeEditor {
     }
 
     updateActiveLineDisplay() {
-        const allLines = this.displayContent.querySelectorAll('.code-line');
-        const allLineNumbers = this.displayContent.querySelectorAll('.code-display-lines span');
+        const allRows = this.displayContent.querySelectorAll('.code-row');
 
-        // Active line style
-        const activeLineStyle = 'background:#fef08a;border-left:6px solid #eab308;color:#1a1a1a;font-weight:500;border-radius:4px;';
-        const activeNumStyle = 'background:#eab308;color:#1a1a1a;font-weight:700;border-radius:4px;padding:0.2rem 0.4rem;';
-
-        allLines.forEach((el, i) => {
+        allRows.forEach((row, i) => {
             const isActive = i === this.currentLine;
-            el.classList.toggle('active', isActive);
-            el.style.cssText = isActive ? activeLineStyle : '';
-        });
+            const lineNum = row.querySelector('.line-num');
+            const lineCode = row.querySelector('.line-code');
 
-        allLineNumbers.forEach((el, i) => {
-            const isActive = i === this.currentLine;
-            el.classList.toggle('active', isActive);
-            el.style.cssText = isActive ? activeNumStyle : '';
+            // Row style
+            row.style.cssText = isActive
+                ? 'display:flex;align-items:center;background:#fef08a;border-left:6px solid #eab308;border-radius:6px;margin:4px 0;padding:8px 12px;'
+                : 'display:flex;align-items:center;margin:4px 0;padding:8px 12px;border-left:6px solid transparent;';
+
+            // Line number style
+            if (lineNum) {
+                lineNum.style.cssText = isActive
+                    ? 'min-width:40px;text-align:right;margin-right:16px;font-weight:700;color:#92400e;'
+                    : 'min-width:40px;text-align:right;margin-right:16px;color:#6b7280;';
+            }
+
+            // Code style
+            if (lineCode) {
+                lineCode.style.cssText = isActive
+                    ? 'flex:1;color:#1a1a1a;font-weight:500;'
+                    : 'flex:1;';
+            }
+
+            row.classList.toggle('active', isActive);
         });
 
         // Scroll into view
-        const activeLine = this.displayContent.querySelector('.code-line.active');
-        if (activeLine) {
-            activeLine.scrollIntoView({ block: 'nearest' });
+        const activeRow = this.displayContent.querySelector('.code-row.active');
+        if (activeRow) {
+            activeRow.scrollIntoView({ block: 'nearest' });
         }
     }
 
