@@ -1109,21 +1109,56 @@ class CodeEditor {
         // Initial render
         this.updateDisplay();
 
-        // Listen for textarea changes
-        this.textarea.addEventListener('input', () => this.updateDisplay());
+        // Listen for textarea changes - always update display in real-time
+        this.textarea.addEventListener('input', () => {
+            this.updateCurrentLineFromCursor();
+            this.updateDisplay();
+        });
         this.textarea.addEventListener('keydown', (e) => this.handleTextareaKey(e));
+        this.textarea.addEventListener('keyup', () => {
+            this.updateCurrentLineFromCursor();
+            this.updateDisplay();
+        });
+        this.textarea.addEventListener('click', () => {
+            this.updateCurrentLineFromCursor();
+            this.updateDisplay();
+        });
+        this.textarea.addEventListener('focus', () => {
+            this.updateCurrentLineFromCursor();
+            this.updateDisplay();
+        });
 
-        // Click on display to edit
+        // Sync scroll between textarea and display
+        this.textarea.addEventListener('scroll', () => {
+            this.displayContent.scrollTop = this.textarea.scrollTop;
+            this.displayContent.scrollLeft = this.textarea.scrollLeft;
+        });
+
+        // Click on display to focus textarea at that line
         this.displayContent.addEventListener('click', (e) => this.handleDisplayClick(e));
 
-        // Keyboard navigation on display
+        // Keyboard navigation on display (when not editing)
         this.displayContent.addEventListener('keydown', (e) => this.handleDisplayKey(e));
         this.displayContent.setAttribute('tabindex', '0');
+
+        // Make sure textarea is always interactive
+        this.textarea.style.pointerEvents = 'auto';
+    }
+
+    updateCurrentLineFromCursor() {
+        const cursorPos = this.textarea.selectionStart;
+        const textBeforeCursor = this.textarea.value.substring(0, cursorPos);
+        const lineNumber = textBeforeCursor.split('\n').length - 1;
+        if (this.currentLine !== lineNumber) {
+            this.currentLine = lineNumber;
+            this.updateActiveLineDisplay();
+        }
     }
 
     updateDisplay() {
         const code = this.textarea.value;
         this.lines = code.split('\n');
+        const isDark = document.body.getAttribute('data-theme') === 'dark';
 
         // Build combined HTML with line numbers and code on same line
         let html = '';
@@ -1135,19 +1170,26 @@ class CodeEditor {
             const highlighted = this.highlightLine(lineContent);
             const isActive = i === this.currentLine;
 
+            // Colors based on theme
+            const activeBg = isDark ? '#422006' : '#fef08a';
+            const activeBorder = isDark ? '#facc15' : '#eab308';
+            const activeNumColor = isDark ? '#fcd34d' : '#92400e';
+            const activeCodeColor = isDark ? '#fef3c7' : '#1a1a1a';
+            const inactiveNumColor = isDark ? '#6b7280' : '#6b7280';
+
             // Row container style
             const rowStyle = isActive
-                ? 'display:flex;align-items:center;background:#fef08a;border-left:6px solid #eab308;border-radius:6px;margin:4px 0;padding:8px 12px;'
+                ? `display:flex;align-items:center;background:${activeBg};border-left:6px solid ${activeBorder};border-radius:6px;margin:4px 0;padding:8px 12px;`
                 : 'display:flex;align-items:center;margin:4px 0;padding:8px 12px;border-left:6px solid transparent;';
 
             // Line number style
             const numStyle = isActive
-                ? 'min-width:40px;text-align:right;margin-right:16px;font-weight:700;color:#92400e;'
-                : 'min-width:40px;text-align:right;margin-right:16px;color:#6b7280;';
+                ? `min-width:40px;text-align:right;margin-right:16px;font-weight:700;color:${activeNumColor};`
+                : `min-width:40px;text-align:right;margin-right:16px;color:${inactiveNumColor};`;
 
             // Code style
             const codeStyle = isActive
-                ? 'flex:1;color:#1a1a1a;font-weight:500;'
+                ? `flex:1;color:${activeCodeColor};font-weight:500;`
                 : 'flex:1;';
 
             html += `<div class="code-row ${isActive ? 'active' : ''}" data-line="${i}" style="${rowStyle}">
@@ -1157,7 +1199,7 @@ class CodeEditor {
         }
 
         this.displayContent.innerHTML = html;
-        this.displayContent.style.cssText = 'display:flex;flex-direction:column;padding:12px;font-family:monospace;font-size:1.1rem;line-height:1.6;';
+        this.displayContent.style.cssText = 'display:flex;flex-direction:column;padding:12px;font-family:monospace;font-size:1.1rem;line-height:1.6;overflow-y:auto;';
     }
 
     highlightLine(line) {
@@ -1203,8 +1245,19 @@ class CodeEditor {
         if (rowEl) {
             const lineNum = parseInt(rowEl.dataset.line);
             this.setActiveLine(lineNum);
+            // Focus textarea and move cursor to that line
+            this.focusTextareaAtLine(lineNum);
         }
-        this.displayContent.focus();
+    }
+
+    focusTextareaAtLine(lineNum) {
+        // Calculate cursor position for the start of the line
+        let pos = 0;
+        for (let i = 0; i < lineNum && i < this.lines.length; i++) {
+            pos += this.lines[i].length + 1; // +1 for newline
+        }
+        this.textarea.focus();
+        this.textarea.selectionStart = this.textarea.selectionEnd = pos;
     }
 
     handleDisplayKey(e) {
@@ -1278,6 +1331,14 @@ class CodeEditor {
 
     updateActiveLineDisplay() {
         const allRows = this.displayContent.querySelectorAll('.code-row');
+        const isDark = document.body.getAttribute('data-theme') === 'dark';
+
+        // Colors based on theme
+        const activeBg = isDark ? '#422006' : '#fef08a';
+        const activeBorder = isDark ? '#facc15' : '#eab308';
+        const activeNumColor = isDark ? '#fcd34d' : '#92400e';
+        const activeCodeColor = isDark ? '#fef3c7' : '#1a1a1a';
+        const inactiveNumColor = isDark ? '#6b7280' : '#6b7280';
 
         allRows.forEach((row, i) => {
             const isActive = i === this.currentLine;
@@ -1286,20 +1347,20 @@ class CodeEditor {
 
             // Row style
             row.style.cssText = isActive
-                ? 'display:flex;align-items:center;background:#fef08a;border-left:6px solid #eab308;border-radius:6px;margin:4px 0;padding:8px 12px;'
+                ? `display:flex;align-items:center;background:${activeBg};border-left:6px solid ${activeBorder};border-radius:6px;margin:4px 0;padding:8px 12px;`
                 : 'display:flex;align-items:center;margin:4px 0;padding:8px 12px;border-left:6px solid transparent;';
 
             // Line number style
             if (lineNum) {
                 lineNum.style.cssText = isActive
-                    ? 'min-width:40px;text-align:right;margin-right:16px;font-weight:700;color:#92400e;'
-                    : 'min-width:40px;text-align:right;margin-right:16px;color:#6b7280;';
+                    ? `min-width:40px;text-align:right;margin-right:16px;font-weight:700;color:${activeNumColor};`
+                    : `min-width:40px;text-align:right;margin-right:16px;color:${inactiveNumColor};`;
             }
 
             // Code style
             if (lineCode) {
                 lineCode.style.cssText = isActive
-                    ? 'flex:1;color:#1a1a1a;font-weight:500;'
+                    ? `flex:1;color:${activeCodeColor};font-weight:500;`
                     : 'flex:1;';
             }
 
@@ -1314,10 +1375,7 @@ class CodeEditor {
     }
 
     editCurrentLine(initialChar = '') {
-        this.textarea.classList.remove('code-input-hidden');
-        this.display.style.display = 'none';
-
-        // Position cursor at the right line
+        // Position cursor at the right line (no longer hiding display)
         let charPos = 0;
         for (let i = 0; i < this.currentLine; i++) {
             charPos += this.lines[i].length + 1; // +1 for newline
@@ -1330,6 +1388,7 @@ class CodeEditor {
             const text = this.textarea.value;
             this.textarea.value = text.substring(0, charPos + this.lines[this.currentLine].length) + initialChar + text.substring(charPos + this.lines[this.currentLine].length);
             this.textarea.selectionStart = this.textarea.selectionEnd = charPos + this.lines[this.currentLine].length + 1;
+            this.updateDisplay();
         }
     }
 
@@ -1347,8 +1406,7 @@ class CodeEditor {
     }
 
     exitEditMode() {
-        this.textarea.classList.add('code-input-hidden');
-        this.display.style.display = '';
+        // Just update display and refocus (no hiding/showing needed)
         this.updateDisplay();
         this.displayContent.focus();
     }
@@ -1434,6 +1492,9 @@ class XLogoApp {
         this.sandboxTurtle.redraw();
         this.expectedTurtle.redraw();
         this.adminTurtle.redraw();
+        // Update code editors with new theme colors
+        this.mainEditor.updateDisplay();
+        this.sandboxEditor.updateDisplay();
     }
 
     initLanguage() {
