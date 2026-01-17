@@ -996,19 +996,26 @@ body {
 }
 
 /* ========================================
-   Responsive
+   Responsive - Mobile First Approach
    ======================================== */
 
+/* Large Desktop (> 1200px) - Default styles above */
+
+/* Desktop (1024px - 1200px) */
 @media (max-width: 1200px) {
     .main-workspace {
         grid-template-columns: 160px 1fr 380px;
     }
+
+    .sandbox-workspace {
+        grid-template-columns: 1fr 380px;
+    }
 }
 
-@media (max-width: 1000px) {
+/* Tablet Landscape (768px - 1024px) */
+@media (max-width: 1024px) {
     .main-workspace {
-        grid-template-columns: 1fr;
-        grid-template-rows: auto 1fr auto;
+        grid-template-columns: 1fr 350px;
     }
 
     .task-panel {
@@ -1017,26 +1024,484 @@ body {
 
     .sandbox-workspace {
         grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 768px) {
-    .main-header {
-        flex-wrap: wrap;
-        padding: 0.3rem 0.5rem;
+        grid-template-rows: 1fr auto;
     }
 
-    .stats-bar { order: 3; width: 100%; justify-content: center; }
-    .main-nav { flex-wrap: wrap; justify-content: center; }
+    .sandbox-left {
+        order: 2;
+    }
 
-    .nav-btn span { display: none; }
+    .sandbox-right {
+        order: 1;
+    }
 
-    .difficulty-cards {
-        flex-wrap: wrap;
+    .command-reference {
+        display: none;
     }
 
     .admin-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+/* Tablet Portrait (600px - 768px) */
+@media (max-width: 768px) {
+    .main-header {
+        flex-wrap: wrap;
+        padding: 0.4rem 0.5rem;
+        gap: 0.4rem;
+    }
+
+    .logo h1 {
+        font-size: 1rem;
+    }
+
+    .stats-bar {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        padding-top: 0.3rem;
+        border-top: 1px solid var(--border-color);
+        margin-top: 0.2rem;
+    }
+
+    .main-nav {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.2rem;
+    }
+
+    .nav-btn {
+        padding: 0.3rem 0.5rem;
+        font-size: 0.75rem;
+    }
+
+    .nav-btn span {
+        display: none;
+    }
+
+    .main-workspace {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+        gap: 0.4rem;
+    }
+
+    .canvas-section {
+        order: 1;
+    }
+
+    .code-section {
+        order: 2;
+    }
+
+    .canvas-container {
+        min-height: 250px;
+        max-height: 300px;
+    }
+
+    #turtleCanvas, #sandboxCanvas {
+        max-height: 250px;
+    }
+
+    .difficulty-selector {
+        margin-bottom: 0.3rem;
+    }
+
+    .difficulty-cards {
+        flex-wrap: wrap;
+        gap: 0.3rem;
+    }
+
+    .difficulty-card {
+        padding: 0.3rem 0.5rem;
+        font-size: 0.8rem;
+    }
+
+    .difficulty-emoji {
+        font-size: 1rem;
+    }
+
+    .difficulty-name {
+        font-size: 0.75rem;
+    }
+
+    .control-toolbar {
+        padding: 0.3rem;
+        gap: 0.3rem;
+    }
+
+    .control-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 1.1rem;
+    }
+
+    .code-panel {
+        min-height: 200px;
+    }
+
+    .console-panel {
+        height: 80px;
+    }
+
+    /* Popups responsive */
+    .share-content, .reward-content, .levelup-content {
+        width: 90%;
+        max-width: 300px;
+        padding: 1rem;
+    }
+}
+
+/* Mobile Large (480px - 600px) */
+@media (max-width: 600px) {
+    html, body {
+        overflow-x: hidden;
+    }
+
+    .main-content {
+        padding: 0.3rem;
+    }
+
+    .main-header {
+        padding: 0.3rem;
+    }
+
+    .logo {
+        gap: 0.3rem;
+    }
+
+    .logo h1 {
+        font-size: 0.9rem;
+    }
+
+    .turtle-icon {
+        font-size: 1.2rem;
+    }
+
+    .rubox-display, .level-display, .streak-display {
+        padding: 0.2rem 0.4rem;
+        font-size: 0.7rem;
+    }
+
+    .header-controls {
+        gap: 0.3rem;
+    }
+
+    .theme-toggle {
+        width: 28px;
+        height: 28px;
+        font-size: 0.9rem;
+    }
+
+    .language-selector select {
+        padding: 0.2rem 0.3rem;
+        font-size: 0.7rem;
+    }
+
+    .difficulty-cards {
+        justify-content: center;
+    }
+
+    .difficulty-card {
+        flex: 0 1 auto;
+        min-width: 80px;
+    }
+
+    .difficulty-reward {
+        display: none;
+    }
+
+    .canvas-container {
+        min-height: 200px;
+        max-height: 250px;
+        padding: 0.3rem;
+    }
+
+    #turtleCanvas, #sandboxCanvas {
+        max-height: 200px;
+    }
+
+    .control-toolbar {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .speed-control {
+        width: 100%;
+        justify-content: center;
+        display: flex;
+        gap: 0.3rem;
+        padding: 0.3rem;
+    }
+
+    .code-panel {
+        padding: 0.3rem;
+    }
+
+    .code-header h4 {
+        font-size: 0.75rem;
+    }
+
+    .code-hints {
+        display: none;
+    }
+
+    .code-editor-container {
+        border-radius: var(--radius-sm);
+    }
+
+    .code-editor-container textarea {
+        font-size: 0.8rem;
+        padding: 0.4rem;
+    }
+
+    .line-numbers {
+        font-size: 0.8rem;
+        min-width: 30px;
+        padding: 0.4rem 0.3rem;
+    }
+
+    .console-panel {
+        height: 70px;
+    }
+
+    .console-header {
+        padding: 0.2rem 0.4rem;
+    }
+
+    .console-header h4 {
+        font-size: 0.7rem;
+    }
+
+    .console-output {
+        font-size: 0.65rem;
+        padding: 0.3rem 0.4rem;
+    }
+}
+
+/* Mobile Small (< 480px) */
+@media (max-width: 480px) {
+    .main-header {
+        padding: 0.25rem;
+    }
+
+    .logo h1 {
+        font-size: 0.8rem;
+    }
+
+    .stats-bar {
+        gap: 0.3rem;
+    }
+
+    .rubox-display, .level-display, .streak-display {
+        padding: 0.15rem 0.3rem;
+        font-size: 0.65rem;
+        gap: 0.15rem;
+    }
+
+    .rubox-icon {
+        font-size: 0.8rem;
+    }
+
+    .nav-btn {
+        padding: 0.25rem 0.4rem;
+        font-size: 0.7rem;
+    }
+
+    .difficulty-cards {
+        gap: 0.2rem;
+    }
+
+    .difficulty-card {
+        padding: 0.25rem 0.4rem;
+    }
+
+    .difficulty-emoji {
+        font-size: 0.9rem;
+    }
+
+    .difficulty-name {
+        font-size: 0.7rem;
+    }
+
+    .canvas-container {
+        min-height: 180px;
+        max-height: 220px;
+    }
+
+    #turtleCanvas, #sandboxCanvas {
+        max-height: 180px;
+    }
+
+    .control-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+    }
+
+    .code-panel {
+        min-height: 150px;
+    }
+
+    .code-editor-container textarea {
+        font-size: 0.75rem;
+    }
+
+    .line-numbers {
+        font-size: 0.75rem;
+        min-width: 25px;
+    }
+
+    .console-panel {
+        height: 60px;
+    }
+
+    /* Admin responsive */
+    .admin-container h2 {
+        font-size: 1rem;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .form-group label {
+        font-size: 0.75rem;
+    }
+
+    .form-group input, .form-group select, .form-group textarea {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.5rem;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .btn-primary, .btn-secondary {
+        width: 100%;
+        text-align: center;
+    }
+
+    /* Share popup */
+    .share-content {
+        padding: 0.75rem;
+    }
+
+    .share-qr canvas {
+        max-width: 150px !important;
+        max-height: 150px !important;
+    }
+
+    .link-copy-container {
+        flex-direction: column;
+    }
+
+    .link-copy-container input {
+        font-size: 0.65rem;
+    }
+
+    .share-buttons {
+        flex-wrap: wrap;
+    }
+
+    .share-option-btn {
+        flex: 1;
+        min-width: 80px;
+        font-size: 0.7rem;
+    }
+}
+
+/* Very Small Devices (< 360px) */
+@media (max-width: 360px) {
+    .main-header {
+        padding: 0.2rem;
+    }
+
+    .logo h1 {
+        font-size: 0.7rem;
+    }
+
+    .turtle-icon {
+        font-size: 1rem;
+    }
+
+    .nav-btn {
+        padding: 0.2rem 0.3rem;
+        font-size: 0.65rem;
+    }
+
+    .difficulty-card {
+        min-width: 70px;
+    }
+
+    .canvas-container {
+        min-height: 150px;
+        max-height: 180px;
+    }
+
+    .control-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 0.9rem;
+    }
+}
+
+/* Landscape orientation on mobile */
+@media (max-height: 500px) and (orientation: landscape) {
+    .main-workspace {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr;
+    }
+
+    .canvas-section {
+        order: 1;
+    }
+
+    .code-section {
+        order: 2;
+    }
+
+    .difficulty-selector {
+        display: none;
+    }
+
+    .canvas-container {
+        min-height: auto;
+        max-height: none;
+    }
+
+    .console-panel {
+        height: 50px;
+    }
+
+    .control-toolbar {
+        padding: 0.2rem;
+    }
+
+    .control-btn {
+        width: 28px;
+        height: 28px;
+    }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+    .control-btn {
+        min-width: 44px;
+        min-height: 44px;
+    }
+
+    .nav-btn {
+        min-height: 36px;
+    }
+
+    .difficulty-card {
+        min-height: 40px;
+    }
+
+    .hint-btn {
+        min-height: 44px;
     }
 }
 
@@ -1411,4 +1876,65 @@ body {
     color: #4ade80;
 }
 
-/* Textarea is now always an invisible overlay - see .code-editor-container textarea */
+/* ========================================
+   Fullscreen Mode Responsive
+   ======================================== */
+
+@media (max-width: 768px) {
+    .code-editor-fullscreen {
+        padding: 0.5rem !important;
+    }
+
+    .code-editor-fullscreen .code-header {
+        padding: 0.5rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .code-editor-fullscreen .code-header h4 {
+        font-size: 1rem;
+    }
+
+    .code-editor-fullscreen .line-numbers {
+        font-size: 1rem;
+        min-width: 40px;
+        padding: 0.5rem 0.3rem;
+    }
+
+    .code-editor-fullscreen textarea,
+    .code-editor-fullscreen #codeInput,
+    .code-editor-fullscreen #sandboxCode {
+        font-size: 1rem;
+        padding: 0.5rem;
+    }
+
+    .code-editor-fullscreen .fullscreen-hint {
+        font-size: 0.75rem;
+        padding: 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .code-editor-fullscreen {
+        padding: 0.3rem !important;
+    }
+
+    .code-editor-fullscreen .code-header h4 {
+        font-size: 0.9rem;
+    }
+
+    .code-editor-fullscreen .line-numbers {
+        font-size: 0.85rem;
+        min-width: 35px;
+    }
+
+    .code-editor-fullscreen textarea,
+    .code-editor-fullscreen #codeInput,
+    .code-editor-fullscreen #sandboxCode {
+        font-size: 0.85rem;
+        padding: 0.4rem;
+    }
+
+    .code-editor-fullscreen .fullscreen-hint {
+        font-size: 0.7rem;
+    }
+}
