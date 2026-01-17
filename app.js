@@ -1098,7 +1098,7 @@ class CodeEditor {
         this.display = document.getElementById(displayId);
         this.panel = document.getElementById(panelId);
         this.displayContent = this.display.querySelector('.code-display-content');
-        this.currentLine = 0;
+        this.currentLine = -1; // -1 = keine Zeile hervorgehoben
         this.lines = [];
         this.isFullscreen = false;
 
@@ -1106,26 +1106,22 @@ class CodeEditor {
     }
 
     init() {
-        // Initial render
+        // Initial render (ohne Hervorhebung)
         this.updateDisplay();
 
-        // Listen for textarea changes - always update display in real-time
+        // Nur beim Tippen (input) wird die Hervorhebung aktiviert
         this.textarea.addEventListener('input', () => {
             this.updateCurrentLineFromCursor();
             this.updateDisplay();
         });
         this.textarea.addEventListener('keydown', (e) => this.handleTextareaKey(e));
-        this.textarea.addEventListener('keyup', () => {
-            this.updateCurrentLineFromCursor();
-            this.updateDisplay();
-        });
-        this.textarea.addEventListener('click', () => {
-            this.updateCurrentLineFromCursor();
-            this.updateDisplay();
-        });
-        this.textarea.addEventListener('focus', () => {
-            this.updateCurrentLineFromCursor();
-            this.updateDisplay();
+
+        // Bei Pfeiltasten im Textarea die aktuelle Zeile aktualisieren
+        this.textarea.addEventListener('keyup', (e) => {
+            if (this.currentLine >= 0 && ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
+                this.updateCurrentLineFromCursor();
+                this.updateDisplay();
+            }
         });
 
         // Sync scroll between textarea and display
@@ -1134,7 +1130,7 @@ class CodeEditor {
             this.displayContent.scrollLeft = this.textarea.scrollLeft;
         });
 
-        // Click on display to focus textarea at that line
+        // Click on display to focus textarea at that line (aktiviert auch Hervorhebung)
         this.displayContent.addEventListener('click', (e) => this.handleDisplayClick(e));
 
         // Keyboard navigation on display (when not editing)
@@ -1168,7 +1164,8 @@ class CodeEditor {
             const lineNum = i + 1;
             const lineContent = i < this.lines.length ? this.lines[i] : '';
             const highlighted = this.highlightLine(lineContent);
-            const isActive = i === this.currentLine;
+            // Nur hervorheben wenn currentLine >= 0 (d.h. Benutzer hat angefangen zu tippen)
+            const isActive = this.currentLine >= 0 && i === this.currentLine;
 
             // Colors based on theme
             const activeBg = isDark ? '#422006' : '#fef08a';
@@ -1341,7 +1338,8 @@ class CodeEditor {
         const inactiveNumColor = isDark ? '#6b7280' : '#6b7280';
 
         allRows.forEach((row, i) => {
-            const isActive = i === this.currentLine;
+            // Nur hervorheben wenn currentLine >= 0
+            const isActive = this.currentLine >= 0 && i === this.currentLine;
             const lineNum = row.querySelector('.line-num');
             const lineCode = row.querySelector('.line-code');
 
@@ -1416,14 +1414,10 @@ class CodeEditor {
         this.panel.classList.toggle('code-editor-fullscreen', this.isFullscreen);
 
         if (this.isFullscreen) {
-            // Start at first line when entering fullscreen
-            this.currentLine = 0;
-            // Force re-render with active class
+            // Keine automatische Hervorhebung - bleibt bei -1
             this.updateDisplay();
-            // Small delay to ensure DOM is updated
             setTimeout(() => {
                 this.displayContent.focus();
-                this.updateActiveLineDisplay();
             }, 50);
         }
     }
@@ -1441,7 +1435,7 @@ class CodeEditor {
 
     setCode(code) {
         this.textarea.value = code;
-        this.currentLine = 0;
+        this.currentLine = -1; // Keine Hervorhebung bis Benutzer tippt
         this.updateDisplay();
     }
 }
