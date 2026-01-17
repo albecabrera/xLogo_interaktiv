@@ -1100,6 +1100,7 @@ class CodeEditor {
         this.currentLine = -1;
         this.lines = [];
         this.isFullscreen = false;
+        this.lineHighlight = null;
 
         this.init();
     }
@@ -1110,29 +1111,64 @@ class CodeEditor {
             this.display.style.display = 'none';
         }
 
+        // Textarea Container vorbereiten
+        const container = this.textarea.closest('.code-editor-container');
+        if (container) {
+            container.style.position = 'relative';
+
+            // Line Highlight Element erstellen
+            this.lineHighlight = document.createElement('div');
+            this.lineHighlight.className = 'line-highlight';
+            this.lineHighlight.style.cssText = `
+                position: absolute;
+                left: 0;
+                right: 0;
+                height: 1.6em;
+                pointer-events: none;
+                z-index: 0;
+                display: none;
+            `;
+            container.insertBefore(this.lineHighlight, container.firstChild);
+        }
+
         // Textarea sichtbar und nutzbar machen
         this.textarea.style.opacity = '1';
         this.textarea.style.position = 'relative';
         this.textarea.style.pointerEvents = 'auto';
         this.textarea.style.width = '100%';
         this.textarea.style.height = '100%';
+        this.textarea.style.zIndex = '2';
+        this.textarea.style.background = 'transparent';
 
         // Line Numbers aktualisieren
         this.updateLineNumbers();
 
-        // Bei Input Line Numbers aktualisieren
+        // Bei Input Line Numbers und Highlight aktualisieren
         this.textarea.addEventListener('input', () => {
             this.updateLineNumbers();
+            this.updateLineHighlight();
         });
 
+        // Bei Cursor-Bewegung Highlight aktualisieren
+        this.textarea.addEventListener('click', () => this.updateLineHighlight());
+        this.textarea.addEventListener('keyup', (e) => {
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End', 'Enter'].includes(e.key)) {
+                this.updateLineHighlight();
+            }
+        });
+        this.textarea.addEventListener('focus', () => this.updateLineHighlight());
+        this.textarea.addEventListener('blur', () => this.hideLineHighlight());
+
         this.textarea.addEventListener('keydown', (e) => this.handleTextareaKey(e));
+
+        // Scroll sync für Highlight
+        this.textarea.addEventListener('scroll', () => this.updateLineHighlight());
     }
 
     updateLineNumbers() {
         const code = this.textarea.value;
         this.lines = code.split('\n');
 
-        // Finde das Line Numbers Element
         const container = this.textarea.closest('.code-editor-container');
         if (container) {
             let lineNumbersEl = container.querySelector('.line-numbers');
@@ -1144,6 +1180,52 @@ class CodeEditor {
                 }
                 lineNumbersEl.textContent = html;
             }
+        }
+    }
+
+    updateLineHighlight() {
+        if (!this.lineHighlight) return;
+
+        // Aktuelle Zeile ermitteln
+        const cursorPos = this.textarea.selectionStart;
+        const textBeforeCursor = this.textarea.value.substring(0, cursorPos);
+        const lineNumber = textBeforeCursor.split('\n').length - 1;
+        this.currentLine = lineNumber;
+
+        // Line Height berechnen
+        const computedStyle = window.getComputedStyle(this.textarea);
+        const lineHeight = parseFloat(computedStyle.lineHeight) || parseFloat(computedStyle.fontSize) * 1.6;
+        const paddingTop = parseFloat(computedStyle.paddingTop) || 8;
+
+        // Position berechnen (berücksichtigt Scroll)
+        const topPosition = paddingTop + (lineNumber * lineHeight) - this.textarea.scrollTop;
+
+        // Highlight anzeigen und positionieren
+        const container = this.textarea.closest('.code-editor-container');
+        const lineNumbersEl = container ? container.querySelector('.line-numbers') : null;
+        const lineNumbersWidth = lineNumbersEl ? lineNumbersEl.offsetWidth : 35;
+
+        // Farbe basierend auf Theme
+        const isDark = document.body.getAttribute('data-theme') === 'dark';
+        const highlightColor = isDark ? 'rgba(139, 69, 69, 0.5)' : 'rgba(255, 235, 59, 0.3)';
+
+        this.lineHighlight.style.cssText = `
+            position: absolute;
+            left: ${lineNumbersWidth}px;
+            right: 0;
+            top: ${topPosition}px;
+            height: ${lineHeight}px;
+            background: ${highlightColor};
+            pointer-events: none;
+            z-index: 1;
+            display: block;
+            border-left: 3px solid ${isDark ? '#8b4545' : '#ffc107'};
+        `;
+    }
+
+    hideLineHighlight() {
+        if (this.lineHighlight) {
+            this.lineHighlight.style.display = 'none';
         }
     }
 
@@ -1172,17 +1254,18 @@ class CodeEditor {
             this.updateLineNumbers();
         }
 
-        // On Enter, update line numbers
+        // On Enter, update line numbers and highlight
         if (e.key === 'Enter') {
             setTimeout(() => {
                 this.updateLineNumbers();
+                this.updateLineHighlight();
             }, 0);
         }
     }
 
     updateDisplay() {
-        // Für Kompatibilität - ruft nur updateLineNumbers auf
         this.updateLineNumbers();
+        this.updateLineHighlight();
     }
 
     toggleFullscreen() {
@@ -1193,6 +1276,7 @@ class CodeEditor {
             this.updateLineNumbers();
             setTimeout(() => {
                 this.textarea.focus();
+                this.updateLineHighlight();
             }, 50);
         }
     }
@@ -1211,6 +1295,7 @@ class CodeEditor {
     setCode(code) {
         this.textarea.value = code;
         this.updateLineNumbers();
+        this.hideLineHighlight();
     }
 }
 
