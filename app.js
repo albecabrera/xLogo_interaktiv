@@ -1081,6 +1081,9 @@ class CodeEditor {
         this.panel.classList.toggle('code-editor-fullscreen', this.isFullscreen);
 
         if (this.isFullscreen) {
+            // Start at first line when entering fullscreen
+            this.currentLine = 0;
+            this.updateDisplay();
             this.displayContent.focus();
         }
     }

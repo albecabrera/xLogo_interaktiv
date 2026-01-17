@@ -1064,27 +1064,70 @@ body {
 
 .code-editor-fullscreen .code-editor-container {
     flex: 1;
-    font-size: 1rem;
+    font-size: 1.2rem;
+    border-radius: var(--radius-lg);
+}
+
+.code-editor-fullscreen .code-display {
+    border-radius: var(--radius-lg);
+}
+
+.code-editor-fullscreen .code-display-content {
+    font-size: 1.2rem;
+    line-height: 2;
+}
+
+.code-editor-fullscreen .code-display-lines {
+    font-size: 1.2rem;
+    min-width: 60px;
+    padding: 1rem 0.5rem;
+    line-height: 2;
+}
+
+.code-editor-fullscreen .code-display-lines span {
+    padding: 0.3rem 0.5rem;
+    margin: 0.1rem 0;
+}
+
+.code-editor-fullscreen .code-display-code {
+    padding: 1rem;
+}
+
+.code-editor-fullscreen .code-line {
+    padding: 0.3rem 0.5rem;
+    margin: 0.1rem 0;
 }
 
 .code-editor-fullscreen .line-numbers {
-    font-size: 1rem;
-    min-width: 40px;
+    font-size: 1.2rem;
+    min-width: 60px;
     padding: 1rem 0.5rem;
 }
 
 .code-editor-fullscreen #codeInput,
 .code-editor-fullscreen #sandboxCode {
-    font-size: 1rem;
+    font-size: 1.2rem;
     padding: 1rem;
 }
 
 .code-editor-fullscreen .fullscreen-hint {
     display: block;
     text-align: center;
-    padding: 0.5rem;
+    padding: 0.75rem;
     color: var(--text-secondary);
-    font-size: 0.8rem;
+    font-size: 0.9rem;
+    background: var(--bg-main);
+    border-radius: var(--radius-md);
+    margin-top: 0.5rem;
+}
+
+.code-editor-fullscreen .code-header {
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.code-editor-fullscreen .code-header h4 {
+    font-size: 1.5rem;
 }
 
 .fullscreen-hint {
@@ -1165,6 +1208,25 @@ body {
     background: rgba(108, 92, 231, 0.25);
     border-left: 3px solid var(--primary);
     margin-left: -3px;
+}
+
+/* Fullscreen mode - more prominent highlighting */
+.code-editor-fullscreen .code-line.active {
+    background: linear-gradient(90deg, rgba(108, 92, 231, 0.4) 0%, rgba(108, 92, 231, 0.15) 100%);
+    border-left: 5px solid var(--primary);
+    margin-left: -5px;
+    padding: 0.4rem 0.5rem;
+    font-size: 1.1rem;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(108, 92, 231, 0.2);
+}
+
+.code-editor-fullscreen .code-display-lines span.active {
+    background: var(--primary);
+    color: white;
+    font-size: 1.1rem;
+    padding: 0.3rem 0.5rem;
+    border-radius: 6px;
 }
 
 .code-line.active .line-number-inline {
