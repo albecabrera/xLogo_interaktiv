@@ -1326,8 +1326,13 @@ class CodeEditor {
         if (this.isFullscreen) {
             // Start at first line when entering fullscreen
             this.currentLine = 0;
+            // Force re-render with active class
             this.updateDisplay();
-            this.displayContent.focus();
+            // Small delay to ensure DOM is updated
+            setTimeout(() => {
+                this.displayContent.focus();
+                this.updateActiveLineDisplay();
+            }, 50);
         }
     }
 
