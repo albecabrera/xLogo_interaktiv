@@ -328,12 +328,21 @@ class Turtle {
         this.ctx.lineCap = 'round';
         this.ctx.lineJoin = 'round';
         for (const seg of this.pathHistory) {
-            this.ctx.strokeStyle = seg.color;
-            this.ctx.lineWidth = seg.width;
-            this.ctx.beginPath();
-            this.ctx.moveTo(seg.x1, seg.y1);
-            this.ctx.lineTo(seg.x2, seg.y2);
-            this.ctx.stroke();
+            if (seg.type === 'dot') {
+                // Draw dot
+                this.ctx.beginPath();
+                this.ctx.arc(seg.x, seg.y, seg.diameter / 2, 0, Math.PI * 2);
+                this.ctx.fillStyle = seg.color;
+                this.ctx.fill();
+            } else {
+                // Draw line
+                this.ctx.strokeStyle = seg.color;
+                this.ctx.lineWidth = seg.width;
+                this.ctx.beginPath();
+                this.ctx.moveTo(seg.x1, seg.y1);
+                this.ctx.lineTo(seg.x2, seg.y2);
+                this.ctx.stroke();
+            }
         }
         this.drawTurtle();
     }
@@ -360,25 +369,142 @@ class Turtle {
     penDownFunc() { this.penDown = true; }
 
     setColor(color) {
+        // Vollständige Farbtabelle aus XLogo Cheatsheet
         const colorMap = {
-            'rot': '#e74c3c', 'red': '#e74c3c',
-            'grün': '#2ecc71', 'green': '#2ecc71',
-            'blau': '#3498db', 'blue': '#3498db',
-            'gelb': '#f1c40f', 'yellow': '#f1c40f',
-            'orange': '#e67e22',
-            'lila': '#9b59b6', 'purple': '#9b59b6',
-            'pink': '#fd79a8',
-            'schwarz': '#000000', 'black': '#000000',
-            'weiß': '#ffffff', 'white': '#ffffff',
-            'braun': '#8b4513', 'brown': '#8b4513'
+            // Deutsche Namen
+            'rot': '#ff0000', 'grün': '#00ff00', 'blau': '#0000ff',
+            'gelb': '#ffff00', 'lila': '#8000ff', 'weiß': '#ffffff',
+            'schwarz': '#000000', 'braun': '#996600',
+            // English names (from cheatsheet)
+            'black': '#000000', 'red': '#ff0000', 'green': '#00ff00',
+            'yellow': '#ffff00', 'blue': '#0000ff', 'magenta': '#ff00ff',
+            'cyan': '#00ffff', 'white': '#ffffff', 'darkgray': '#808080',
+            'lightgray': '#c0c0c0', 'darkred': '#800000', 'darkgreen': '#008000',
+            'darkblue': '#000080', 'orange': '#ffc800', 'pink': '#ffafaf',
+            'purple': '#8000ff', 'brown': '#996600'
         };
-        this.penColor = color.startsWith('#') ? color : (colorMap[color.toLowerCase()] || '#00aa00');
+        if (color.startsWith('#')) {
+            this.penColor = color;
+        } else if (color.startsWith('{') || color.startsWith('[')) {
+            // RGB format: {R G B} or [R, G, B]
+            const rgb = color.replace(/[{}\[\]]/g, '').split(/[\s,]+/).map(Number);
+            if (rgb.length === 3) {
+                this.penColor = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
+            }
+        } else {
+            this.penColor = colorMap[color.toLowerCase()] || '#00aa00';
+        }
     }
 
     setWidth(w) { this.penWidth = Math.max(1, Math.min(20, w)); }
-    home() { this.x = this.width / 2; this.y = this.height / 2; this.angle = -90; this.redraw(); }
+
+    // Position commands
+    setX(x) {
+        const centerX = this.width / 2;
+        this.x = centerX + x;
+        this.redraw();
+    }
+
+    setY(y) {
+        const centerY = this.height / 2;
+        this.y = centerY - y; // Y is inverted in canvas
+        this.redraw();
+    }
+
+    setXY(x, y) {
+        const centerX = this.width / 2;
+        const centerY = this.height / 2;
+        const newX = centerX + x;
+        const newY = centerY - y;
+        if (this.penDown) {
+            this.pathHistory.push({
+                x1: this.x, y1: this.y, x2: newX, y2: newY,
+                color: this.penColor, width: this.penWidth
+            });
+        }
+        this.x = newX;
+        this.y = newY;
+        this.redraw();
+    }
+
+    setPos(x, y) {
+        // Move without drawing
+        const centerX = this.width / 2;
+        const centerY = this.height / 2;
+        this.x = centerX + x;
+        this.y = centerY - y;
+        this.redraw();
+    }
+
+    moveTo(x, y) {
+        // Move with drawing (like setXY)
+        this.setXY(x, y);
+    }
+
+    getX() {
+        return this.x - this.width / 2;
+    }
+
+    getY() {
+        return this.height / 2 - this.y;
+    }
+
+    // Heading commands
+    setHeading(angle) {
+        // 0 = up, 90 = right, 180 = down, 270 = left
+        this.angle = angle - 90; // Convert to canvas coordinates
+        this.redraw();
+    }
+
+    getHeading() {
+        return (this.angle + 90 + 360) % 360;
+    }
+
+    setRandomHeading() {
+        this.angle = Math.random() * 360 - 90;
+        this.redraw();
+    }
+
+    home() {
+        this.x = this.width / 2;
+        this.y = this.height / 2;
+        this.angle = -90;
+        this.redraw();
+    }
+
     hideTurtle() { this.turtleVisible = false; this.redraw(); }
     showTurtle() { this.turtleVisible = true; this.redraw(); }
+
+    // Drawing commands
+    dot(diameter) {
+        this.ctx.beginPath();
+        this.ctx.arc(this.x, this.y, diameter / 2, 0, Math.PI * 2);
+        this.ctx.fillStyle = this.penColor;
+        this.ctx.fill();
+        // Store dot in path history for redraw
+        this.pathHistory.push({
+            type: 'dot', x: this.x, y: this.y, diameter: diameter, color: this.penColor
+        });
+    }
+
+    // Clear commands
+    wash() {
+        // Clear lines but keep turtle position
+        this.pathHistory = [];
+        this.redraw();
+    }
+
+    clean() {
+        // Same as wash
+        this.pathHistory = [];
+        this.redraw();
+    }
+
+    // Background color
+    setScreenColor(color) {
+        this.backgroundColor = color;
+        this.redraw();
+    }
 
     reset() {
         this.x = this.width / 2;
@@ -390,6 +516,7 @@ class Turtle {
         this.pathHistory = [];
         this.stateHistory = [];
         this.turtleVisible = true;
+        this.backgroundColor = null;
         this.clear();
     }
 
@@ -616,17 +743,106 @@ class XLogoInterpreter {
         match = text.match(/^print\s*\(\s*(\d+(?:\.\d+)?)\s*\)$/);
         if (match) return { type: 'print', value: match[1], lineNum };
 
-        // Legacy syntax without parentheses
-        match = text.match(/^fd\s+(-?\d+(?:\.\d+)?)$/);
+        // setx(x) - set X coordinate
+        match = text.match(/^setx\s*\(\s*(-?\d+(?:\.\d+)?)\s*\)$/i);
+        if (match) return { type: 'setx', value: parseFloat(match[1]), lineNum };
+
+        // sety(y) - set Y coordinate
+        match = text.match(/^sety\s*\(\s*(-?\d+(?:\.\d+)?)\s*\)$/i);
+        if (match) return { type: 'sety', value: parseFloat(match[1]), lineNum };
+
+        // setxy(x, y) / setpos(x, y) - set both coordinates
+        match = text.match(/^(?:setxy|setpos)\s*\(\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*\)$/i);
+        if (match) return { type: 'setxy', x: parseFloat(match[1]), y: parseFloat(match[2]), lineNum };
+
+        // moveto(x, y) - move to with drawing
+        match = text.match(/^moveto\s*\(\s*(-?\d+(?:\.\d+)?)\s*,\s*(-?\d+(?:\.\d+)?)\s*\)$/i);
+        if (match) return { type: 'moveto', x: parseFloat(match[1]), y: parseFloat(match[2]), lineNum };
+
+        // setheading(angle) / heading(angle) - set turtle direction
+        match = text.match(/^(?:setheading|heading)\s*\(\s*(-?\d+(?:\.\d+)?)\s*\)$/i);
+        if (match) return { type: 'setheading', value: parseFloat(match[1]), lineNum };
+
+        // setrandomheading() - random direction
+        if (text.match(/^setrandomheading\s*\(\s*\)$/i)) return { type: 'randomheading', lineNum };
+
+        // dot(diameter) - draw filled circle
+        match = text.match(/^dot\s*\(\s*(\d+(?:\.\d+)?)\s*\)$/i);
+        if (match) return { type: 'dot', value: parseFloat(match[1]), lineNum };
+
+        // wash() / clean() - clear lines but keep position
+        if (text.match(/^(?:wash|clean)\s*\(\s*\)$/i)) return { type: 'wash', lineNum };
+
+        // clear() - clear and hide turtle
+        if (text.match(/^clear\s*\(\s*\)$/i)) return { type: 'clear', lineNum };
+
+        // setsc("color") / setscreencolor("color") - background color
+        match = text.match(/^(?:setsc|setscreencolor)\s*\(\s*["']([^"']+)["']\s*\)$/i);
+        if (match) return { type: 'screencolor', value: match[1], lineNum };
+
+        // delay(ms) / wait(ms) - pause execution
+        match = text.match(/^(?:delay|wait)\s*\(\s*(\d+)\s*\)$/i);
+        if (match) return { type: 'delay', value: parseInt(match[1]), lineNum };
+
+        // speed(value) - turtle speed
+        match = text.match(/^speed\s*\(\s*(-?\d+)\s*\)$/i);
+        if (match) return { type: 'speed', value: parseInt(match[1]), lineNum };
+
+        // setPenColor with spc alias
+        match = text.match(/^spc\s*\(\s*["']([^"']+)["']\s*\)$/i);
+        if (match) return { type: 'color', value: match[1], lineNum };
+
+        // setPenWidth with spw alias
+        match = text.match(/^spw\s*\(\s*(\d+(?:\.\d+)?)\s*\)$/i);
+        if (match) return { type: 'width', value: parseFloat(match[1]), lineNum };
+
+        // setLineWidth alias
+        match = text.match(/^setlinewidth\s*\(\s*(\d+(?:\.\d+)?)\s*\)$/i);
+        if (match) return { type: 'width', value: parseFloat(match[1]), lineNum };
+
+        // makeTurtle() - ignored (compatibility)
+        if (text.match(/^maketurtle\s*\(\s*\)$/i)) return { type: 'noop', lineNum };
+
+        // from gturtle import * - ignored (compatibility)
+        if (text.match(/^from\s+gturtle\s+import\s+\*$/i)) return { type: 'noop', lineNum };
+
+        // Legacy syntax without parentheses (XLogo classic)
+        match = text.match(/^fd\s+(-?\d+(?:\.\d+)?)$/i);
         if (match) return { type: 'forward', value: parseFloat(match[1]), lineNum };
-        match = text.match(/^bk\s+(-?\d+(?:\.\d+)?)$/);
+        match = text.match(/^bk\s+(-?\d+(?:\.\d+)?)$/i);
         if (match) return { type: 'backward', value: parseFloat(match[1]), lineNum };
-        match = text.match(/^rt\s+(-?\d+(?:\.\d+)?)$/);
+        match = text.match(/^rt\s+(-?\d+(?:\.\d+)?)$/i);
         if (match) return { type: 'right', value: parseFloat(match[1]), lineNum };
-        match = text.match(/^lt\s+(-?\d+(?:\.\d+)?)$/);
+        match = text.match(/^lt\s+(-?\d+(?:\.\d+)?)$/i);
         if (match) return { type: 'left', value: parseFloat(match[1]), lineNum };
-        if (text === 'pu') return { type: 'penup', lineNum };
-        if (text === 'pd') return { type: 'pendown', lineNum };
+
+        // XLogo legacy: setpc color / setpw number
+        match = text.match(/^setpc\s+(\w+)$/i);
+        if (match) return { type: 'color', value: match[1], lineNum };
+        match = text.match(/^setpw\s+(\d+)$/i);
+        if (match) return { type: 'width', value: parseFloat(match[1]), lineNum };
+        match = text.match(/^setsc\s+(\w+)$/i);
+        if (match) return { type: 'screencolor', value: match[1], lineNum };
+
+        // XLogo legacy: setx, sety, setxy, setheading without parentheses
+        match = text.match(/^setx\s+(-?\d+(?:\.\d+)?)$/i);
+        if (match) return { type: 'setx', value: parseFloat(match[1]), lineNum };
+        match = text.match(/^sety\s+(-?\d+(?:\.\d+)?)$/i);
+        if (match) return { type: 'sety', value: parseFloat(match[1]), lineNum };
+        match = text.match(/^setxy\s+(-?\d+(?:\.\d+)?)\s+(-?\d+(?:\.\d+)?)$/i);
+        if (match) return { type: 'setxy', x: parseFloat(match[1]), y: parseFloat(match[2]), lineNum };
+        match = text.match(/^setheading\s+(-?\d+(?:\.\d+)?)$/i);
+        if (match) return { type: 'setheading', value: parseFloat(match[1]), lineNum };
+
+        // Single word commands
+        if (text.toLowerCase() === 'pu') return { type: 'penup', lineNum };
+        if (text.toLowerCase() === 'pd') return { type: 'pendown', lineNum };
+        if (text.toLowerCase() === 'ht') return { type: 'hideturtle', lineNum };
+        if (text.toLowerCase() === 'st') return { type: 'showturtle', lineNum };
+        if (text.toLowerCase() === 'home') return { type: 'home', lineNum };
+        if (text.toLowerCase() === 'cs') return { type: 'clearscreen', lineNum };
+        if (text.toLowerCase() === 'wash') return { type: 'wash', lineNum };
+        if (text.toLowerCase() === 'clean') return { type: 'wash', lineNum };
 
         throw new Error(`Zeile ${lineNum}: ${t('error.unknownCmd')} "${text}"`);
     }
@@ -682,6 +898,20 @@ class XLogoInterpreter {
             case 'hideturtle': this.turtle.hideTurtle(); break;
             case 'showturtle': this.turtle.showTurtle(); break;
             case 'print': if (this.console) this.console.print(cmd.value); break;
+            // New commands from cheatsheet
+            case 'setx': this.turtle.setX(cmd.value); break;
+            case 'sety': this.turtle.setY(cmd.value); break;
+            case 'setxy': this.turtle.setPos(cmd.x, cmd.y); break;
+            case 'moveto': this.turtle.moveTo(cmd.x, cmd.y); break;
+            case 'setheading': this.turtle.setHeading(cmd.value); break;
+            case 'randomheading': this.turtle.setRandomHeading(); break;
+            case 'dot': this.turtle.dot(cmd.value); break;
+            case 'wash': this.turtle.wash(); break;
+            case 'clear': this.turtle.clean(); this.turtle.hideTurtle(); break;
+            case 'screencolor': this.turtle.setScreenColor(cmd.value); break;
+            case 'delay': /* delay is handled differently for animation */ break;
+            case 'speed': this.turtle.speed = cmd.value; break;
+            case 'noop': /* do nothing - compatibility commands */ break;
         }
     }
 
@@ -700,7 +930,20 @@ class XLogoInterpreter {
             'clearscreen': 'cs()',
             'hideturtle': 'ht()',
             'showturtle': 'st()',
-            'print': `print("${cmd.value}")`
+            'print': `print("${cmd.value}")`,
+            'setx': `setx(${cmd.value})`,
+            'sety': `sety(${cmd.value})`,
+            'setxy': `setxy(${cmd.x}, ${cmd.y})`,
+            'moveto': `moveTo(${cmd.x}, ${cmd.y})`,
+            'setheading': `setheading(${cmd.value})`,
+            'randomheading': 'setRandomHeading()',
+            'dot': `dot(${cmd.value})`,
+            'wash': 'wash()',
+            'clear': 'clear()',
+            'screencolor': `setsc("${cmd.value}")`,
+            'delay': `delay(${cmd.value})`,
+            'speed': `speed(${cmd.value})`,
+            'noop': ''
         };
         return map[cmd.type] || cmd.type;
     }
