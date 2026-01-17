@@ -846,6 +846,264 @@ class GameState {
 }
 
 // ==========================================
+// Code Editor mit Syntax Highlighting
+// ==========================================
+
+class CodeEditor {
+    constructor(textareaId, displayId, panelId) {
+        this.textarea = document.getElementById(textareaId);
+        this.display = document.getElementById(displayId);
+        this.panel = document.getElementById(panelId);
+        this.displayContent = this.display.querySelector('.code-display-content');
+        this.currentLine = 0;
+        this.lines = [];
+        this.isFullscreen = false;
+
+        this.init();
+    }
+
+    init() {
+        // Initial render
+        this.updateDisplay();
+
+        // Listen for textarea changes
+        this.textarea.addEventListener('input', () => this.updateDisplay());
+        this.textarea.addEventListener('keydown', (e) => this.handleTextareaKey(e));
+
+        // Click on display to edit
+        this.displayContent.addEventListener('click', (e) => this.handleDisplayClick(e));
+
+        // Keyboard navigation on display
+        this.displayContent.addEventListener('keydown', (e) => this.handleDisplayKey(e));
+        this.displayContent.setAttribute('tabindex', '0');
+    }
+
+    updateDisplay() {
+        const code = this.textarea.value;
+        this.lines = code.split('\n');
+
+        // Build line numbers
+        let lineNumbersHtml = '';
+        let codeHtml = '';
+
+        const lineCount = Math.max(this.lines.length, 1);
+        for (let i = 0; i < lineCount; i++) {
+            const lineNum = i + 1;
+            const highlighted = i < this.lines.length ? this.highlightLine(this.lines[i]) : '';
+            const activeClass = i === this.currentLine ? 'active' : '';
+            lineNumbersHtml += `<span class="${activeClass}">${lineNum}</span>`;
+            codeHtml += `<div class="code-line ${activeClass}" data-line="${i}">${highlighted || '&nbsp;'}</div>`;
+        }
+
+        this.displayContent.innerHTML = `
+            <div class="code-display-lines">${lineNumbersHtml}</div>
+            <div class="code-display-code">${codeHtml}</div>
+        `;
+    }
+
+    highlightLine(line) {
+        if (!line.trim()) return '';
+
+        // Escape HTML
+        let result = line
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
+
+        // Comments (must be first)
+        if (result.trim().startsWith('#')) {
+            return `<span class="syntax-comment">${result}</span>`;
+        }
+
+        // Preserve leading whitespace for indentation
+        const leadingSpace = result.match(/^(\s*)/)[1];
+        let content = result.substring(leadingSpace.length);
+
+        // Functions: words followed by () - matches QUADRAT(), hideTurtle(), fd(), etc.
+        content = content.replace(/\b([A-Za-z_][A-Za-z0-9_]*)\s*(\()/g, (match, func, paren) => {
+            return `<span class="syntax-function">${func}</span><span class="syntax-paren">${paren}</span>`;
+        });
+
+        // Closing parenthesis
+        content = content.replace(/\)/g, '<span class="syntax-paren">)</span>');
+
+        // Keywords: repeat, if, else, etc.
+        content = content.replace(/\b(repeat|if|else|while|for|def|to|end)\b/gi, '<span class="syntax-keyword">$1</span>');
+
+        // Numbers
+        content = content.replace(/\b(-?\d+(?:\.\d+)?)\b/g, '<span class="syntax-number">$1</span>');
+
+        // Strings
+        content = content.replace(/(["'])([^"']*)\1/g, '<span class="syntax-string">$1$2$1</span>');
+
+        return leadingSpace + content;
+    }
+
+    handleDisplayClick(e) {
+        const lineEl = e.target.closest('.code-line');
+        if (lineEl) {
+            const lineNum = parseInt(lineEl.dataset.line);
+            this.setActiveLine(lineNum);
+        }
+        this.displayContent.focus();
+    }
+
+    handleDisplayKey(e) {
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            this.moveLine(1);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            this.moveLine(-1);
+        } else if (e.key === 'Enter') {
+            e.preventDefault();
+            this.editCurrentLine();
+        } else if (e.key === 'Backspace' || e.key === 'Delete') {
+            e.preventDefault();
+            this.deleteCurrentLine();
+        } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
+            // Start typing on current line
+            this.editCurrentLine(e.key);
+        }
+    }
+
+    handleTextareaKey(e) {
+        // Auto-close parentheses
+        if (e.key === '(') {
+            e.preventDefault();
+            const start = this.textarea.selectionStart;
+            const text = this.textarea.value;
+            this.textarea.value = text.substring(0, start) + '()' + text.substring(start);
+            this.textarea.selectionStart = this.textarea.selectionEnd = start + 1;
+            this.updateDisplay();
+        }
+
+        // Tab for indentation
+        if (e.key === 'Tab') {
+            e.preventDefault();
+            const start = this.textarea.selectionStart;
+            const text = this.textarea.value;
+            this.textarea.value = text.substring(0, start) + '    ' + text.substring(start);
+            this.textarea.selectionStart = this.textarea.selectionEnd = start + 4;
+            this.updateDisplay();
+        }
+
+        // On Enter, sync and update
+        if (e.key === 'Enter') {
+            setTimeout(() => {
+                this.updateDisplay();
+                this.currentLine = Math.min(this.currentLine + 1, this.lines.length);
+                this.updateActiveLineDisplay();
+            }, 0);
+        }
+
+        // Escape to exit editing
+        if (e.key === 'Escape') {
+            this.textarea.blur();
+            this.displayContent.focus();
+            this.updateDisplay();
+        }
+    }
+
+    moveLine(direction) {
+        const newLine = this.currentLine + direction;
+        if (newLine >= 0 && newLine < this.lines.length) {
+            this.setActiveLine(newLine);
+        }
+    }
+
+    setActiveLine(lineNum) {
+        this.currentLine = lineNum;
+        this.updateActiveLineDisplay();
+    }
+
+    updateActiveLineDisplay() {
+        const allLines = this.displayContent.querySelectorAll('.code-line');
+        const allLineNumbers = this.displayContent.querySelectorAll('.code-display-lines span');
+
+        allLines.forEach((el, i) => {
+            el.classList.toggle('active', i === this.currentLine);
+        });
+
+        allLineNumbers.forEach((el, i) => {
+            el.classList.toggle('active', i === this.currentLine);
+        });
+
+        // Scroll into view
+        const activeLine = this.displayContent.querySelector('.code-line.active');
+        if (activeLine) {
+            activeLine.scrollIntoView({ block: 'nearest' });
+        }
+    }
+
+    editCurrentLine(initialChar = '') {
+        this.textarea.classList.remove('code-input-hidden');
+        this.display.style.display = 'none';
+
+        // Position cursor at the right line
+        let charPos = 0;
+        for (let i = 0; i < this.currentLine; i++) {
+            charPos += this.lines[i].length + 1; // +1 for newline
+        }
+
+        this.textarea.focus();
+        this.textarea.selectionStart = this.textarea.selectionEnd = charPos + this.lines[this.currentLine].length;
+
+        if (initialChar) {
+            const text = this.textarea.value;
+            this.textarea.value = text.substring(0, charPos + this.lines[this.currentLine].length) + initialChar + text.substring(charPos + this.lines[this.currentLine].length);
+            this.textarea.selectionStart = this.textarea.selectionEnd = charPos + this.lines[this.currentLine].length + 1;
+        }
+    }
+
+    deleteCurrentLine() {
+        if (this.lines.length <= 1) {
+            this.lines[0] = '';
+        } else {
+            this.lines.splice(this.currentLine, 1);
+            if (this.currentLine >= this.lines.length) {
+                this.currentLine = this.lines.length - 1;
+            }
+        }
+        this.textarea.value = this.lines.join('\n');
+        this.updateDisplay();
+    }
+
+    exitEditMode() {
+        this.textarea.classList.add('code-input-hidden');
+        this.display.style.display = '';
+        this.updateDisplay();
+        this.displayContent.focus();
+    }
+
+    toggleFullscreen() {
+        this.isFullscreen = !this.isFullscreen;
+        this.panel.classList.toggle('code-editor-fullscreen', this.isFullscreen);
+
+        if (this.isFullscreen) {
+            this.displayContent.focus();
+        }
+    }
+
+    exitFullscreen() {
+        if (this.isFullscreen) {
+            this.isFullscreen = false;
+            this.panel.classList.remove('code-editor-fullscreen');
+        }
+    }
+
+    getCode() {
+        return this.textarea.value;
+    }
+
+    setCode(code) {
+        this.textarea.value = code;
+        this.currentLine = 0;
+        this.updateDisplay();
+    }
+}
+
+// ==========================================
 // Hauptanwendung
 // ==========================================
 
@@ -858,11 +1116,16 @@ class XLogoApp {
         this.initCanvases();
         this.initConsoles();
         this.initInterpreters();
-        this.initEventListeners();
-        this.initLineNumbers();
+        this.initCodeEditors();
         this.initEditorFeatures();
+        this.initEventListeners();
         this.updateUI();
         this.loadCurrentTask();
+    }
+
+    initCodeEditors() {
+        this.mainEditor = new CodeEditor('codeInput', 'codeDisplay', 'codePanel');
+        this.sandboxEditor = new CodeEditor('sandboxCode', 'sandboxCodeDisplay', 'sandboxCodePanel');
     }
 
     initTheme() {
@@ -922,102 +1185,20 @@ class XLogoApp {
         this.adminInterpreter = new XLogoInterpreter(this.adminTurtle);
     }
 
-    initLineNumbers() {
-        const updateLineNumbers = (textarea, lineNumbersDiv) => {
-            const lines = textarea.value.split('\n').length;
-            let html = '';
-            for (let i = 1; i <= Math.max(lines, 10); i++) html += `<span>${i}</span>\n`;
-            lineNumbersDiv.innerHTML = html;
-        };
-
-        const codeInput = document.getElementById('codeInput');
-        const lineNumbers = document.getElementById('lineNumbers');
-        const sandboxCode = document.getElementById('sandboxCode');
-        const sandboxLineNumbers = document.getElementById('sandboxLineNumbers');
-
-        updateLineNumbers(codeInput, lineNumbers);
-        updateLineNumbers(sandboxCode, sandboxLineNumbers);
-
-        codeInput.addEventListener('input', () => updateLineNumbers(codeInput, lineNumbers));
-        codeInput.addEventListener('scroll', () => { lineNumbers.scrollTop = codeInput.scrollTop; });
-
-        sandboxCode.addEventListener('input', () => updateLineNumbers(sandboxCode, sandboxLineNumbers));
-        sandboxCode.addEventListener('scroll', () => { sandboxLineNumbers.scrollTop = sandboxCode.scrollTop; });
-    }
-
     initEditorFeatures() {
-        const editors = [
-            document.getElementById('codeInput'),
-            document.getElementById('sandboxCode'),
-            document.getElementById('taskSolution')
-        ];
-
-        editors.forEach(editor => {
-            if (!editor) return;
-
-            editor.addEventListener('keydown', (e) => {
-                // Auto-close parentheses
-                if (e.key === '(') {
-                    e.preventDefault();
-                    const start = editor.selectionStart;
-                    const end = editor.selectionEnd;
-                    const text = editor.value;
-                    const selected = text.substring(start, end);
-                    editor.value = text.substring(0, start) + '(' + selected + ')' + text.substring(end);
-                    editor.selectionStart = editor.selectionEnd = start + 1;
-                    editor.dispatchEvent(new Event('input'));
-                }
-
-                // Auto-close quotes
-                if (e.key === '"' || e.key === "'") {
-                    const start = editor.selectionStart;
-                    const text = editor.value;
-                    if (text[start] === e.key) {
-                        e.preventDefault();
-                        editor.selectionStart = editor.selectionEnd = start + 1;
-                        return;
-                    }
-                    e.preventDefault();
-                    const end = editor.selectionEnd;
-                    const selected = text.substring(start, end);
-                    editor.value = text.substring(0, start) + e.key + selected + e.key + text.substring(end);
-                    editor.selectionStart = editor.selectionEnd = start + 1;
-                    editor.dispatchEvent(new Event('input'));
-                }
-
-                // Duplicate line: Shift+Option/Alt+Down
-                if (e.shiftKey && e.altKey && e.key === 'ArrowDown') {
-                    e.preventDefault();
-                    const start = editor.selectionStart;
-                    const end = editor.selectionEnd;
-                    const text = editor.value;
-
-                    let lineStart = text.lastIndexOf('\n', start - 1) + 1;
-                    let lineEnd = text.indexOf('\n', end);
-                    if (lineEnd === -1) lineEnd = text.length;
-
-                    const selectedLines = text.substring(lineStart, lineEnd);
-                    const newText = text.substring(0, lineEnd) + '\n' + selectedLines + text.substring(lineEnd);
-
-                    editor.value = newText;
-                    const newStart = lineEnd + 1 + (start - lineStart);
-                    const newEnd = lineEnd + 1 + (end - lineStart);
-                    editor.selectionStart = newStart;
-                    editor.selectionEnd = newEnd;
-                    editor.dispatchEvent(new Event('input'));
-                }
-
-                // Tab for indentation (4 spaces)
+        // Setup task solution textarea (not using CodeEditor class for this one)
+        const taskSolution = document.getElementById('taskSolution');
+        if (taskSolution) {
+            taskSolution.addEventListener('keydown', (e) => {
                 if (e.key === 'Tab') {
                     e.preventDefault();
-                    const start = editor.selectionStart;
-                    const text = editor.value;
-                    editor.value = text.substring(0, start) + '    ' + text.substring(start);
-                    editor.selectionStart = editor.selectionEnd = start + 4;
-                    editor.dispatchEvent(new Event('input'));
+                    const start = taskSolution.selectionStart;
+                    const text = taskSolution.value;
+                    taskSolution.value = text.substring(0, start) + '    ' + text.substring(start);
+                    taskSolution.selectionStart = taskSolution.selectionEnd = start + 4;
                 }
             });
-        });
+        }
     }
 
     initEventListeners() {
@@ -1055,7 +1236,7 @@ class XLogoApp {
         document.getElementById('sandboxStepBackBtn').addEventListener('click', () => this.stepSandboxBack());
         document.getElementById('sandboxResetBtn').addEventListener('click', () => this.sandboxTurtle.reset());
         document.getElementById('sandboxClearBtn').addEventListener('click', () => {
-            document.getElementById('sandboxCode').value = '';
+            this.sandboxEditor.setCode('');
             this.sandboxTurtle.reset();
             this.sandboxConsole.clear();
         });
@@ -1082,37 +1263,57 @@ class XLogoApp {
         const active = document.activeElement;
         const isTextarea = active.tagName === 'TEXTAREA';
         const isInput = active.tagName === 'INPUT';
+        const view = document.querySelector('.view.active');
+
+        // Cmd+L (Mac) or Ctrl+L (Windows) for fullscreen toggle
+        if ((e.metaKey || e.ctrlKey) && e.key === 'l') {
+            e.preventDefault();
+            if (view.id === 'sandboxView') {
+                this.sandboxEditor.toggleFullscreen();
+            } else if (view.id === 'learnView') {
+                this.mainEditor.toggleFullscreen();
+            }
+            return;
+        }
+
+        // Escape to exit fullscreen
+        if (e.key === 'Escape') {
+            if (this.mainEditor && this.mainEditor.isFullscreen) {
+                this.mainEditor.exitFullscreen();
+                return;
+            }
+            if (this.sandboxEditor && this.sandboxEditor.isFullscreen) {
+                this.sandboxEditor.exitFullscreen();
+                return;
+            }
+            // Also exit edit mode
+            if (this.mainEditor) this.mainEditor.exitEditMode();
+            if (this.sandboxEditor) this.sandboxEditor.exitEditMode();
+            this.stopCode();
+            this.stopSandboxCode();
+        }
 
         if (e.key === 'F5') {
             e.preventDefault();
-            const view = document.querySelector('.view.active');
             if (view.id === 'sandboxView') this.runSandboxCode();
             else if (view.id === 'learnView') this.runCode();
-        }
-
-        if (e.key === 'Escape') {
-            this.stopCode();
-            this.stopSandboxCode();
         }
 
         if (!isTextarea && !isInput) {
             if (e.key === 'ArrowRight') {
                 e.preventDefault();
-                const view = document.querySelector('.view.active');
                 if (view.id === 'sandboxView') this.stepSandboxForward();
                 else this.stepForward();
             }
 
             if (e.key === 'ArrowLeft') {
                 e.preventDefault();
-                const view = document.querySelector('.view.active');
                 if (view.id === 'sandboxView') this.stepSandboxBack();
                 else this.stepBack();
             }
         }
 
         if (e.ctrlKey && e.key === 'Enter') {
-            const view = document.querySelector('.view.active');
             if (view.id === 'sandboxView') this.runSandboxCode();
             else if (view.id === 'learnView') this.runCode();
         }
@@ -1145,7 +1346,7 @@ class XLogoApp {
             this.expectedTurtle.reset();
             this.expectedInterpreter.execute(task.solution);
             this.mainTurtle.reset();
-            document.getElementById('codeInput').value = '';
+            this.mainEditor.setCode('');
             this.mainConsole.clear();
             this.mainConsole.log(t('console.taskLoaded'), 'info');
         } else {
@@ -1155,7 +1356,7 @@ class XLogoApp {
     }
 
     runCode() {
-        const code = document.getElementById('codeInput').value.trim();
+        const code = this.mainEditor.getCode().trim();
         if (!code) { this.mainConsole.error(t('console.enterCode')); return; }
 
         this.mainConsole.clear();
@@ -1173,7 +1374,7 @@ class XLogoApp {
 
     stepForward() {
         if (this.mainInterpreter.currentStep === 0 || this.mainInterpreter.currentStep >= this.mainInterpreter.flatSteps.length) {
-            const code = document.getElementById('codeInput').value.trim();
+            const code = this.mainEditor.getCode().trim();
             if (!code) { this.mainConsole.error(t('console.enterCode')); return; }
 
             this.mainTurtle.reset();
@@ -1223,7 +1424,7 @@ class XLogoApp {
         this.mainConsole.log(t('console.reset'), 'info');
     }
 
-    clearCode() { document.getElementById('codeInput').value = ''; this.resetCanvas(); }
+    clearCode() { this.mainEditor.setCode(''); this.resetCanvas(); }
 
     showHint() {
         const task = this.gameState.getCurrentTask();
@@ -1283,7 +1484,7 @@ class XLogoApp {
     }
 
     runSandboxCode() {
-        const code = document.getElementById('sandboxCode').value.trim();
+        const code = this.sandboxEditor.getCode().trim();
         if (!code) { this.sandboxConsole.error(t('console.enterCode')); return; }
 
         this.sandboxConsole.clear();
@@ -1303,7 +1504,7 @@ class XLogoApp {
 
     stepSandboxForward() {
         if (this.sandboxInterpreter.currentStep === 0 || this.sandboxInterpreter.currentStep >= this.sandboxInterpreter.flatSteps.length) {
-            const code = document.getElementById('sandboxCode').value.trim();
+            const code = this.sandboxEditor.getCode().trim();
             if (!code) { this.sandboxConsole.error(t('console.enterCode')); return; }
 
             this.sandboxTurtle.reset();

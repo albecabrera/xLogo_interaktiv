@@ -292,7 +292,7 @@ body {
 .main-workspace {
     flex: 1;
     display: grid;
-    grid-template-columns: 200px 1fr 320px;
+    grid-template-columns: 180px 1fr 450px;
     gap: 0.5rem;
     min-height: 0;
     overflow: hidden;
@@ -517,9 +517,35 @@ body {
     overflow: hidden;
     background: var(--bg-input);
     min-height: 0;
+    position: relative;
+}
+
+.code-editor-container .code-display {
+    flex: 1;
+    display: flex;
+    border: none;
+    border-radius: 0;
+}
+
+.code-editor-container .code-input-hidden {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.code-editor-container textarea:not(.code-input-hidden) {
+    flex: 1;
+    position: relative;
+    opacity: 1;
+    pointer-events: auto;
 }
 
 .line-numbers {
+    display: none; /* Hidden - line numbers are now in code-display */
     background: var(--bg-main);
     padding: 0.5rem 0.3rem;
     font-family: 'Fira Code', monospace;
@@ -971,7 +997,7 @@ body {
 
 @media (max-width: 1200px) {
     .main-workspace {
-        grid-template-columns: 180px 1fr 280px;
+        grid-template-columns: 160px 1fr 380px;
     }
 }
 
@@ -1008,4 +1034,191 @@ body {
     .admin-grid {
         grid-template-columns: 1fr;
     }
+}
+
+/* ========================================
+   Code Editor Fullscreen Mode (Cmd+L)
+   ======================================== */
+
+.code-editor-fullscreen {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 2000 !important;
+    background: var(--bg-card) !important;
+    border-radius: 0 !important;
+    padding: 1rem !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.code-editor-fullscreen .code-header {
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.code-editor-fullscreen .code-editor-container {
+    flex: 1;
+    font-size: 1rem;
+}
+
+.code-editor-fullscreen .line-numbers {
+    font-size: 1rem;
+    min-width: 40px;
+    padding: 1rem 0.5rem;
+}
+
+.code-editor-fullscreen #codeInput,
+.code-editor-fullscreen #sandboxCode {
+    font-size: 1rem;
+    padding: 1rem;
+}
+
+.code-editor-fullscreen .fullscreen-hint {
+    display: block;
+    text-align: center;
+    padding: 0.5rem;
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+}
+
+.fullscreen-hint {
+    display: none;
+}
+
+/* ========================================
+   Syntax Highlighted Code Display
+   ======================================== */
+
+.code-display {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: var(--bg-input);
+    min-height: 0;
+}
+
+.code-display-content {
+    flex: 1;
+    display: flex;
+    overflow-y: auto;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    outline: none;
+}
+
+.code-display-content:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: -2px;
+}
+
+.code-display-lines {
+    background: var(--bg-main);
+    padding: 0.5rem 0.3rem;
+    text-align: right;
+    user-select: none;
+    min-width: 28px;
+    color: var(--text-light);
+}
+
+.code-display-lines span {
+    display: block;
+    padding: 0.1rem 0.2rem;
+    transition: all 0.1s ease;
+}
+
+.code-display-lines span.active {
+    color: var(--primary);
+    font-weight: 700;
+    background: rgba(108, 92, 231, 0.1);
+    border-radius: 3px;
+}
+
+.code-display-code {
+    flex: 1;
+    padding: 0.5rem;
+    overflow-x: auto;
+}
+
+.code-line {
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: background 0.1s ease;
+    white-space: pre;
+}
+
+.code-line:hover {
+    background: rgba(108, 92, 231, 0.1);
+}
+
+.code-line.active {
+    background: rgba(108, 92, 231, 0.25);
+    border-left: 3px solid var(--primary);
+    margin-left: -3px;
+}
+
+.code-line.active .line-number-inline {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+/* Syntax highlighting colors */
+.syntax-function {
+    color: #e879f9;
+    font-weight: 600;
+}
+
+.syntax-keyword {
+    color: #f472b6;
+    font-weight: 600;
+}
+
+.syntax-number {
+    color: #38bdf8;
+}
+
+.syntax-string {
+    color: #a3e635;
+}
+
+.syntax-comment {
+    color: var(--text-light);
+    font-style: italic;
+}
+
+.syntax-paren {
+    color: #fbbf24;
+}
+
+[data-theme="dark"] .syntax-function {
+    color: #c084fc;
+}
+
+[data-theme="dark"] .syntax-keyword {
+    color: #f472b6;
+}
+
+[data-theme="dark"] .syntax-number {
+    color: #38bdf8;
+}
+
+[data-theme="dark"] .syntax-string {
+    color: #4ade80;
+}
+
+/* Hidden textarea for editing in display mode */
+.code-input-hidden {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
 }

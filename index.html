@@ -131,18 +131,22 @@
 
                     <!-- Rechte Seite: Code + Konsole -->
                     <div class="code-section">
-                        <div class="code-panel">
+                        <div class="code-panel" id="codePanel">
                             <div class="code-header">
                                 <h4 data-i18n="code.title">Code</h4>
                                 <div class="code-hints">
                                     <span class="code-hint">fd()</span>
                                     <span class="code-hint">rt()</span>
                                     <span class="code-hint">repeat:</span>
+                                    <span class="code-hint">⌘L</span>
                                 </div>
                             </div>
                             <div class="code-editor-container">
                                 <div class="line-numbers" id="lineNumbers"></div>
-                                <textarea id="codeInput" spellcheck="false" placeholder="# Code hier...
+                                <div class="code-display" id="codeDisplay">
+                                    <div class="code-display-content" id="codeDisplayContent"></div>
+                                </div>
+                                <textarea id="codeInput" spellcheck="false" class="code-input-hidden" placeholder="# Code hier...
 fd(100)
 rt(90)
 
@@ -150,6 +154,7 @@ repeat 4:
     fd(100)
     rt(90)"></textarea>
                             </div>
+                            <div class="fullscreen-hint">Drücke ⌘L oder Esc zum Beenden</div>
                         </div>
                         <div class="console-panel">
                             <div class="console-header">
@@ -203,15 +208,27 @@ repeat 4:
                         </div>
                     </div>
                     <div class="sandbox-right">
-                        <div class="code-editor-container sandbox-editor">
-                            <div class="line-numbers" id="sandboxLineNumbers"></div>
-                            <textarea id="sandboxCode" spellcheck="false" placeholder="# Freies Experimentieren!
+                        <div class="code-panel" id="sandboxCodePanel">
+                            <div class="code-header">
+                                <h4 data-i18n="code.title">Code</h4>
+                                <div class="code-hints">
+                                    <span class="code-hint">⌘L Fullscreen</span>
+                                </div>
+                            </div>
+                            <div class="code-editor-container sandbox-editor">
+                                <div class="line-numbers" id="sandboxLineNumbers"></div>
+                                <div class="code-display" id="sandboxCodeDisplay">
+                                    <div class="code-display-content" id="sandboxCodeDisplayContent"></div>
+                                </div>
+                                <textarea id="sandboxCode" spellcheck="false" class="code-input-hidden" placeholder="# Freies Experimentieren!
 
 repeat 4:
     fd(100)
     rt(90)
 
 print('Fertig!')"></textarea>
+                            </div>
+                            <div class="fullscreen-hint">Drücke ⌘L oder Esc zum Beenden</div>
                         </div>
                         <div class="console-panel">
                             <div class="console-header">
