@@ -1097,8 +1097,7 @@ class CodeEditor {
         this.textarea = document.getElementById(textareaId);
         this.display = document.getElementById(displayId);
         this.panel = document.getElementById(panelId);
-        this.displayContent = this.display.querySelector('.code-display-content');
-        this.currentLine = -1; // -1 = keine Zeile hervorgehoben
+        this.currentLine = -1;
         this.lines = [];
         this.isFullscreen = false;
 
@@ -1106,174 +1105,50 @@ class CodeEditor {
     }
 
     init() {
-        // Initial render (ohne Hervorhebung)
-        this.updateDisplay();
-
-        // Nur beim Tippen (input) wird die Hervorhebung aktiviert
-        this.textarea.addEventListener('input', () => {
-            this.updateCurrentLineFromCursor();
-            this.updateDisplay();
-        });
-        this.textarea.addEventListener('keydown', (e) => this.handleTextareaKey(e));
-
-        // Bei Pfeiltasten im Textarea die aktuelle Zeile aktualisieren
-        this.textarea.addEventListener('keyup', (e) => {
-            if (this.currentLine >= 0 && ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) {
-                this.updateCurrentLineFromCursor();
-                this.updateDisplay();
-            }
-        });
-
-        // Sync scroll between textarea and display
-        this.textarea.addEventListener('scroll', () => {
-            this.displayContent.scrollTop = this.textarea.scrollTop;
-            this.displayContent.scrollLeft = this.textarea.scrollLeft;
-        });
-
-        // Click on display to focus textarea at that line (aktiviert auch Hervorhebung)
-        this.displayContent.addEventListener('click', (e) => this.handleDisplayClick(e));
-
-        // Keyboard navigation on display (when not editing)
-        this.displayContent.addEventListener('keydown', (e) => this.handleDisplayKey(e));
-        this.displayContent.setAttribute('tabindex', '0');
-
-        // Make sure textarea is always interactive
-        this.textarea.style.pointerEvents = 'auto';
-    }
-
-    updateCurrentLineFromCursor() {
-        const cursorPos = this.textarea.selectionStart;
-        const textBeforeCursor = this.textarea.value.substring(0, cursorPos);
-        const lineNumber = textBeforeCursor.split('\n').length - 1;
-        if (this.currentLine !== lineNumber) {
-            this.currentLine = lineNumber;
-            this.updateActiveLineDisplay();
+        // Display verstecken - nur normales Textarea verwenden
+        if (this.display) {
+            this.display.style.display = 'none';
         }
+
+        // Textarea sichtbar und nutzbar machen
+        this.textarea.style.opacity = '1';
+        this.textarea.style.position = 'relative';
+        this.textarea.style.pointerEvents = 'auto';
+        this.textarea.style.width = '100%';
+        this.textarea.style.height = '100%';
+
+        // Line Numbers aktualisieren
+        this.updateLineNumbers();
+
+        // Bei Input Line Numbers aktualisieren
+        this.textarea.addEventListener('input', () => {
+            this.updateLineNumbers();
+        });
+
+        this.textarea.addEventListener('keydown', (e) => this.handleTextareaKey(e));
     }
 
-    updateDisplay() {
+    updateLineNumbers() {
         const code = this.textarea.value;
         this.lines = code.split('\n');
-        const isDark = document.body.getAttribute('data-theme') === 'dark';
 
-        // Build combined HTML with line numbers and code on same line
-        let html = '';
-
-        const lineCount = Math.max(this.lines.length, 1);
-        for (let i = 0; i < lineCount; i++) {
-            const lineNum = i + 1;
-            const lineContent = i < this.lines.length ? this.lines[i] : '';
-            const highlighted = this.highlightLine(lineContent);
-            // Nur hervorheben wenn currentLine >= 0 (d.h. Benutzer hat angefangen zu tippen)
-            const isActive = this.currentLine >= 0 && i === this.currentLine;
-
-            // Colors based on theme
-            const activeBg = isDark ? '#422006' : '#fef08a';
-            const activeBorder = isDark ? '#facc15' : '#eab308';
-            const activeNumColor = isDark ? '#fcd34d' : '#92400e';
-            const activeCodeColor = isDark ? '#fef3c7' : '#1a1a1a';
-            const inactiveNumColor = isDark ? '#6b7280' : '#6b7280';
-
-            // Row container style
-            const rowStyle = isActive
-                ? `display:flex;align-items:center;background:${activeBg};border-left:6px solid ${activeBorder};border-radius:6px;margin:4px 0;padding:8px 12px;`
-                : 'display:flex;align-items:center;margin:4px 0;padding:8px 12px;border-left:6px solid transparent;';
-
-            // Line number style
-            const numStyle = isActive
-                ? `min-width:40px;text-align:right;margin-right:16px;font-weight:700;color:${activeNumColor};`
-                : `min-width:40px;text-align:right;margin-right:16px;color:${inactiveNumColor};`;
-
-            // Code style
-            const codeStyle = isActive
-                ? `flex:1;color:${activeCodeColor};font-weight:500;`
-                : 'flex:1;';
-
-            html += `<div class="code-row ${isActive ? 'active' : ''}" data-line="${i}" style="${rowStyle}">
-                <span class="line-num" style="${numStyle}">${lineNum}</span>
-                <span class="line-code" style="${codeStyle}">${highlighted || '&nbsp;'}</span>
-            </div>`;
+        // Finde das Line Numbers Element
+        const container = this.textarea.closest('.code-editor-container');
+        if (container) {
+            let lineNumbersEl = container.querySelector('.line-numbers');
+            if (lineNumbersEl) {
+                lineNumbersEl.style.display = 'block';
+                let html = '';
+                for (let i = 1; i <= Math.max(this.lines.length, 1); i++) {
+                    html += i + '\n';
+                }
+                lineNumbersEl.textContent = html;
+            }
         }
-
-        this.displayContent.innerHTML = html;
-        this.displayContent.style.cssText = 'display:flex;flex-direction:column;padding:12px;font-family:monospace;font-size:1.1rem;line-height:1.6;overflow-y:auto;';
-    }
-
-    highlightLine(line) {
-        if (!line.trim()) return '';
-
-        // Escape HTML
-        let result = line
-            .replace(/&/g, '&amp;')
-            .replace(/</g, '&lt;')
-            .replace(/>/g, '&gt;');
-
-        // Comments (must be first)
-        if (result.trim().startsWith('#')) {
-            return `<span class="syntax-comment">${result}</span>`;
-        }
-
-        // Preserve leading whitespace for indentation
-        const leadingSpace = result.match(/^(\s*)/)[1];
-        let content = result.substring(leadingSpace.length);
-
-        // Functions: words followed by () - matches QUADRAT(), hideTurtle(), fd(), etc.
-        content = content.replace(/\b([A-Za-z_][A-Za-z0-9_]*)\s*(\()/g, (match, func, paren) => {
-            return `<span class="syntax-function">${func}</span><span class="syntax-paren">${paren}</span>`;
-        });
-
-        // Closing parenthesis
-        content = content.replace(/\)/g, '<span class="syntax-paren">)</span>');
-
-        // Keywords: repeat, if, else, etc.
-        content = content.replace(/\b(repeat|if|else|while|for|def|to|end)\b/gi, '<span class="syntax-keyword">$1</span>');
-
-        // Numbers
-        content = content.replace(/\b(-?\d+(?:\.\d+)?)\b/g, '<span class="syntax-number">$1</span>');
-
-        // Strings
-        content = content.replace(/(["'])([^"']*)\1/g, '<span class="syntax-string">$1$2$1</span>');
-
-        return leadingSpace + content;
     }
 
     handleDisplayClick(e) {
-        const rowEl = e.target.closest('.code-row');
-        if (rowEl) {
-            const lineNum = parseInt(rowEl.dataset.line);
-            this.setActiveLine(lineNum);
-            // Focus textarea and move cursor to that line
-            this.focusTextareaAtLine(lineNum);
-        }
-    }
-
-    focusTextareaAtLine(lineNum) {
-        // Calculate cursor position for the start of the line
-        let pos = 0;
-        for (let i = 0; i < lineNum && i < this.lines.length; i++) {
-            pos += this.lines[i].length + 1; // +1 for newline
-        }
         this.textarea.focus();
-        this.textarea.selectionStart = this.textarea.selectionEnd = pos;
-    }
-
-    handleDisplayKey(e) {
-        if (e.key === 'ArrowDown') {
-            e.preventDefault();
-            this.moveLine(1);
-        } else if (e.key === 'ArrowUp') {
-            e.preventDefault();
-            this.moveLine(-1);
-        } else if (e.key === 'Enter') {
-            e.preventDefault();
-            this.editCurrentLine();
-        } else if (e.key === 'Backspace' || e.key === 'Delete') {
-            e.preventDefault();
-            this.deleteCurrentLine();
-        } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey) {
-            // Start typing on current line
-            this.editCurrentLine(e.key);
-        }
     }
 
     handleTextareaKey(e) {
@@ -1284,7 +1159,7 @@ class CodeEditor {
             const text = this.textarea.value;
             this.textarea.value = text.substring(0, start) + '()' + text.substring(start);
             this.textarea.selectionStart = this.textarea.selectionEnd = start + 1;
-            this.updateDisplay();
+            this.updateLineNumbers();
         }
 
         // Tab for indentation
@@ -1294,119 +1169,20 @@ class CodeEditor {
             const text = this.textarea.value;
             this.textarea.value = text.substring(0, start) + '    ' + text.substring(start);
             this.textarea.selectionStart = this.textarea.selectionEnd = start + 4;
-            this.updateDisplay();
+            this.updateLineNumbers();
         }
 
-        // On Enter, sync and update
+        // On Enter, update line numbers
         if (e.key === 'Enter') {
             setTimeout(() => {
-                this.updateDisplay();
-                this.currentLine = Math.min(this.currentLine + 1, this.lines.length);
-                this.updateActiveLineDisplay();
+                this.updateLineNumbers();
             }, 0);
         }
-
-        // Escape to exit editing
-        if (e.key === 'Escape') {
-            this.textarea.blur();
-            this.displayContent.focus();
-            this.updateDisplay();
-        }
     }
 
-    moveLine(direction) {
-        const newLine = this.currentLine + direction;
-        if (newLine >= 0 && newLine < this.lines.length) {
-            this.setActiveLine(newLine);
-        }
-    }
-
-    setActiveLine(lineNum) {
-        this.currentLine = lineNum;
-        this.updateActiveLineDisplay();
-    }
-
-    updateActiveLineDisplay() {
-        const allRows = this.displayContent.querySelectorAll('.code-row');
-        const isDark = document.body.getAttribute('data-theme') === 'dark';
-
-        // Colors based on theme
-        const activeBg = isDark ? '#422006' : '#fef08a';
-        const activeBorder = isDark ? '#facc15' : '#eab308';
-        const activeNumColor = isDark ? '#fcd34d' : '#92400e';
-        const activeCodeColor = isDark ? '#fef3c7' : '#1a1a1a';
-        const inactiveNumColor = isDark ? '#6b7280' : '#6b7280';
-
-        allRows.forEach((row, i) => {
-            // Nur hervorheben wenn currentLine >= 0
-            const isActive = this.currentLine >= 0 && i === this.currentLine;
-            const lineNum = row.querySelector('.line-num');
-            const lineCode = row.querySelector('.line-code');
-
-            // Row style
-            row.style.cssText = isActive
-                ? `display:flex;align-items:center;background:${activeBg};border-left:6px solid ${activeBorder};border-radius:6px;margin:4px 0;padding:8px 12px;`
-                : 'display:flex;align-items:center;margin:4px 0;padding:8px 12px;border-left:6px solid transparent;';
-
-            // Line number style
-            if (lineNum) {
-                lineNum.style.cssText = isActive
-                    ? `min-width:40px;text-align:right;margin-right:16px;font-weight:700;color:${activeNumColor};`
-                    : `min-width:40px;text-align:right;margin-right:16px;color:${inactiveNumColor};`;
-            }
-
-            // Code style
-            if (lineCode) {
-                lineCode.style.cssText = isActive
-                    ? `flex:1;color:${activeCodeColor};font-weight:500;`
-                    : 'flex:1;';
-            }
-
-            row.classList.toggle('active', isActive);
-        });
-
-        // Scroll into view
-        const activeRow = this.displayContent.querySelector('.code-row.active');
-        if (activeRow) {
-            activeRow.scrollIntoView({ block: 'nearest' });
-        }
-    }
-
-    editCurrentLine(initialChar = '') {
-        // Position cursor at the right line (no longer hiding display)
-        let charPos = 0;
-        for (let i = 0; i < this.currentLine; i++) {
-            charPos += this.lines[i].length + 1; // +1 for newline
-        }
-
-        this.textarea.focus();
-        this.textarea.selectionStart = this.textarea.selectionEnd = charPos + this.lines[this.currentLine].length;
-
-        if (initialChar) {
-            const text = this.textarea.value;
-            this.textarea.value = text.substring(0, charPos + this.lines[this.currentLine].length) + initialChar + text.substring(charPos + this.lines[this.currentLine].length);
-            this.textarea.selectionStart = this.textarea.selectionEnd = charPos + this.lines[this.currentLine].length + 1;
-            this.updateDisplay();
-        }
-    }
-
-    deleteCurrentLine() {
-        if (this.lines.length <= 1) {
-            this.lines[0] = '';
-        } else {
-            this.lines.splice(this.currentLine, 1);
-            if (this.currentLine >= this.lines.length) {
-                this.currentLine = this.lines.length - 1;
-            }
-        }
-        this.textarea.value = this.lines.join('\n');
-        this.updateDisplay();
-    }
-
-    exitEditMode() {
-        // Just update display and refocus (no hiding/showing needed)
-        this.updateDisplay();
-        this.displayContent.focus();
+    updateDisplay() {
+        // Für Kompatibilität - ruft nur updateLineNumbers auf
+        this.updateLineNumbers();
     }
 
     toggleFullscreen() {
@@ -1414,10 +1190,9 @@ class CodeEditor {
         this.panel.classList.toggle('code-editor-fullscreen', this.isFullscreen);
 
         if (this.isFullscreen) {
-            // Keine automatische Hervorhebung - bleibt bei -1
-            this.updateDisplay();
+            this.updateLineNumbers();
             setTimeout(() => {
-                this.displayContent.focus();
+                this.textarea.focus();
             }, 50);
         }
     }
@@ -1435,8 +1210,7 @@ class CodeEditor {
 
     setCode(code) {
         this.textarea.value = code;
-        this.currentLine = -1; // Keine Hervorhebung bis Benutzer tippt
-        this.updateDisplay();
+        this.updateLineNumbers();
     }
 }
 
