@@ -1125,7 +1125,7 @@ class CodeEditor {
         const code = this.textarea.value;
         this.lines = code.split('\n');
 
-        // Build line numbers
+        // Build line numbers and code lines
         let lineNumbersHtml = '';
         let codeHtml = '';
 
@@ -1133,9 +1133,19 @@ class CodeEditor {
         for (let i = 0; i < lineCount; i++) {
             const lineNum = i + 1;
             const highlighted = i < this.lines.length ? this.highlightLine(this.lines[i]) : '';
-            const activeClass = i === this.currentLine ? 'active' : '';
-            lineNumbersHtml += `<span class="${activeClass}">${lineNum}</span>`;
-            codeHtml += `<div class="code-line ${activeClass}" data-line="${i}">${highlighted || '&nbsp;'}</div>`;
+            const isActive = i === this.currentLine;
+
+            // Line number with inline style for active state
+            const lineNumStyle = isActive
+                ? 'background:#eab308;color:#1a1a1a;font-weight:700;border-radius:4px;padding:0.2rem 0.4rem;'
+                : '';
+            lineNumbersHtml += `<span class="${isActive ? 'active' : ''}" style="${lineNumStyle}">${lineNum}</span>`;
+
+            // Code line with inline style for active state
+            const lineStyle = isActive
+                ? 'background:#fef08a;border-left:6px solid #eab308;color:#1a1a1a;font-weight:500;border-radius:4px;'
+                : '';
+            codeHtml += `<div class="code-line ${isActive ? 'active' : ''}" data-line="${i}" style="${lineStyle}">${highlighted || '&nbsp;'}</div>`;
         }
 
         this.displayContent.innerHTML = `
@@ -1264,12 +1274,20 @@ class CodeEditor {
         const allLines = this.displayContent.querySelectorAll('.code-line');
         const allLineNumbers = this.displayContent.querySelectorAll('.code-display-lines span');
 
+        // Active line style
+        const activeLineStyle = 'background:#fef08a;border-left:6px solid #eab308;color:#1a1a1a;font-weight:500;border-radius:4px;';
+        const activeNumStyle = 'background:#eab308;color:#1a1a1a;font-weight:700;border-radius:4px;padding:0.2rem 0.4rem;';
+
         allLines.forEach((el, i) => {
-            el.classList.toggle('active', i === this.currentLine);
+            const isActive = i === this.currentLine;
+            el.classList.toggle('active', isActive);
+            el.style.cssText = isActive ? activeLineStyle : '';
         });
 
         allLineNumbers.forEach((el, i) => {
-            el.classList.toggle('active', i === this.currentLine);
+            const isActive = i === this.currentLine;
+            el.classList.toggle('active', isActive);
+            el.style.cssText = isActive ? activeNumStyle : '';
         });
 
         // Scroll into view
