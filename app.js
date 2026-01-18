@@ -323,30 +323,6 @@ class Turtle {
         this.ctx.restore();
     }
 
-    redraw() {
-        this.clear();
-        this.ctx.lineCap = 'round';
-        this.ctx.lineJoin = 'round';
-        for (const seg of this.pathHistory) {
-            if (seg.type === 'dot') {
-                // Draw dot
-                this.ctx.beginPath();
-                this.ctx.arc(seg.x, seg.y, seg.diameter / 2, 0, Math.PI * 2);
-                this.ctx.fillStyle = seg.color;
-                this.ctx.fill();
-            } else {
-                // Draw line
-                this.ctx.strokeStyle = seg.color;
-                this.ctx.lineWidth = seg.width;
-                this.ctx.beginPath();
-                this.ctx.moveTo(seg.x1, seg.y1);
-                this.ctx.lineTo(seg.x2, seg.y2);
-                this.ctx.stroke();
-            }
-        }
-        this.drawTurtle();
-    }
-
     forward(distance) {
         const angleRad = (this.angle * Math.PI) / 180;
         const newX = this.x + distance * Math.cos(angleRad);
@@ -531,6 +507,73 @@ class Turtle {
             dy2: Math.round((seg.y2 - startY) / 5) * 5
         }));
         return JSON.stringify(normalized);
+    }
+
+    // Ghost preview - zeigt erwarteten Pfad als transparente Linien
+    setGhostPath(pathHistory) {
+        this.ghostPath = pathHistory || [];
+    }
+
+    clearGhostPath() {
+        this.ghostPath = [];
+        this.redraw();
+    }
+
+    drawGhost() {
+        if (!this.ghostPath || this.ghostPath.length === 0) return;
+
+        this.ctx.save();
+        this.ctx.globalAlpha = 0.3;
+        this.ctx.setLineDash([8, 4]);
+        this.ctx.lineCap = 'round';
+        this.ctx.lineJoin = 'round';
+
+        const isDark = document.body.getAttribute('data-theme') === 'dark';
+        const ghostColor = isDark ? '#a29bfe' : '#6c5ce7';
+
+        for (const seg of this.ghostPath) {
+            if (seg.type === 'dot') {
+                this.ctx.beginPath();
+                this.ctx.arc(seg.x, seg.y, seg.diameter / 2, 0, Math.PI * 2);
+                this.ctx.fillStyle = ghostColor;
+                this.ctx.fill();
+            } else {
+                this.ctx.strokeStyle = ghostColor;
+                this.ctx.lineWidth = seg.width + 1;
+                this.ctx.beginPath();
+                this.ctx.moveTo(seg.x1, seg.y1);
+                this.ctx.lineTo(seg.x2, seg.y2);
+                this.ctx.stroke();
+            }
+        }
+
+        this.ctx.restore();
+    }
+
+    redraw() {
+        this.clear();
+
+        // Zuerst Ghost zeichnen (hinter dem eigentlichen Pfad)
+        this.drawGhost();
+
+        this.ctx.lineCap = 'round';
+        this.ctx.lineJoin = 'round';
+        for (const seg of this.pathHistory) {
+            if (seg.type === 'dot') {
+                this.ctx.beginPath();
+                this.ctx.arc(seg.x, seg.y, seg.diameter / 2, 0, Math.PI * 2);
+                this.ctx.fillStyle = seg.color;
+                this.ctx.fill();
+            } else {
+                this.ctx.strokeStyle = seg.color;
+                this.ctx.lineWidth = seg.width;
+                this.ctx.beginPath();
+                this.ctx.moveTo(seg.x1, seg.y1);
+                this.ctx.lineTo(seg.x2, seg.y2);
+                this.ctx.stroke();
+            }
+        }
+        this.drawTurtle();
     }
 }
 
@@ -1307,6 +1350,7 @@ class XLogoApp {
     constructor() {
         this.gameState = new GameState();
         this.speed = 5;
+        this.previewEnabled = true;
         this.initTheme();
         this.initLanguage();
         this.initCanvases();
@@ -1434,6 +1478,8 @@ class XLogoApp {
         });
 
         document.getElementById('hintBtn').addEventListener('click', () => this.showHint());
+        document.getElementById('previewBtn').addEventListener('click', () => this.togglePreview());
+        document.getElementById('hintPopupClose').addEventListener('click', () => this.hideHint());
 
         document.getElementById('sandboxRunBtn').addEventListener('click', () => this.runSandboxCode());
         document.getElementById('sandboxStopBtn').addEventListener('click', () => this.stopSandboxCode());
@@ -1559,13 +1605,30 @@ class XLogoApp {
             document.getElementById('taskNumber').textContent = `${this.gameState.currentTaskIndex + 1}/${tasks.length}`;
             document.getElementById('hintContent').classList.remove('visible');
             document.getElementById('hintContent').textContent = '';
+
+            // Berechne das erwartete Ergebnis
             this.expectedTurtle.reset();
             this.expectedInterpreter.execute(task.solution);
+
+            // Speichere den erwarteten Pfad für die Ghost-Preview
+            this.expectedPath = [...this.expectedTurtle.pathHistory];
+
+            // Reset main canvas und setze Ghost-Preview
             this.mainTurtle.reset();
+            if (this.previewEnabled) {
+                this.mainTurtle.setGhostPath(this.expectedPath);
+            }
+            this.mainTurtle.redraw();
 
             // Aufgabe im Code-Editor anzeigen
             const taskCode = this.generateTaskCode(task);
             this.mainEditor.setCode(taskCode);
+
+            // Preview-Button Status aktualisieren
+            const previewBtn = document.getElementById('previewBtn');
+            if (previewBtn) {
+                previewBtn.classList.toggle('active', this.previewEnabled);
+            }
 
             this.mainConsole.clear();
             this.mainConsole.log(t('console.taskLoaded'), 'info');
@@ -1573,6 +1636,7 @@ class XLogoApp {
             document.getElementById('taskContent').innerHTML = `<p class="task-description">${t('task.selectDifficulty')}</p>`;
             document.getElementById('taskNumber').textContent = '✓';
             this.mainEditor.setCode('# ' + t('task.selectDifficulty') + '\n');
+            this.mainTurtle.clearGhostPath();
         }
     }
 
@@ -1583,7 +1647,6 @@ class XLogoApp {
 
         let code = `# Aufgabe ${taskNum}/${totalTasks}: ${task.title}\n`;
         code += `# ${task.description}\n`;
-        code += `# Tipp: ${task.hint}\n`;
         code += `#\n`;
         code += `# Schreib deinen Code hier drunter...\n`;
         code += `\n`;
@@ -1597,7 +1660,12 @@ class XLogoApp {
 
         this.mainConsole.clear();
         this.mainConsole.log(t('console.running'), 'info');
+
+        // Reset aber Ghost-Pfad beibehalten
         this.mainTurtle.reset();
+        if (this.previewEnabled && this.expectedPath) {
+            this.mainTurtle.setGhostPath(this.expectedPath);
+        }
 
         const result = this.mainInterpreter.execute(code);
         if (!result.success) { this.gameState.resetStreak(); this.updateUI(); return; }
@@ -1614,6 +1682,9 @@ class XLogoApp {
             if (!code) { this.mainConsole.error(t('console.enterCode')); return; }
 
             this.mainTurtle.reset();
+            if (this.previewEnabled && this.expectedPath) {
+                this.mainTurtle.setGhostPath(this.expectedPath);
+            }
             this.mainConsole.clear();
             const result = this.mainInterpreter.execute(code, true);
             if (!result.success) return;
@@ -1654,6 +1725,10 @@ class XLogoApp {
 
     resetCanvas() {
         this.mainTurtle.reset();
+        if (this.previewEnabled && this.expectedPath) {
+            this.mainTurtle.setGhostPath(this.expectedPath);
+        }
+        this.mainTurtle.redraw();
         this.mainInterpreter.currentStep = 0;
         this.mainInterpreter.flatSteps = [];
         this.mainConsole.clear();
@@ -1667,15 +1742,39 @@ class XLogoApp {
         if (!task) return;
 
         if (!this.gameState.hintsUsed.has(task.id)) {
-            if (this.gameState.rubox < 5) { this.mainConsole.error(t('console.needRubox')); return; }
+            if (this.gameState.rubox < 5) {
+                this.mainConsole.error(t('console.needRubox'));
+                return;
+            }
             this.gameState.spendRubox(5);
             this.gameState.hintsUsed.add(task.id);
             this.gameState.save();
             this.updateUI();
         }
 
-        document.getElementById('hintContent').textContent = task.hint;
-        document.getElementById('hintContent').classList.add('visible');
+        // Zeige Hint-Popup
+        document.getElementById('hintPopupText').textContent = task.hint;
+        document.getElementById('hintPopup').classList.add('visible');
+    }
+
+    hideHint() {
+        document.getElementById('hintPopup').classList.remove('visible');
+    }
+
+    togglePreview() {
+        this.previewEnabled = !this.previewEnabled;
+
+        const previewBtn = document.getElementById('previewBtn');
+        if (previewBtn) {
+            previewBtn.classList.toggle('active', this.previewEnabled);
+        }
+
+        if (this.previewEnabled && this.expectedPath) {
+            this.mainTurtle.setGhostPath(this.expectedPath);
+        } else {
+            this.mainTurtle.setGhostPath([]);
+        }
+        this.mainTurtle.redraw();
     }
 
     showReward(amount, isNew) {

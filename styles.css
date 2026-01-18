@@ -450,6 +450,21 @@ body {
     color: white;
 }
 
+.hint-btn {
+    background: linear-gradient(135deg, var(--warning) 0%, #f39c12 100%);
+    color: #333;
+}
+
+.preview-btn {
+    background: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-light) 100%);
+    color: white;
+}
+
+.preview-btn.active {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+    box-shadow: 0 0 10px var(--primary);
+}
+
 .speed-control {
     padding: 0.2rem 0.4rem;
     background: var(--bg-main);
@@ -1082,6 +1097,84 @@ body {
 
 .share-option-btn:hover {
     border-color: var(--primary);
+}
+
+/* ========================================
+   Hint Popup
+   ======================================== */
+
+.hint-popup {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.hint-popup.visible {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+}
+
+.hint-popup-content {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%);
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 8px 32px rgba(253, 203, 110, 0.4);
+    border: 2px solid #f39c12;
+    max-width: 400px;
+}
+
+[data-theme="dark"] .hint-popup-content {
+    background: linear-gradient(135deg, #44361a 0%, #5a4520 100%);
+    border-color: #f39c12;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+}
+
+.hint-popup-icon {
+    font-size: 1.5rem;
+}
+
+.hint-popup-text {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #333;
+    font-family: 'Fira Code', monospace;
+}
+
+[data-theme="dark"] .hint-popup-text {
+    color: #ffeaa7;
+}
+
+.hint-popup-close {
+    background: rgba(0,0,0,0.1);
+    border: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1rem;
+    color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+[data-theme="dark"] .hint-popup-close {
+    background: rgba(255,255,255,0.1);
+    color: #ffeaa7;
+}
+
+.hint-popup-close:hover {
+    background: rgba(0,0,0,0.2);
 }
 
 /* ========================================

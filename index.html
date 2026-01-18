@@ -83,11 +83,16 @@
                         <div class="task-content" id="taskContent">
                             <p class="task-description" data-i18n="task.selectDifficulty">Wähle einen Schwierigkeitsgrad!</p>
                         </div>
-                        <button class="hint-btn" id="hintBtn" style="display: none;">💡 <span data-i18n="task.hint">Hinweis</span> (-5)</button>
                         <div class="hint-content" id="hintContent"></div>
-                        <div class="expected-preview">
-                            <h4 data-i18n="task.expected">Erwartet:</h4>
-                            <canvas id="expectedCanvas" width="150" height="150"></canvas>
+                        <canvas id="expectedCanvas" width="150" height="150" style="display: none;"></canvas>
+                    </div>
+
+                    <!-- Hint Popup -->
+                    <div class="hint-popup" id="hintPopup">
+                        <div class="hint-popup-content">
+                            <span class="hint-popup-icon">💡</span>
+                            <span class="hint-popup-text" id="hintPopupText"></span>
+                            <button class="hint-popup-close" id="hintPopupClose">×</button>
                         </div>
                     </div>
 
@@ -119,6 +124,14 @@
                                 </button>
                                 <button class="control-btn" id="clearBtn">
                                     <span class="btn-icon">🗑️</span>
+                                </button>
+                            </div>
+                            <div class="control-group">
+                                <button class="control-btn hint-btn" id="hintBtn" title="Hinweis anzeigen">
+                                    <span class="btn-icon">💡</span>
+                                </button>
+                                <button class="control-btn preview-btn" id="previewBtn" title="Vorschau ein/aus">
+                                    <span class="btn-icon">👁️</span>
                                 </button>
                             </div>
                             <div class="control-group speed-control">
