@@ -74,8 +74,8 @@
                 </div>
 
                 <div class="main-workspace">
-                    <!-- Linke Seite: Aufgabe + Erwartetes Ergebnis -->
-                    <div class="task-panel">
+                    <!-- Verstecktes Task-Panel für interne Nutzung -->
+                    <div class="task-panel" style="display: none;">
                         <div class="task-header">
                             <h3 data-i18n="task.current">Aufgabe</h3>
                             <span class="task-number" id="taskNumber">1/5</span>
@@ -83,7 +83,7 @@
                         <div class="task-content" id="taskContent">
                             <p class="task-description" data-i18n="task.selectDifficulty">Wähle einen Schwierigkeitsgrad!</p>
                         </div>
-                        <button class="hint-btn" id="hintBtn">💡 <span data-i18n="task.hint">Hinweis</span> (-5)</button>
+                        <button class="hint-btn" id="hintBtn" style="display: none;">💡 <span data-i18n="task.hint">Hinweis</span> (-5)</button>
                         <div class="hint-content" id="hintContent"></div>
                         <div class="expected-preview">
                             <h4 data-i18n="task.expected">Erwartet:</h4>
@@ -91,7 +91,7 @@
                         </div>
                     </div>
 
-                    <!-- Mitte: Canvas -->
+                    <!-- Links: Canvas -->
                     <div class="canvas-section">
                         <div class="canvas-container">
                             <canvas id="turtleCanvas" width="450" height="350"></canvas>
@@ -156,10 +156,15 @@ repeat 4:
                             </div>
                             <div class="fullscreen-hint">⬆️ ⬇️ Zeile wechseln  •  ⌘L oder Esc zum Beenden</div>
                         </div>
-                        <div class="console-panel">
+                        <div class="console-panel" id="consolePanel">
+                            <div class="console-resize-handle" id="consoleResizeHandle"></div>
                             <div class="console-header">
                                 <h4 data-i18n="console.title">Konsole</h4>
-                                <button class="console-clear-btn" id="clearConsoleBtn">🗑️</button>
+                                <div class="console-header-controls">
+                                    <span class="console-shortcut">⌘J</span>
+                                    <button class="console-toggle-btn" id="toggleConsoleBtn" title="Konsole ein-/ausblenden (⌘J)">−</button>
+                                    <button class="console-clear-btn" id="clearConsoleBtn">🗑️</button>
+                                </div>
                             </div>
                             <div class="console-output" id="consoleOutput">
                                 <div class="console-welcome" data-i18n="console.welcome">Drücke F5 zum Ausführen</div>
@@ -230,10 +235,15 @@ print('Fertig!')"></textarea>
                             </div>
                             <div class="fullscreen-hint">⬆️ ⬇️ Zeile wechseln  •  ⌘L oder Esc zum Beenden</div>
                         </div>
-                        <div class="console-panel">
+                        <div class="console-panel" id="sandboxConsolePanel">
+                            <div class="console-resize-handle" id="sandboxConsoleResizeHandle"></div>
                             <div class="console-header">
                                 <h4 data-i18n="console.title">Konsole</h4>
-                                <button class="console-clear-btn" id="sandboxClearConsoleBtn">🗑️</button>
+                                <div class="console-header-controls">
+                                    <span class="console-shortcut">⌘J</span>
+                                    <button class="console-toggle-btn" id="sandboxToggleConsoleBtn" title="Konsole ein-/ausblenden (⌘J)">−</button>
+                                    <button class="console-clear-btn" id="sandboxClearConsoleBtn">🗑️</button>
+                                </div>
                             </div>
                             <div class="console-output" id="sandboxConsoleOutput">
                                 <div class="console-welcome" data-i18n="console.ready">Bereit!</div>

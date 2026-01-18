@@ -1,14 +1,17 @@
 # xLogo Lernwelt
 
----
+<div align="center">
 
-## Live Demo - Link zum Kopieren
+## 🐢 [LIVE DEMO STARTEN](https://albecabrera.github.io/xLogo_interaktiv/) 🐢
 
+[![Live Demo](https://img.shields.io/badge/🚀_LIVE_DEMO-Jetzt_starten!-6c5ce7?style=for-the-badge&labelColor=2d3436)](https://albecabrera.github.io/xLogo_interaktiv/)
+
+### 📋 Link zum Teilen:
 ```
 https://albecabrera.github.io/xLogo_interaktiv/
 ```
 
-**Direkt-Link:** [https://albecabrera.github.io/xLogo_interaktiv/](https://albecabrera.github.io/xLogo_interaktiv/)
+</div>
 
 ---
 
@@ -71,10 +74,12 @@ Eine interaktive Lernplattform zum spielerischen Erlernen der Programmiersprache
 | Kürzel | Funktion |
 |--------|----------|
 | `F5` | Code ausführen |
-| `Esc` | Ausführung stoppen |
+| `Esc` | Ausführung stoppen / Fullscreen beenden |
 | `→` | Schritt vorwärts |
 | `←` | Schritt zurück |
 | `Ctrl+Enter` | Code ausführen |
+| `⌘J` / `Ctrl+J` | Konsole ein-/ausblenden |
+| `⌘L` / `Ctrl+L` | Editor-Fullscreen ein-/ausschalten |
 
 ## Beispiele
 

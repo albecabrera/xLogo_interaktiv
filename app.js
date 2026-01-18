@@ -955,25 +955,25 @@ class XLogoInterpreter {
 
 const defaultTasks = {
     beginner: [
-        { id: 'b1', title: 'Erste Schritte', description: 'Lass die Schildkröte 100 Schritte vorwärts gehen! Benutze <code>fd(100)</code>.', hint: 'Schreibe: fd(100)', solution: 'fd(100)', reward: 10 },
-        { id: 'b2', title: 'Hin und zurück', description: 'Gehe 50 Schritte vorwärts und dann 50 Schritte rückwärts.', hint: 'fd(50) dann bk(50)', solution: 'fd(50)\nbk(50)', reward: 10 },
-        { id: 'b3', title: 'Die erste Ecke', description: 'Gehe 80 Schritte vorwärts und drehe 90° nach rechts.', hint: 'fd(80) dann rt(90)', solution: 'fd(80)\nrt(90)', reward: 10 },
-        { id: 'b4', title: 'Der Winkel', description: 'Zeichne einen Winkel: 60 Schritte, 90° rechts, nochmal 60.', hint: 'fd(60), rt(90), fd(60)', solution: 'fd(60)\nrt(90)\nfd(60)', reward: 10 },
-        { id: 'b5', title: 'Das einfache Quadrat', description: 'Zeichne ein Quadrat mit Seitenlänge 80.', hint: '4 mal: vorwärts 80, rechts 90', solution: 'fd(80)\nrt(90)\nfd(80)\nrt(90)\nfd(80)\nrt(90)\nfd(80)', reward: 15 }
+        { id: 'b1', title: 'Erste Schritte', description: '100 Schritte vorwärts', hint: 'fd(100)', solution: 'fd(100)', reward: 10 },
+        { id: 'b2', title: 'Hin und zurück', description: '50 vor, 50 zurück', hint: 'fd() und bk()', solution: 'fd(50)\nbk(50)', reward: 10 },
+        { id: 'b3', title: 'Die erste Ecke', description: '80 vor, 90° rechts', hint: 'rt(90) dreht', solution: 'fd(80)\nrt(90)', reward: 10 },
+        { id: 'b4', title: 'Der Winkel', description: '60 vor, 90° rechts, 60 vor', hint: 'L-Form zeichnen', solution: 'fd(60)\nrt(90)\nfd(60)', reward: 10 },
+        { id: 'b5', title: 'Das einfache Quadrat', description: 'Quadrat Seitenlänge 80', hint: '4 Seiten, 4 Ecken', solution: 'fd(80)\nrt(90)\nfd(80)\nrt(90)\nfd(80)\nrt(90)\nfd(80)', reward: 15 }
     ],
     intermediate: [
-        { id: 'i1', title: 'Quadrat mit Schleife', description: 'Zeichne ein Quadrat (100) mit <code>repeat</code>-Schleife!', hint: 'repeat 4:\n    fd(100)\n    rt(90)', solution: 'repeat 4:\n    fd(100)\n    rt(90)', reward: 25 },
-        { id: 'i2', title: 'Das Dreieck', description: 'Zeichne ein gleichseitiges Dreieck (100).', hint: '120° Drehung', solution: 'repeat 3:\n    fd(100)\n    rt(120)', reward: 25 },
-        { id: 'i3', title: 'Das Sechseck', description: 'Zeichne ein Sechseck (60).', hint: '360°/6 = 60°', solution: 'repeat 6:\n    fd(60)\n    rt(60)', reward: 25 },
-        { id: 'i4', title: 'Die Treppe', description: 'Zeichne eine Treppe mit 4 Stufen (30).', hint: 'Vorwärts, rechts, vorwärts, links', solution: 'repeat 4:\n    fd(30)\n    rt(90)\n    fd(30)\n    lt(90)', reward: 30 },
-        { id: 'i5', title: 'Der Stern', description: 'Zeichne einen 5-zackigen Stern (100).', hint: '144° Drehung', solution: 'repeat 5:\n    fd(100)\n    rt(144)', reward: 30 }
+        { id: 'i1', title: 'Quadrat mit Schleife', description: 'Quadrat (100) mit repeat', hint: 'repeat 4:', solution: 'repeat 4:\n    fd(100)\n    rt(90)', reward: 25 },
+        { id: 'i2', title: 'Das Dreieck', description: 'Gleichseitiges Dreieck (100)', hint: '120° Drehung', solution: 'repeat 3:\n    fd(100)\n    rt(120)', reward: 25 },
+        { id: 'i3', title: 'Das Sechseck', description: 'Sechseck (60)', hint: '360÷6 = 60°', solution: 'repeat 6:\n    fd(60)\n    rt(60)', reward: 25 },
+        { id: 'i4', title: 'Die Treppe', description: '4 Stufen (30)', hint: 'vor, rechts, vor, links', solution: 'repeat 4:\n    fd(30)\n    rt(90)\n    fd(30)\n    lt(90)', reward: 30 },
+        { id: 'i5', title: 'Der Stern', description: '5-zackiger Stern (100)', hint: '144° Drehung', solution: 'repeat 5:\n    fd(100)\n    rt(144)', reward: 30 }
     ],
     advanced: [
-        { id: 'a1', title: 'Spirale', description: 'Zeichne eine quadratische Spirale (10, 20, 30... bis 80).', hint: 'Jede Seite 10 größer', solution: 'fd(10)\nrt(90)\nfd(20)\nrt(90)\nfd(30)\nrt(90)\nfd(40)\nrt(90)\nfd(50)\nrt(90)\nfd(60)\nrt(90)\nfd(70)\nrt(90)\nfd(80)', reward: 50 },
-        { id: 'a2', title: 'Kreis', description: 'Zeichne einen Kreis.', hint: '36 mal: 10 Schritte, 10° drehen', solution: 'repeat 36:\n    fd(10)\n    rt(10)', reward: 50 },
-        { id: 'a3', title: 'Blume', description: 'Zeichne eine Blume: 6 Kreise.', hint: '6 Kreise mit 60° Versatz', solution: 'repeat 6:\n    repeat 36:\n        fd(5)\n        rt(10)\n    rt(60)', reward: 60 },
-        { id: 'a4', title: 'Haus vom Nikolaus', description: 'Zeichne das "Haus vom Nikolaus" in einem Zug.', hint: 'Diagonale = 141', solution: 'fd(100)\nrt(45)\nfd(141)\nrt(135)\nfd(100)\nlt(135)\nfd(141)\nrt(135)\nfd(100)\nrt(90)\nfd(100)\nrt(135)\nfd(141)\nlt(135)\nfd(100)', reward: 75 },
-        { id: 'a5', title: 'Verschachtelte Quadrate', description: 'Zeichne 5 Quadrate (20, 40, 60, 80, 100).', hint: 'Nutze pu() und pd()', solution: 'repeat 4:\n    fd(20)\n    rt(90)\npu()\nbk(10)\nlt(90)\nbk(10)\nrt(90)\npd()\nrepeat 4:\n    fd(40)\n    rt(90)\npu()\nbk(10)\nlt(90)\nbk(10)\nrt(90)\npd()\nrepeat 4:\n    fd(60)\n    rt(90)\npu()\nbk(10)\nlt(90)\nbk(10)\nrt(90)\npd()\nrepeat 4:\n    fd(80)\n    rt(90)\npu()\nbk(10)\nlt(90)\nbk(10)\nrt(90)\npd()\nrepeat 4:\n    fd(100)\n    rt(90)', reward: 80 }
+        { id: 'a1', title: 'Spirale', description: 'Spirale (10,20,30...80)', hint: '+10 pro Seite', solution: 'fd(10)\nrt(90)\nfd(20)\nrt(90)\nfd(30)\nrt(90)\nfd(40)\nrt(90)\nfd(50)\nrt(90)\nfd(60)\nrt(90)\nfd(70)\nrt(90)\nfd(80)', reward: 50 },
+        { id: 'a2', title: 'Kreis', description: 'Einen Kreis zeichnen', hint: '36×10°=360°', solution: 'repeat 36:\n    fd(10)\n    rt(10)', reward: 50 },
+        { id: 'a3', title: 'Blume', description: '6 Kreise = Blume', hint: '60° zwischen Kreisen', solution: 'repeat 6:\n    repeat 36:\n        fd(5)\n        rt(10)\n    rt(60)', reward: 60 },
+        { id: 'a4', title: 'Haus vom Nikolaus', description: 'In einem Zug', hint: 'Diagonale = 141', solution: 'fd(100)\nrt(45)\nfd(141)\nrt(135)\nfd(100)\nlt(135)\nfd(141)\nrt(135)\nfd(100)\nrt(90)\nfd(100)\nrt(135)\nfd(141)\nlt(135)\nfd(100)', reward: 75 },
+        { id: 'a5', title: 'Verschachtelte Quadrate', description: '5 Quadrate (20-100)', hint: 'pu() und pd()', solution: 'repeat 4:\n    fd(20)\n    rt(90)\npu()\nbk(10)\nlt(90)\nbk(10)\nrt(90)\npd()\nrepeat 4:\n    fd(40)\n    rt(90)\npu()\nbk(10)\nlt(90)\nbk(10)\nrt(90)\npd()\nrepeat 4:\n    fd(60)\n    rt(90)\npu()\nbk(10)\nlt(90)\nbk(10)\nrt(90)\npd()\nrepeat 4:\n    fd(80)\n    rt(90)\npu()\nbk(10)\nlt(90)\nbk(10)\nrt(90)\npd()\nrepeat 4:\n    fd(100)\n    rt(90)', reward: 80 }
     ]
 };
 
@@ -1421,6 +1421,12 @@ class XLogoApp {
         document.getElementById('resetBtn').addEventListener('click', () => this.resetCanvas());
         document.getElementById('clearBtn').addEventListener('click', () => this.clearCode());
         document.getElementById('clearConsoleBtn').addEventListener('click', () => this.mainConsole.clear());
+        document.getElementById('toggleConsoleBtn').addEventListener('click', () => this.toggleConsole('main'));
+        document.getElementById('sandboxToggleConsoleBtn').addEventListener('click', () => this.toggleConsole('sandbox'));
+
+        // Console resize handlers
+        this.initConsoleResize('consoleResizeHandle', 'consolePanel');
+        this.initConsoleResize('sandboxConsoleResizeHandle', 'sandboxConsolePanel');
 
         document.getElementById('speedSlider').addEventListener('input', (e) => {
             this.speed = parseInt(e.target.value);
@@ -1463,6 +1469,17 @@ class XLogoApp {
         const isTextarea = active.tagName === 'TEXTAREA';
         const isInput = active.tagName === 'INPUT';
         const view = document.querySelector('.view.active');
+
+        // Cmd+J (Mac) or Ctrl+J (Windows) for console toggle
+        if ((e.metaKey || e.ctrlKey) && e.key === 'j') {
+            e.preventDefault();
+            if (view.id === 'sandboxView') {
+                this.toggleConsole('sandbox');
+            } else if (view.id === 'learnView') {
+                this.toggleConsole('main');
+            }
+            return;
+        }
 
         // Cmd+L (Mac) or Ctrl+L (Windows) for fullscreen toggle
         if ((e.metaKey || e.ctrlKey) && e.key === 'l') {
@@ -1545,13 +1562,33 @@ class XLogoApp {
             this.expectedTurtle.reset();
             this.expectedInterpreter.execute(task.solution);
             this.mainTurtle.reset();
-            this.mainEditor.setCode('');
+
+            // Aufgabe im Code-Editor anzeigen
+            const taskCode = this.generateTaskCode(task);
+            this.mainEditor.setCode(taskCode);
+
             this.mainConsole.clear();
             this.mainConsole.log(t('console.taskLoaded'), 'info');
         } else {
             document.getElementById('taskContent').innerHTML = `<p class="task-description">${t('task.selectDifficulty')}</p>`;
             document.getElementById('taskNumber').textContent = '✓';
+            this.mainEditor.setCode('# ' + t('task.selectDifficulty') + '\n');
         }
+    }
+
+    generateTaskCode(task) {
+        const tasks = this.gameState.getTasks(this.gameState.currentDifficulty);
+        const taskNum = this.gameState.currentTaskIndex + 1;
+        const totalTasks = tasks.length;
+
+        let code = `# Aufgabe ${taskNum}/${totalTasks}: ${task.title}\n`;
+        code += `# ${task.description}\n`;
+        code += `# Tipp: ${task.hint}\n`;
+        code += `#\n`;
+        code += `# Schreib deinen Code hier drunter...\n`;
+        code += `\n`;
+
+        return code;
     }
 
     runCode() {
@@ -1898,6 +1935,74 @@ class XLogoApp {
         link.download = 'xlogo-qrcode.png';
         link.href = canvas.toDataURL('image/png');
         link.click();
+    }
+
+    toggleConsole(type) {
+        const panelId = type === 'sandbox' ? 'sandboxConsolePanel' : 'consolePanel';
+        const btnId = type === 'sandbox' ? 'sandboxToggleConsoleBtn' : 'toggleConsoleBtn';
+        const panel = document.getElementById(panelId);
+        const btn = document.getElementById(btnId);
+
+        if (panel) {
+            panel.classList.toggle('collapsed');
+            btn.textContent = panel.classList.contains('collapsed') ? '+' : '−';
+        }
+    }
+
+    initConsoleResize(handleId, panelId) {
+        const handle = document.getElementById(handleId);
+        const panel = document.getElementById(panelId);
+
+        if (!handle || !panel) return;
+
+        let isResizing = false;
+        let startY = 0;
+        let startHeight = 0;
+
+        handle.addEventListener('mousedown', (e) => {
+            isResizing = true;
+            startY = e.clientY;
+            startHeight = panel.offsetHeight;
+            document.body.style.cursor = 'ns-resize';
+            document.body.style.userSelect = 'none';
+            e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isResizing) return;
+
+            const deltaY = startY - e.clientY;
+            const newHeight = Math.min(Math.max(startHeight + deltaY, 40), 400);
+            panel.style.height = newHeight + 'px';
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (isResizing) {
+                isResizing = false;
+                document.body.style.cursor = '';
+                document.body.style.userSelect = '';
+            }
+        });
+
+        // Touch support
+        handle.addEventListener('touchstart', (e) => {
+            isResizing = true;
+            startY = e.touches[0].clientY;
+            startHeight = panel.offsetHeight;
+            e.preventDefault();
+        });
+
+        document.addEventListener('touchmove', (e) => {
+            if (!isResizing) return;
+
+            const deltaY = startY - e.touches[0].clientY;
+            const newHeight = Math.min(Math.max(startHeight + deltaY, 40), 400);
+            panel.style.height = newHeight + 'px';
+        });
+
+        document.addEventListener('touchend', () => {
+            isResizing = false;
+        });
     }
 }
 
