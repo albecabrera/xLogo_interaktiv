@@ -1463,7 +1463,6 @@ class XLogoApp {
         document.getElementById('stepForwardBtn').addEventListener('click', () => this.stepForward());
         document.getElementById('stepBackBtn').addEventListener('click', () => this.stepBack());
         document.getElementById('resetBtn').addEventListener('click', () => this.resetCanvas());
-        document.getElementById('clearBtn').addEventListener('click', () => this.clearCode());
         document.getElementById('clearConsoleBtn').addEventListener('click', () => this.mainConsole.clear());
         document.getElementById('toggleConsoleBtn').addEventListener('click', () => this.toggleConsole('main'));
         document.getElementById('sandboxToggleConsoleBtn').addEventListener('click', () => this.toggleConsole('sandbox'));
@@ -1478,7 +1477,6 @@ class XLogoApp {
         });
 
         document.getElementById('hintBtn').addEventListener('click', () => this.showHint());
-        document.getElementById('previewBtn').addEventListener('click', () => this.togglePreview());
         document.getElementById('hintPopupClose').addEventListener('click', () => this.hideHint());
 
         document.getElementById('sandboxRunBtn').addEventListener('click', () => this.runSandboxCode());
@@ -1606,29 +1604,16 @@ class XLogoApp {
             document.getElementById('hintContent').classList.remove('visible');
             document.getElementById('hintContent').textContent = '';
 
-            // Berechne das erwartete Ergebnis
+            // Zeichne das erwartete Ergebnis im Ziel-Canvas
             this.expectedTurtle.reset();
             this.expectedInterpreter.execute(task.solution);
 
-            // Speichere den erwarteten Pfad für die Ghost-Preview
-            this.expectedPath = [...this.expectedTurtle.pathHistory];
-
-            // Reset main canvas und setze Ghost-Preview
+            // Reset main canvas
             this.mainTurtle.reset();
-            if (this.previewEnabled) {
-                this.mainTurtle.setGhostPath(this.expectedPath);
-            }
-            this.mainTurtle.redraw();
 
             // Aufgabe im Code-Editor anzeigen
             const taskCode = this.generateTaskCode(task);
             this.mainEditor.setCode(taskCode);
-
-            // Preview-Button Status aktualisieren
-            const previewBtn = document.getElementById('previewBtn');
-            if (previewBtn) {
-                previewBtn.classList.toggle('active', this.previewEnabled);
-            }
 
             this.mainConsole.clear();
             this.mainConsole.log(t('console.taskLoaded'), 'info');
@@ -1636,7 +1621,7 @@ class XLogoApp {
             document.getElementById('taskContent').innerHTML = `<p class="task-description">${t('task.selectDifficulty')}</p>`;
             document.getElementById('taskNumber').textContent = '✓';
             this.mainEditor.setCode('# ' + t('task.selectDifficulty') + '\n');
-            this.mainTurtle.clearGhostPath();
+            this.expectedTurtle.reset();
         }
     }
 
@@ -1661,11 +1646,7 @@ class XLogoApp {
         this.mainConsole.clear();
         this.mainConsole.log(t('console.running'), 'info');
 
-        // Reset aber Ghost-Pfad beibehalten
         this.mainTurtle.reset();
-        if (this.previewEnabled && this.expectedPath) {
-            this.mainTurtle.setGhostPath(this.expectedPath);
-        }
 
         const result = this.mainInterpreter.execute(code);
         if (!result.success) { this.gameState.resetStreak(); this.updateUI(); return; }
@@ -1682,9 +1663,6 @@ class XLogoApp {
             if (!code) { this.mainConsole.error(t('console.enterCode')); return; }
 
             this.mainTurtle.reset();
-            if (this.previewEnabled && this.expectedPath) {
-                this.mainTurtle.setGhostPath(this.expectedPath);
-            }
             this.mainConsole.clear();
             const result = this.mainInterpreter.execute(code, true);
             if (!result.success) return;
@@ -1725,10 +1703,6 @@ class XLogoApp {
 
     resetCanvas() {
         this.mainTurtle.reset();
-        if (this.previewEnabled && this.expectedPath) {
-            this.mainTurtle.setGhostPath(this.expectedPath);
-        }
-        this.mainTurtle.redraw();
         this.mainInterpreter.currentStep = 0;
         this.mainInterpreter.flatSteps = [];
         this.mainConsole.clear();

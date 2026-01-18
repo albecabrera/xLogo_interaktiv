@@ -288,12 +288,12 @@ body {
     font-weight: 700;
 }
 
-/* Main Workspace - 2 Column Layout (Canvas + Code) */
+/* Main Workspace - 2 Column Layout (50% Code, 50% Canvas) */
 .main-workspace {
     flex: 1;
     display: grid;
-    grid-template-columns: 1fr 500px;
-    gap: 0.5rem;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
     min-height: 0;
     overflow: hidden;
 }
@@ -373,31 +373,101 @@ body {
     background: var(--canvas-bg);
 }
 
-/* Canvas Section - Center */
+/* Canvas Section - Right Side (50%) */
 .canvas-section {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
     min-height: 0;
+    order: 2;
 }
 
-.canvas-container {
-    flex: 1;
+/* Live Canvas Area - Top */
+.live-canvas-area {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
     background: var(--bg-card);
     border-radius: var(--radius-lg);
     padding: 0.5rem;
     box-shadow: var(--shadow-sm);
+    min-height: 0;
+}
+
+/* Expected Canvas Area - Bottom */
+.expected-canvas-area {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    padding: 0.5rem;
+    box-shadow: var(--shadow-sm);
+    min-height: 0;
+    border: 2px dashed var(--primary-light);
+}
+
+.canvas-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.4rem;
+    flex-shrink: 0;
+}
+
+.canvas-header h4 {
+    font-family: 'Fredoka One', cursive;
+    color: var(--primary);
+    font-size: 0.85rem;
+}
+
+.control-toolbar-inline {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.control-toolbar-inline .control-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 0.85rem;
+}
+
+.speed-control-inline {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+    font-size: 0.75rem;
+    background: var(--bg-main);
+    padding: 0.15rem 0.3rem;
+    border-radius: var(--radius-sm);
+}
+
+.speed-control-inline input[type="range"] {
+    width: 50px;
+    accent-color: var(--primary);
+}
+
+.canvas-container {
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
     min-height: 0;
+    background: var(--canvas-bg);
+    border-radius: var(--radius-md);
+    border: 2px solid var(--border-color);
 }
 
-#turtleCanvas, #sandboxCanvas {
+.expected-container {
+    background: var(--canvas-bg);
+    border: 2px solid var(--primary-light);
+}
+
+#turtleCanvas, #sandboxCanvas, #expectedCanvas {
     max-width: 100%;
     max-height: 100%;
-    border: 2px solid var(--border-color);
-    border-radius: var(--radius-md);
+    border-radius: var(--radius-sm);
     background: var(--canvas-bg);
 }
 
@@ -477,12 +547,13 @@ body {
     accent-color: var(--primary);
 }
 
-/* Code Section - Right */
+/* Code Section - Left Side (50%) */
 .code-section {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
     min-height: 0;
+    order: 1;
 }
 
 .code-panel {
@@ -1186,7 +1257,7 @@ body {
 /* Desktop (1024px - 1200px) */
 @media (max-width: 1200px) {
     .main-workspace {
-        grid-template-columns: 1fr 450px;
+        grid-template-columns: 1fr 1fr;
     }
 
     .sandbox-workspace {
@@ -1197,7 +1268,17 @@ body {
 /* Tablet Landscape (768px - 1024px) */
 @media (max-width: 1024px) {
     .main-workspace {
-        grid-template-columns: 1fr 380px;
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .control-toolbar-inline .control-btn {
+        width: 24px;
+        height: 24px;
+        font-size: 0.75rem;
+    }
+
+    .speed-control-inline {
+        display: none;
     }
 
     .sandbox-workspace {
@@ -1260,25 +1341,37 @@ body {
 
     .main-workspace {
         grid-template-columns: 1fr;
-        grid-template-rows: auto 1fr;
+        grid-template-rows: 1fr 1fr;
         gap: 0.4rem;
     }
 
     .canvas-section {
-        order: 1;
+        order: 2;
+        flex-direction: row;
+        gap: 0.4rem;
+    }
+
+    .live-canvas-area,
+    .expected-canvas-area {
+        flex: 1;
     }
 
     .code-section {
-        order: 2;
+        order: 1;
     }
 
-    .canvas-container {
-        min-height: 250px;
-        max-height: 300px;
+    .canvas-header h4 {
+        font-size: 0.7rem;
     }
 
-    #turtleCanvas, #sandboxCanvas {
-        max-height: 250px;
+    .control-toolbar-inline {
+        gap: 0.15rem;
+    }
+
+    .control-toolbar-inline .control-btn {
+        width: 22px;
+        height: 22px;
+        font-size: 0.7rem;
     }
 
     .difficulty-selector {

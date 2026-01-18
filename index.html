@@ -76,15 +76,9 @@
                 <div class="main-workspace">
                     <!-- Verstecktes Task-Panel für interne Nutzung -->
                     <div class="task-panel" style="display: none;">
-                        <div class="task-header">
-                            <h3 data-i18n="task.current">Aufgabe</h3>
-                            <span class="task-number" id="taskNumber">1/5</span>
-                        </div>
-                        <div class="task-content" id="taskContent">
-                            <p class="task-description" data-i18n="task.selectDifficulty">Wähle einen Schwierigkeitsgrad!</p>
-                        </div>
+                        <div class="task-content" id="taskContent"></div>
                         <div class="hint-content" id="hintContent"></div>
-                        <canvas id="expectedCanvas" width="150" height="150" style="display: none;"></canvas>
+                        <span class="task-number" id="taskNumber">1/5</span>
                     </div>
 
                     <!-- Hint Popup -->
@@ -96,53 +90,7 @@
                         </div>
                     </div>
 
-                    <!-- Links: Canvas -->
-                    <div class="canvas-section">
-                        <div class="canvas-container">
-                            <canvas id="turtleCanvas" width="450" height="350"></canvas>
-                        </div>
-                        <div class="control-toolbar">
-                            <div class="control-group">
-                                <button class="control-btn run-btn" id="runBtn" title="F5">
-                                    <span class="btn-icon">▶️</span>
-                                </button>
-                                <button class="control-btn stop-btn" id="stopBtn" title="Esc">
-                                    <span class="btn-icon">⏹️</span>
-                                </button>
-                            </div>
-                            <div class="control-group">
-                                <button class="control-btn" id="stepBackBtn" title="←">
-                                    <span class="btn-icon">⏮️</span>
-                                </button>
-                                <button class="control-btn" id="stepForwardBtn" title="→">
-                                    <span class="btn-icon">⏭️</span>
-                                </button>
-                            </div>
-                            <div class="control-group">
-                                <button class="control-btn" id="resetBtn">
-                                    <span class="btn-icon">🔄</span>
-                                </button>
-                                <button class="control-btn" id="clearBtn">
-                                    <span class="btn-icon">🗑️</span>
-                                </button>
-                            </div>
-                            <div class="control-group">
-                                <button class="control-btn hint-btn" id="hintBtn" title="Hinweis anzeigen">
-                                    <span class="btn-icon">💡</span>
-                                </button>
-                                <button class="control-btn preview-btn" id="previewBtn" title="Vorschau ein/aus">
-                                    <span class="btn-icon">👁️</span>
-                                </button>
-                            </div>
-                            <div class="control-group speed-control">
-                                <span>🐢</span>
-                                <input type="range" id="speedSlider" min="1" max="10" value="5">
-                                <span>🐇</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Rechte Seite: Code + Konsole -->
+                    <!-- LINKE SEITE: Code-Editor + Konsole (50%) -->
                     <div class="code-section">
                         <div class="code-panel" id="codePanel">
                             <div class="code-header">
@@ -181,6 +129,42 @@ repeat 4:
                             </div>
                             <div class="console-output" id="consoleOutput">
                                 <div class="console-welcome" data-i18n="console.welcome">Drücke F5 zum Ausführen</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RECHTE SEITE: Canvas-Bereich (50%) -->
+                    <div class="canvas-section">
+                        <!-- Oben: Live-Canvas (Echtzeit-Ausführung) -->
+                        <div class="live-canvas-area">
+                            <div class="canvas-header">
+                                <h4>🐢 Live</h4>
+                                <div class="control-toolbar-inline">
+                                    <button class="control-btn run-btn" id="runBtn" title="F5">▶️</button>
+                                    <button class="control-btn stop-btn" id="stopBtn" title="Esc">⏹️</button>
+                                    <button class="control-btn" id="stepBackBtn" title="←">⏮️</button>
+                                    <button class="control-btn" id="stepForwardBtn" title="→">⏭️</button>
+                                    <button class="control-btn" id="resetBtn">🔄</button>
+                                    <button class="control-btn hint-btn" id="hintBtn" title="Hinweis">💡</button>
+                                    <div class="speed-control-inline">
+                                        <span>🐢</span>
+                                        <input type="range" id="speedSlider" min="1" max="10" value="5">
+                                        <span>🐇</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="canvas-container">
+                                <canvas id="turtleCanvas" width="400" height="280"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Unten: Ziel-Canvas (erwartetes Ergebnis) -->
+                        <div class="expected-canvas-area">
+                            <div class="canvas-header">
+                                <h4>🎯 Ziel</h4>
+                            </div>
+                            <div class="canvas-container expected-container">
+                                <canvas id="expectedCanvas" width="400" height="200"></canvas>
                             </div>
                         </div>
                     </div>
