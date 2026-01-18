@@ -382,9 +382,9 @@ body {
     order: 2;
 }
 
-/* Live Canvas Area - Top */
-.live-canvas-area {
-    flex: 3;
+/* Canvas Area - Full Height */
+.canvas-area {
+    flex: 1;
     display: flex;
     flex-direction: column;
     background: var(--bg-card);
@@ -392,19 +392,6 @@ body {
     padding: 0.5rem;
     box-shadow: var(--shadow-sm);
     min-height: 0;
-}
-
-/* Expected Canvas Area - Bottom */
-.expected-canvas-area {
-    flex: 2;
-    display: flex;
-    flex-direction: column;
-    background: var(--bg-card);
-    border-radius: var(--radius-lg);
-    padding: 0.5rem;
-    box-shadow: var(--shadow-sm);
-    min-height: 0;
-    border: 2px dashed var(--primary-light);
 }
 
 .canvas-header {
@@ -459,12 +446,7 @@ body {
     border: 2px solid var(--border-color);
 }
 
-.expected-container {
-    background: var(--canvas-bg);
-    border: 2px solid var(--primary-light);
-}
-
-#turtleCanvas, #sandboxCanvas, #expectedCanvas {
+#turtleCanvas, #sandboxCanvas {
     max-width: 100%;
     max-height: 100%;
     border-radius: var(--radius-sm);

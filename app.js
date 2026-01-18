@@ -553,27 +553,195 @@ class Turtle {
     redraw() {
         this.clear();
 
+        // Berechne Auto-Skalierung
+        const transform = this.calculateAutoScale();
+
         // Zuerst Ghost zeichnen (hinter dem eigentlichen Pfad)
-        this.drawGhost();
+        this.drawGhostScaled(transform);
 
         this.ctx.lineCap = 'round';
         this.ctx.lineJoin = 'round';
+
+        // Zeichne alle Pfade mit Skalierung
         for (const seg of this.pathHistory) {
             if (seg.type === 'dot') {
+                const pos = this.transformPoint(seg.x, seg.y, transform);
                 this.ctx.beginPath();
-                this.ctx.arc(seg.x, seg.y, seg.diameter / 2, 0, Math.PI * 2);
+                this.ctx.arc(pos.x, pos.y, (seg.diameter / 2) * transform.scale, 0, Math.PI * 2);
                 this.ctx.fillStyle = seg.color;
                 this.ctx.fill();
             } else {
+                const p1 = this.transformPoint(seg.x1, seg.y1, transform);
+                const p2 = this.transformPoint(seg.x2, seg.y2, transform);
                 this.ctx.strokeStyle = seg.color;
-                this.ctx.lineWidth = seg.width;
+                this.ctx.lineWidth = Math.max(1, seg.width * transform.scale);
                 this.ctx.beginPath();
-                this.ctx.moveTo(seg.x1, seg.y1);
-                this.ctx.lineTo(seg.x2, seg.y2);
+                this.ctx.moveTo(p1.x, p1.y);
+                this.ctx.lineTo(p2.x, p2.y);
                 this.ctx.stroke();
             }
         }
-        this.drawTurtle();
+
+        // Zeichne Schildkröte an transformierter Position
+        this.drawTurtleScaled(transform);
+    }
+
+    // Berechnet die Bounding-Box aller Pfade (inkl. Ghost)
+    calculateBoundingBox() {
+        const allPaths = [...this.pathHistory, ...(this.ghostPath || [])];
+        if (allPaths.length === 0) {
+            return { minX: this.x, maxX: this.x, minY: this.y, maxY: this.y };
+        }
+
+        let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+
+        for (const seg of allPaths) {
+            if (seg.type === 'dot') {
+                minX = Math.min(minX, seg.x);
+                maxX = Math.max(maxX, seg.x);
+                minY = Math.min(minY, seg.y);
+                maxY = Math.max(maxY, seg.y);
+            } else {
+                minX = Math.min(minX, seg.x1, seg.x2);
+                maxX = Math.max(maxX, seg.x1, seg.x2);
+                minY = Math.min(minY, seg.y1, seg.y2);
+                maxY = Math.max(maxY, seg.y1, seg.y2);
+            }
+        }
+
+        // Auch aktuelle Turtle-Position berücksichtigen
+        minX = Math.min(minX, this.x);
+        maxX = Math.max(maxX, this.x);
+        minY = Math.min(minY, this.y);
+        maxY = Math.max(maxY, this.y);
+
+        return { minX, maxX, minY, maxY };
+    }
+
+    // Berechnet Skalierung und Offset für Auto-Fit
+    calculateAutoScale() {
+        const bbox = this.calculateBoundingBox();
+        const padding = 40; // Rand
+
+        const drawingWidth = bbox.maxX - bbox.minX;
+        const drawingHeight = bbox.maxY - bbox.minY;
+        const centerX = (bbox.minX + bbox.maxX) / 2;
+        const centerY = (bbox.minY + bbox.maxY) / 2;
+
+        const availableWidth = this.width - padding * 2;
+        const availableHeight = this.height - padding * 2;
+
+        // Prüfe ob Skalierung nötig ist
+        const needsScaling = drawingWidth > availableWidth || drawingHeight > availableHeight;
+
+        if (!needsScaling && drawingWidth < 10 && drawingHeight < 10) {
+            // Keine Skalierung nötig, Zeichnung ist klein genug
+            return { scale: 1, offsetX: 0, offsetY: 0 };
+        }
+
+        if (!needsScaling) {
+            return { scale: 1, offsetX: 0, offsetY: 0 };
+        }
+
+        // Berechne Skalierungsfaktor
+        const scaleX = availableWidth / Math.max(drawingWidth, 1);
+        const scaleY = availableHeight / Math.max(drawingHeight, 1);
+        const scale = Math.min(scaleX, scaleY, 1); // Nie größer als 1
+
+        // Berechne Offset um die Zeichnung zu zentrieren
+        const canvasCenterX = this.width / 2;
+        const canvasCenterY = this.height / 2;
+        const offsetX = canvasCenterX - centerX * scale;
+        const offsetY = canvasCenterY - centerY * scale;
+
+        return { scale, offsetX, offsetY };
+    }
+
+    // Transformiert einen Punkt
+    transformPoint(x, y, transform) {
+        return {
+            x: x * transform.scale + transform.offsetX,
+            y: y * transform.scale + transform.offsetY
+        };
+    }
+
+    // Zeichnet Ghost mit Skalierung
+    drawGhostScaled(transform) {
+        if (!this.ghostPath || this.ghostPath.length === 0) return;
+
+        this.ctx.save();
+        this.ctx.globalAlpha = 0.3;
+        this.ctx.setLineDash([8, 4]);
+        this.ctx.lineCap = 'round';
+        this.ctx.lineJoin = 'round';
+
+        const isDark = document.body.getAttribute('data-theme') === 'dark';
+        const ghostColor = isDark ? '#a29bfe' : '#6c5ce7';
+
+        for (const seg of this.ghostPath) {
+            if (seg.type === 'dot') {
+                const pos = this.transformPoint(seg.x, seg.y, transform);
+                this.ctx.beginPath();
+                this.ctx.arc(pos.x, pos.y, (seg.diameter / 2) * transform.scale, 0, Math.PI * 2);
+                this.ctx.fillStyle = ghostColor;
+                this.ctx.fill();
+            } else {
+                const p1 = this.transformPoint(seg.x1, seg.y1, transform);
+                const p2 = this.transformPoint(seg.x2, seg.y2, transform);
+                this.ctx.strokeStyle = ghostColor;
+                this.ctx.lineWidth = Math.max(1, (seg.width + 1) * transform.scale);
+                this.ctx.beginPath();
+                this.ctx.moveTo(p1.x, p1.y);
+                this.ctx.lineTo(p2.x, p2.y);
+                this.ctx.stroke();
+            }
+        }
+
+        this.ctx.restore();
+    }
+
+    // Zeichnet Turtle an skalierter Position
+    drawTurtleScaled(transform) {
+        if (!this.turtleVisible) return;
+
+        const pos = this.transformPoint(this.x, this.y, transform);
+        const size = 18 * Math.max(0.5, transform.scale);
+        const angleRad = (this.angle * Math.PI) / 180;
+
+        this.ctx.save();
+        this.ctx.translate(pos.x, pos.y);
+        this.ctx.rotate(angleRad + Math.PI / 2);
+        this.ctx.shadowColor = 'rgba(0,0,0,0.2)';
+        this.ctx.shadowBlur = 5;
+        this.ctx.shadowOffsetX = 2;
+        this.ctx.shadowOffsetY = 2;
+
+        // Shell
+        this.ctx.fillStyle = '#2d8a4e';
+        this.ctx.beginPath();
+        this.ctx.ellipse(0, 0, size * 0.7, size, 0, 0, Math.PI * 2);
+        this.ctx.fill();
+
+        // Head
+        this.ctx.shadowColor = 'transparent';
+        this.ctx.fillStyle = '#3cb371';
+        this.ctx.beginPath();
+        this.ctx.ellipse(0, -size * 1.1, size * 0.35, size * 0.4, 0, 0, Math.PI * 2);
+        this.ctx.fill();
+
+        // Eyes
+        this.ctx.fillStyle = '#fff';
+        this.ctx.beginPath();
+        this.ctx.arc(-size * 0.15, -size * 1.2, 3 * Math.max(0.5, transform.scale), 0, Math.PI * 2);
+        this.ctx.arc(size * 0.15, -size * 1.2, 3 * Math.max(0.5, transform.scale), 0, Math.PI * 2);
+        this.ctx.fill();
+        this.ctx.fillStyle = '#000';
+        this.ctx.beginPath();
+        this.ctx.arc(-size * 0.15, -size * 1.22, 1.5 * Math.max(0.5, transform.scale), 0, Math.PI * 2);
+        this.ctx.arc(size * 0.15, -size * 1.22, 1.5 * Math.max(0.5, transform.scale), 0, Math.PI * 2);
+        this.ctx.fill();
+
+        this.ctx.restore();
     }
 }
 
@@ -1423,8 +1591,8 @@ class XLogoApp {
     }
 
     resizeCanvases() {
-        // Main Canvas (Live)
-        const mainContainer = document.querySelector('.live-canvas-area .canvas-container');
+        // Main Canvas
+        const mainContainer = document.querySelector('.canvas-area .canvas-container');
         if (mainContainer) {
             const mainCanvas = document.getElementById('turtleCanvas');
             const rect = mainContainer.getBoundingClientRect();
@@ -1436,22 +1604,10 @@ class XLogoApp {
                 this.mainTurtle.width = newWidth;
                 this.mainTurtle.height = newHeight;
                 this.mainTurtle.reset();
-            }
-        }
-
-        // Expected Canvas (Ziel)
-        const expectedContainer = document.querySelector('.expected-canvas-area .canvas-container');
-        if (expectedContainer) {
-            const expectedCanvas = document.getElementById('expectedCanvas');
-            const rect = expectedContainer.getBoundingClientRect();
-            const newWidth = Math.floor(rect.width - 10);
-            const newHeight = Math.floor(rect.height - 10);
-            if (newWidth > 50 && newHeight > 50) {
-                expectedCanvas.width = newWidth;
-                expectedCanvas.height = newHeight;
-                this.expectedTurtle.width = newWidth;
-                this.expectedTurtle.height = newHeight;
-                this.expectedTurtle.reset();
+                if (this.previewEnabled && this.expectedPath) {
+                    this.mainTurtle.setGhostPath(this.expectedPath);
+                }
+                this.mainTurtle.redraw();
             }
         }
 
@@ -1471,11 +1627,16 @@ class XLogoApp {
             }
         }
 
-        // Lade aktuelle Aufgabe neu, um das Ziel-Canvas zu aktualisieren
+        // Lade aktuelle Aufgabe neu, um Ghost-Preview zu aktualisieren
         const task = this.gameState.getCurrentTask();
         if (task) {
             this.expectedTurtle.reset();
             this.expectedInterpreter.execute(task.solution);
+            this.expectedPath = [...this.expectedTurtle.pathHistory];
+            if (this.previewEnabled) {
+                this.mainTurtle.setGhostPath(this.expectedPath);
+                this.mainTurtle.redraw();
+            }
         }
     }
 
@@ -1540,6 +1701,7 @@ class XLogoApp {
         });
 
         document.getElementById('hintBtn').addEventListener('click', () => this.showHint());
+        document.getElementById('previewBtn').addEventListener('click', () => this.togglePreview());
         document.getElementById('hintPopupClose').addEventListener('click', () => this.hideHint());
 
         document.getElementById('sandboxRunBtn').addEventListener('click', () => this.runSandboxCode());
@@ -1667,12 +1829,25 @@ class XLogoApp {
             document.getElementById('hintContent').classList.remove('visible');
             document.getElementById('hintContent').textContent = '';
 
-            // Zeichne das erwartete Ergebnis im Ziel-Canvas
+            // Berechne das erwartete Ergebnis
             this.expectedTurtle.reset();
             this.expectedInterpreter.execute(task.solution);
 
-            // Reset main canvas
+            // Speichere den erwarteten Pfad für die Ghost-Preview
+            this.expectedPath = [...this.expectedTurtle.pathHistory];
+
+            // Reset main canvas und setze Ghost-Preview
             this.mainTurtle.reset();
+            if (this.previewEnabled) {
+                this.mainTurtle.setGhostPath(this.expectedPath);
+            }
+            this.mainTurtle.redraw();
+
+            // Preview-Button Status aktualisieren
+            const previewBtn = document.getElementById('previewBtn');
+            if (previewBtn) {
+                previewBtn.classList.toggle('active', this.previewEnabled);
+            }
 
             // Aufgabe im Code-Editor anzeigen
             const taskCode = this.generateTaskCode(task);
@@ -1684,6 +1859,7 @@ class XLogoApp {
             document.getElementById('taskContent').innerHTML = `<p class="task-description">${t('task.selectDifficulty')}</p>`;
             document.getElementById('taskNumber').textContent = '✓';
             this.mainEditor.setCode('# ' + t('task.selectDifficulty') + '\n');
+            this.mainTurtle.clearGhostPath();
             this.expectedTurtle.reset();
         }
     }
@@ -1709,7 +1885,11 @@ class XLogoApp {
         this.mainConsole.clear();
         this.mainConsole.log(t('console.running'), 'info');
 
+        // Reset aber Ghost-Pfad beibehalten
         this.mainTurtle.reset();
+        if (this.previewEnabled && this.expectedPath) {
+            this.mainTurtle.setGhostPath(this.expectedPath);
+        }
 
         const result = this.mainInterpreter.execute(code);
         if (!result.success) { this.gameState.resetStreak(); this.updateUI(); return; }
@@ -1726,6 +1906,9 @@ class XLogoApp {
             if (!code) { this.mainConsole.error(t('console.enterCode')); return; }
 
             this.mainTurtle.reset();
+            if (this.previewEnabled && this.expectedPath) {
+                this.mainTurtle.setGhostPath(this.expectedPath);
+            }
             this.mainConsole.clear();
             const result = this.mainInterpreter.execute(code, true);
             if (!result.success) return;
@@ -1766,6 +1949,10 @@ class XLogoApp {
 
     resetCanvas() {
         this.mainTurtle.reset();
+        if (this.previewEnabled && this.expectedPath) {
+            this.mainTurtle.setGhostPath(this.expectedPath);
+        }
+        this.mainTurtle.redraw();
         this.mainInterpreter.currentStep = 0;
         this.mainInterpreter.flatSteps = [];
         this.mainConsole.clear();

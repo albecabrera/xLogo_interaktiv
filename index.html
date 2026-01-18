@@ -133,12 +133,11 @@ repeat 4:
                         </div>
                     </div>
 
-                    <!-- RECHTE SEITE: Canvas-Bereich (50%) -->
+                    <!-- RECHTE SEITE: Großer Canvas-Bereich (50%) -->
                     <div class="canvas-section">
-                        <!-- Oben: Live-Canvas (Echtzeit-Ausführung) -->
-                        <div class="live-canvas-area">
+                        <div class="canvas-area">
                             <div class="canvas-header">
-                                <h4>🐢 Live</h4>
+                                <h4>🐢 Zeichenfläche</h4>
                                 <div class="control-toolbar-inline">
                                     <button class="control-btn run-btn" id="runBtn" title="F5">▶️</button>
                                     <button class="control-btn stop-btn" id="stopBtn" title="Esc">⏹️</button>
@@ -146,6 +145,7 @@ repeat 4:
                                     <button class="control-btn" id="stepForwardBtn" title="→">⏭️</button>
                                     <button class="control-btn" id="resetBtn">🔄</button>
                                     <button class="control-btn hint-btn" id="hintBtn" title="Hinweis">💡</button>
+                                    <button class="control-btn preview-btn" id="previewBtn" title="Ziel anzeigen">👁️</button>
                                     <div class="speed-control-inline">
                                         <span>🐢</span>
                                         <input type="range" id="speedSlider" min="1" max="10" value="5">
@@ -154,19 +154,11 @@ repeat 4:
                                 </div>
                             </div>
                             <div class="canvas-container">
-                                <canvas id="turtleCanvas" width="400" height="280"></canvas>
+                                <canvas id="turtleCanvas" width="600" height="500"></canvas>
                             </div>
                         </div>
-
-                        <!-- Unten: Ziel-Canvas (erwartetes Ergebnis) -->
-                        <div class="expected-canvas-area">
-                            <div class="canvas-header">
-                                <h4>🎯 Ziel</h4>
-                            </div>
-                            <div class="canvas-container expected-container">
-                                <canvas id="expectedCanvas" width="400" height="200"></canvas>
-                            </div>
-                        </div>
+                        <!-- Verstecktes Canvas für Berechnung des erwarteten Ergebnisses -->
+                        <canvas id="expectedCanvas" width="100" height="100" style="display: none;"></canvas>
                     </div>
                 </div>
             </section>
