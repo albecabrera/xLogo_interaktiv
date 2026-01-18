@@ -1414,6 +1414,69 @@ class XLogoApp {
         this.sandboxTurtle = new Turtle(document.getElementById('sandboxCanvas'));
         this.expectedTurtle = new Turtle(document.getElementById('expectedCanvas'), { penWidth: 1 });
         this.adminTurtle = new Turtle(document.getElementById('adminPreviewCanvas'));
+
+        // Canvas-Größe an Container anpassen (verzögert für korrektes Layout)
+        requestAnimationFrame(() => {
+            this.resizeCanvases();
+        });
+        window.addEventListener('resize', () => this.resizeCanvases());
+    }
+
+    resizeCanvases() {
+        // Main Canvas (Live)
+        const mainContainer = document.querySelector('.live-canvas-area .canvas-container');
+        if (mainContainer) {
+            const mainCanvas = document.getElementById('turtleCanvas');
+            const rect = mainContainer.getBoundingClientRect();
+            const newWidth = Math.floor(rect.width - 10);
+            const newHeight = Math.floor(rect.height - 10);
+            if (newWidth > 50 && newHeight > 50) {
+                mainCanvas.width = newWidth;
+                mainCanvas.height = newHeight;
+                this.mainTurtle.width = newWidth;
+                this.mainTurtle.height = newHeight;
+                this.mainTurtle.reset();
+            }
+        }
+
+        // Expected Canvas (Ziel)
+        const expectedContainer = document.querySelector('.expected-canvas-area .canvas-container');
+        if (expectedContainer) {
+            const expectedCanvas = document.getElementById('expectedCanvas');
+            const rect = expectedContainer.getBoundingClientRect();
+            const newWidth = Math.floor(rect.width - 10);
+            const newHeight = Math.floor(rect.height - 10);
+            if (newWidth > 50 && newHeight > 50) {
+                expectedCanvas.width = newWidth;
+                expectedCanvas.height = newHeight;
+                this.expectedTurtle.width = newWidth;
+                this.expectedTurtle.height = newHeight;
+                this.expectedTurtle.reset();
+            }
+        }
+
+        // Sandbox Canvas
+        const sandboxContainer = document.querySelector('.sandbox-left .canvas-container');
+        if (sandboxContainer) {
+            const sandboxCanvas = document.getElementById('sandboxCanvas');
+            const rect = sandboxContainer.getBoundingClientRect();
+            const newWidth = Math.floor(rect.width - 10);
+            const newHeight = Math.floor(rect.height - 10);
+            if (newWidth > 50 && newHeight > 50) {
+                sandboxCanvas.width = newWidth;
+                sandboxCanvas.height = newHeight;
+                this.sandboxTurtle.width = newWidth;
+                this.sandboxTurtle.height = newHeight;
+                this.sandboxTurtle.reset();
+            }
+        }
+
+        // Lade aktuelle Aufgabe neu, um das Ziel-Canvas zu aktualisieren
+        const task = this.gameState.getCurrentTask();
+        if (task) {
+            this.expectedTurtle.reset();
+            this.expectedInterpreter.execute(task.solution);
+        }
     }
 
     initConsoles() {
