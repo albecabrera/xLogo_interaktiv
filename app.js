@@ -2209,12 +2209,39 @@ class XLogoApp {
 
     generateQRCode(url) {
         const canvas = document.getElementById('qrCanvas');
-        if (typeof QRCode !== 'undefined') {
-            QRCode.toCanvas(canvas, url, { width: 180, margin: 2, color: { dark: '#6c5ce7', light: '#ffffff' } }, (error) => {
-                if (error) console.error('QR-Code Fehler:', error);
-            });
+        const ctx = canvas.getContext('2d');
+
+        if (typeof qrcode !== 'undefined') {
+            try {
+                const qr = qrcode(0, 'M');
+                qr.addData(url);
+                qr.make();
+
+                const moduleCount = qr.getModuleCount();
+                const margin = 8;
+                const availableSize = 180 - margin * 2;
+                const cellSize = availableSize / moduleCount;
+
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, 180, 180);
+
+                ctx.fillStyle = '#6c5ce7';
+                for (let row = 0; row < moduleCount; row++) {
+                    for (let col = 0; col < moduleCount; col++) {
+                        if (qr.isDark(row, col)) {
+                            ctx.fillRect(
+                                margin + col * cellSize,
+                                margin + row * cellSize,
+                                cellSize,
+                                cellSize
+                            );
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('QR-Code Fehler:', error);
+            }
         } else {
-            const ctx = canvas.getContext('2d');
             ctx.fillStyle = '#f0f0f0';
             ctx.fillRect(0, 0, 180, 180);
             ctx.fillStyle = '#6c5ce7';
