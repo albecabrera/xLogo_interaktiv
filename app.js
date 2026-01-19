@@ -2205,16 +2205,23 @@ class XLogoApp {
     }
 
     generateShareUrl() {
-        const task = this.gameState.getCurrentTask();
-        if (!task) {
+        const title = document.getElementById('taskTitle').value.trim();
+        const description = document.getElementById('taskDescription').value.trim();
+        const difficulty = document.getElementById('taskDifficulty').value;
+        const solution = document.getElementById('taskSolution').value.trim();
+        const hint = document.getElementById('taskHint').value.trim();
+
+        if (!title || !solution) {
             return window.location.origin + window.location.pathname;
         }
+
+        const rewards = { beginner: 10, intermediate: 25, advanced: 50 };
         const taskData = {
-            title: task.title,
-            description: task.description,
-            hint: task.hint,
-            solution: task.solution,
-            reward: task.reward
+            title: title,
+            description: description,
+            hint: hint || 'Viel Erfolg!',
+            solution: solution,
+            reward: rewards[difficulty] || 10
         };
         const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(taskData))));
         return window.location.origin + window.location.pathname + '?task=' + encoded;
