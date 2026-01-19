@@ -1528,7 +1528,9 @@ class XLogoApp {
         this.initEditorFeatures();
         this.initEventListeners();
         this.updateUI();
-        this.loadCurrentTask();
+        if (!this.loadSharedTask()) {
+            this.loadCurrentTask();
+        }
     }
 
     initCodeEditors() {
@@ -2196,10 +2198,66 @@ class XLogoApp {
 
     openSharePopup() {
         const popup = document.getElementById('sharePopup');
-        const currentUrl = window.location.href;
-        document.getElementById('shareLink').value = currentUrl;
-        this.generateQRCode(currentUrl);
+        const shareUrl = this.generateShareUrl();
+        document.getElementById('shareLink').value = shareUrl;
+        this.generateQRCode(shareUrl);
         popup.classList.add('visible');
+    }
+
+    generateShareUrl() {
+        const task = this.gameState.getCurrentTask();
+        if (!task) {
+            return window.location.origin + window.location.pathname;
+        }
+        const taskData = {
+            title: task.title,
+            description: task.description,
+            hint: task.hint,
+            solution: task.solution,
+            reward: task.reward
+        };
+        const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(taskData))));
+        return window.location.origin + window.location.pathname + '?task=' + encoded;
+    }
+
+    loadSharedTask() {
+        const params = new URLSearchParams(window.location.search);
+        const taskParam = params.get('task');
+        if (!taskParam) return false;
+
+        try {
+            const taskData = JSON.parse(decodeURIComponent(escape(atob(taskParam))));
+            if (taskData.title && taskData.solution) {
+                const sharedTask = {
+                    id: 'shared_' + Date.now(),
+                    title: taskData.title,
+                    description: taskData.description || '',
+                    hint: taskData.hint || 'Viel Erfolg!',
+                    solution: taskData.solution,
+                    reward: taskData.reward || 10
+                };
+                this.loadTask(sharedTask);
+                window.history.replaceState({}, '', window.location.pathname);
+                return true;
+            }
+        } catch (e) {
+            console.error('Fehler beim Laden der geteilten Aufgabe:', e);
+        }
+        return false;
+    }
+
+    loadTask(task) {
+        document.getElementById('taskContent').innerHTML = `<h4>${task.title}</h4><p class="task-description">${task.description}</p>`;
+        document.getElementById('taskNumber').textContent = '📤';
+        this.expectedTurtle.reset();
+        this.expectedTurtle.animationEnabled = false;
+        this.expectedInterpreter.execute(task.solution);
+        this.expectedTurtle.animationEnabled = true;
+        const taskCode = `# Geteilte Aufgabe: ${task.title}\n# ${task.description}\n\n`;
+        this.mainEditor.setCode(taskCode);
+        this.mainTurtle.reset();
+        this.mainConsole.log('Geteilte Aufgabe geladen. Viel Erfolg!', 'info');
+        this.sharedTask = task;
     }
 
     closeSharePopup() {
