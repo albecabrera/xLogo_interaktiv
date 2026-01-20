@@ -498,14 +498,36 @@ class Turtle {
 
     getPathSignature() {
         if (this.pathHistory.length === 0) return '';
-        const startX = this.width / 2;
-        const startY = this.height / 2;
-        const normalized = this.pathHistory.map(seg => ({
-            dx1: Math.round((seg.x1 - startX) / 5) * 5,
-            dy1: Math.round((seg.y1 - startY) / 5) * 5,
-            dx2: Math.round((seg.x2 - startX) / 5) * 5,
-            dy2: Math.round((seg.y2 - startY) / 5) * 5
-        }));
+        // Berechne den Schwerpunkt der Zeichnung für positions-unabhängige Vergleiche
+        let sumX = 0, sumY = 0, count = 0;
+        for (const seg of this.pathHistory) {
+            if (seg.type === 'dot') {
+                sumX += seg.x;
+                sumY += seg.y;
+                count += 1;
+            } else {
+                sumX += seg.x1 + seg.x2;
+                sumY += seg.y1 + seg.y2;
+                count += 2;
+            }
+        }
+        const centerX = count > 0 ? sumX / count : this.width / 2;
+        const centerY = count > 0 ? sumY / count : this.height / 2;
+        const normalized = this.pathHistory.map(seg => {
+            if (seg.type === 'dot') {
+                return {
+                    type: 'dot',
+                    dx: Math.round((seg.x - centerX) / 5) * 5,
+                    dy: Math.round((seg.y - centerY) / 5) * 5
+                };
+            }
+            return {
+                dx1: Math.round((seg.x1 - centerX) / 5) * 5,
+                dy1: Math.round((seg.y1 - centerY) / 5) * 5,
+                dx2: Math.round((seg.x2 - centerX) / 5) * 5,
+                dy2: Math.round((seg.y2 - centerY) / 5) * 5
+            };
+        });
         return JSON.stringify(normalized);
     }
 
@@ -634,21 +656,15 @@ class Turtle {
         // Prüfe ob Skalierung nötig ist
         const needsScaling = drawingWidth > availableWidth || drawingHeight > availableHeight;
 
-        if (!needsScaling && drawingWidth < 10 && drawingHeight < 10) {
-            // Keine Skalierung nötig, Zeichnung ist klein genug
-            return { scale: 1, offsetX: 0, offsetY: 0 };
+        // Berechne Skalierungsfaktor (nur wenn nötig)
+        let scale = 1;
+        if (needsScaling) {
+            const scaleX = availableWidth / Math.max(drawingWidth, 1);
+            const scaleY = availableHeight / Math.max(drawingHeight, 1);
+            scale = Math.min(scaleX, scaleY, 1); // Nie größer als 1
         }
 
-        if (!needsScaling) {
-            return { scale: 1, offsetX: 0, offsetY: 0 };
-        }
-
-        // Berechne Skalierungsfaktor
-        const scaleX = availableWidth / Math.max(drawingWidth, 1);
-        const scaleY = availableHeight / Math.max(drawingHeight, 1);
-        const scale = Math.min(scaleX, scaleY, 1); // Nie größer als 1
-
-        // Berechne Offset um die Zeichnung zu zentrieren
+        // Berechne Offset um die Zeichnung IMMER zu zentrieren
         const canvasCenterX = this.width / 2;
         const canvasCenterY = this.height / 2;
         const offsetX = canvasCenterX - centerX * scale;
@@ -1170,7 +1186,10 @@ const defaultTasks = {
         { id: 'b2', title: 'Hin und zurück', description: '50 vor, 50 zurück', hint: 'fd() und bk()', solution: 'fd(50)\nbk(50)', reward: 10 },
         { id: 'b3', title: 'Die erste Ecke', description: '80 vor, 90° rechts', hint: 'rt(90) dreht', solution: 'fd(80)\nrt(90)', reward: 10 },
         { id: 'b4', title: 'Der Winkel', description: '60 vor, 90° rechts, 60 vor', hint: 'L-Form zeichnen', solution: 'fd(60)\nrt(90)\nfd(60)', reward: 10 },
-        { id: 'b5', title: 'Das einfache Quadrat', description: 'Quadrat Seitenlänge 80', hint: '4 Seiten, 4 Ecken', solution: 'fd(80)\nrt(90)\nfd(80)\nrt(90)\nfd(80)\nrt(90)\nfd(80)', reward: 15 }
+        { id: 'b5', title: 'Das einfache Quadrat', description: 'Quadrat Seitenlänge 80', hint: '4 Seiten, 4 Ecken', solution: 'fd(80)\nrt(90)\nfd(80)\nrt(90)\nfd(80)\nrt(90)\nfd(80)', reward: 15 },
+        { id: 'b6', title: 'Das Rechteck', description: 'Rechteck (80 breit, 50 hoch)', hint: 'Zwei verschiedene Seitenlängen', solution: 'fd(50)\nrt(90)\nfd(80)\nrt(90)\nfd(50)\nrt(90)\nfd(80)', reward: 15 },
+        { id: 'b7', title: 'Das Fünfeck', description: 'Fünfeck (Seitenlänge 60)', hint: '360÷5 = 72°', solution: 'fd(60)\nrt(72)\nfd(60)\nrt(72)\nfd(60)\nrt(72)\nfd(60)\nrt(72)\nfd(60)', reward: 15 },
+        { id: 'b8', title: 'Das Achteck', description: 'Achteck (Seitenlänge 50)', hint: '360÷8 = 45°', solution: 'fd(50)\nrt(45)\nfd(50)\nrt(45)\nfd(50)\nrt(45)\nfd(50)\nrt(45)\nfd(50)\nrt(45)\nfd(50)\nrt(45)\nfd(50)\nrt(45)\nfd(50)', reward: 20 }
     ],
     intermediate: [
         { id: 'i1', title: 'Quadrat mit Schleife', description: 'Quadrat (100) mit repeat', hint: 'repeat 4:', solution: 'repeat 4:\n    fd(100)\n    rt(90)', reward: 25 },
